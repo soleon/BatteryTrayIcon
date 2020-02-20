@@ -38,7 +38,8 @@ namespace Percentage
                 if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     SetBrush();
-                    SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime, " until fully charged");
+                    SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
+                        " until fully charged");
                 }
                 else
                 {
@@ -55,7 +56,7 @@ namespace Percentage
                         SetBrush();
                     }
 
-                    SetText(notifyIcon.BalloonTipTitle = "On battery", powerStatus.BatteryLifeRemaining, " remaining");
+                    SetText(notifyIcon.BalloonTipTitle = "On battery", powerStatus.BatteryLifeRemaining, "remaining");
                 }
 
                 void SetText(string title, int seconds, string suffix)
@@ -70,8 +71,9 @@ namespace Percentage
                         var duration = TimeSpan.FromSeconds(seconds);
                         Append(duration.Hours, "hour");
                         Append(duration.Minutes, "minute");
-                        builder.Append(suffix);
-                        notifyIcon.Text = title + Environment.NewLine + (notifyIcon.BalloonTipText = builder.ToString());
+                        builder.Append(builder.Length > 0 ? suffix : percent + "% remaining");
+                        notifyIcon.Text = title + Environment.NewLine +
+                                          (notifyIcon.BalloonTipText = builder.ToString());
 
                         void Append(int value, string unit)
                         {
@@ -80,16 +82,7 @@ namespace Percentage
                                 return;
                             }
 
-                            if (builder.Length > 0)
-                            {
-                                builder.Append(" ");
-                            }
-
-                            builder.Append(value + " " + unit);
-                            if (value > 1)
-                            {
-                                builder.Append("s");
-                            }
+                            builder.Append(value + " " + unit + (value > 1 ? "s " : " "));
                         }
                     }
                 }
