@@ -1,6 +1,7 @@
 # Percentage
 ![](https://raw.githubusercontent.com/soleon/percentage/master/percentage.png)
-See your battery percentage in the Windows 10 system tray
+
+See your battery percentage in the Windows 10 system tray.
 
 ## Installing
 1. [Download the latest release](https://github.com/soleon/percentage/releases)
