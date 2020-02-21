@@ -76,75 +76,95 @@ namespace Percentage
                     "SystemUsesLightTheme", null));
 
                 Brush brush;
-                if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
+                string trayIconText;
+                if (batteryChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
                 {
-                    // When the battery is charging.
-                    brush = ChargingBrush;
-                    SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
-                        " until fully charged");
+                    // When no battery detected.
+                    trayIconText = "❌";
+                    SetBrush();
+                    notifyIcon.Text = notifyIcon.BalloonTipText = "No battery detected";
+                }
+                else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Unknown))
+                {
+                    // When battery status is unknown.
+                    trayIconText = "❓";
+                    SetBrush();
+                    notifyIcon.Text = notifyIcon.BalloonTipText = "Battery status unknown";
                 }
                 else
                 {
-                    // When battery is not charging.
-                    if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                    // When battery status is normal, display percentage in tray icon.
+                    trayIconText = percent.ToString(CultureInfo.CurrentCulture);
+                    if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                     {
-                        // When battery capacity is critical.
-                        brush = CriticalBrush;
-                    }
-                    else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Low))
-                    {
-                        // When battery capacity is low.
-                        brush = LowBrush;
+                        // When the battery is charging.
+                        brush = ChargingBrush;
+                        SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
+                            " until fully charged");
                     }
                     else
                     {
-                        // When battery capacity is normal.
-                        SetBrush();
-                    }
-
-                    SetText(
-                        // Check if power line is connected even when it's not charging.
-                        notifyIcon.BalloonTipTitle = powerStatus.PowerLineStatus == PowerLineStatus.Online
-                            ? "Connected (not charging)"
-                            : "On battery", powerStatus.BatteryLifeRemaining, "remaining");
-                }
-
-                // Local function to set tool tip and balloon notification text.
-                void SetText(string title, int seconds, string suffix)
-                {
-                    title += Environment.NewLine;
-                    if (percent == 100)
-                    {
-                        // When battery is fully charged.
-                        notifyIcon.Text = title + (notifyIcon.BalloonTipText = "Fully charged");
-                    }
-                    else
-                    {
-                        // When battery is not fully charged.
-                        if (seconds > 0)
+                        // When battery is not charging.
+                        if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Critical))
                         {
-                            // When duration is valid, set readable duration as tool tip and balloon text.
-                            var builder = new StringBuilder();
-                            var duration = TimeSpan.FromSeconds(seconds);
-                            Append(duration.Hours, "hour");
-                            Append(duration.Minutes, "minute");
-                            builder.Append(suffix);
-                            notifyIcon.Text = title + (notifyIcon.BalloonTipText = builder.ToString());
-
-                            void Append(int value, string unit)
-                            {
-                                if (value == 0)
-                                {
-                                    return;
-                                }
-
-                                builder.Append(value + " " + unit + (value > 1 ? "s " : " "));
-                            }
+                            // When battery capacity is critical.
+                            brush = CriticalBrush;
+                        }
+                        else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                        {
+                            // When battery capacity is low.
+                            brush = LowBrush;
                         }
                         else
                         {
-                            // When duration is not valid, set percentage as tool tip and balloon text.
-                            notifyIcon.Text = title + (notifyIcon.BalloonTipText = percent + "% remaining");
+                            // When battery capacity is normal.
+                            SetBrush();
+                        }
+
+                        SetText(
+                            // Check if power line is connected even when it's not charging.
+                            notifyIcon.BalloonTipTitle = powerStatus.PowerLineStatus == PowerLineStatus.Online
+                                ? "Connected (not charging)"
+                                : "On battery", powerStatus.BatteryLifeRemaining, "remaining");
+                    }
+
+                    // Local function to set tool tip and balloon notification text.
+                    void SetText(string title, int seconds, string suffix)
+                    {
+                        title += Environment.NewLine;
+                        if (percent == 100)
+                        {
+                            // When battery is fully charged.
+                            notifyIcon.Text = title + (notifyIcon.BalloonTipText = "Fully charged");
+                        }
+                        else
+                        {
+                            // When battery is not fully charged.
+                            if (seconds > 0)
+                            {
+                                // When duration is valid, set readable duration as tool tip and balloon text.
+                                var builder = new StringBuilder();
+                                var duration = TimeSpan.FromSeconds(seconds);
+                                Append(duration.Hours, "hour");
+                                Append(duration.Minutes, "minute");
+                                builder.Append(suffix);
+                                notifyIcon.Text = title + (notifyIcon.BalloonTipText = builder.ToString());
+
+                                void Append(int value, string unit)
+                                {
+                                    if (value == 0)
+                                    {
+                                        return;
+                                    }
+
+                                    builder.Append(value + " " + unit + (value > 1 ? "s " : " "));
+                                }
+                            }
+                            else
+                            {
+                                // When duration is not valid, set percentage as tool tip and balloon text.
+                                notifyIcon.Text = title + (notifyIcon.BalloonTipText = percent + "% remaining");
+                            }
                         }
                     }
                 }
@@ -155,22 +175,6 @@ namespace Percentage
                     brush = isLightTheme ? Brushes.Black : Brushes.White;
                 }
 
-                string trayIconText;
-                if (batteryChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
-                {
-                    // When no battery detected.
-                    trayIconText = "❌";
-                }
-                else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Unknown))
-                {
-                    // When battery status is unknown.
-                    trayIconText = "❓";
-                }
-                else
-                {
-                    // When battery status is normal, display percentage in tray icon.
-                    trayIconText = percent.ToString(CultureInfo.CurrentCulture);
-                }
 
                 int textWidth, textHeight;
                 Font font;
