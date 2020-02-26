@@ -60,6 +60,33 @@ namespace Percentage
             var highNotification = settings.HighNotification;
             var lowNotification = settings.LowNotification;
             var criticalNotification = settings.CriticalNotification;
+            settings.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case nameof(settings.CriticalColor):
+                        criticalBrush.Color = settings.CriticalColor;
+                        break;
+                    case nameof(settings.ChargingColor):
+                        chargingBrush.Color = settings.ChargingColor;
+                        break;
+                    case nameof(settings.LowColor):
+                        lowBrush.Color = settings.LowColor;
+                        break;
+                    case nameof(settings.FullNotification):
+                        fullNotification = settings.FullNotification;
+                        break;
+                    case nameof(settings.CriticalNotification):
+                        criticalNotification = settings.CriticalNotification;
+                        break;
+                    case nameof(settings.HighNotification):
+                        highNotification = settings.HighNotification;
+                        break;
+                    case nameof(settings.LowNotification):
+                        lowNotification = settings.LowNotification;
+                        break;
+                }
+            };
 
             // Initial update of the tray icon.
             Update();
