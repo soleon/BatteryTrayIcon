@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Percentage.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CriticalNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="LowNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HighNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FullNotification" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CriticalColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">232, 17, 35</Value>
+    </Setting>
+    <Setting Name="LowColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">202, 80, 16</Value>
+    </Setting>
+    <Setting Name="ChargingColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">16, 137, 62</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

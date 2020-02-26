@@ -6,14 +6,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Percentage.Properties;
 
 namespace Percentage
 {
     internal static class Program
     {
-        private static readonly SolidBrush ChargingBrush = new SolidBrush(Color.FromArgb(16, 137, 62));
-        private static readonly SolidBrush LowBrush = new SolidBrush(Color.FromArgb(202, 80, 16));
-        private static readonly SolidBrush CriticalBrush = new SolidBrush(Color.FromArgb(232, 17, 35));
+        private static (NotificationType Type, DateTime DateTime) _lastNotification;
 
         [STAThread]
         private static void Main()
@@ -37,9 +36,11 @@ namespace Percentage
             using var notifyIcon = new NotifyIcon {Visible = true, BalloonTipIcon = ToolTipIcon.Info};
 
             // Right click menu with "Exit" item to exit this application.
-            var item = new ToolStripMenuItem("Exit");
-            item.Click += (_, __) => Application.Exit();
-            notifyIcon.ContextMenuStrip = new ContextMenuStrip {Items = {item}};
+            var exitMenuItem = new ToolStripMenuItem("Exit");
+            exitMenuItem.Click += (_, __) => Application.Exit();
+            var settingsMenuItem = new ToolStripMenuItem("Settings");
+            settingsMenuItem.Click += (_, __) => new SettingsForm().Show();
+            notifyIcon.ContextMenuStrip = new ContextMenuStrip {Items = {settingsMenuItem, exitMenuItem}};
 
             // Show balloon notification when the try icon is clicked.
             notifyIcon.MouseClick += (_, e) =>
@@ -49,6 +50,16 @@ namespace Percentage
                     notifyIcon.ShowBalloonTip(0);
                 }
             };
+
+            // Setup variables used in the repetitively run "Update" local function.
+            var settings = Settings.Default;
+            var chargingBrush = new SolidBrush(settings.ChargingColor);
+            var lowBrush = new SolidBrush(settings.LowColor);
+            var criticalBrush = new SolidBrush(settings.CriticalColor);
+            var fullNotification = settings.FullNotification;
+            var highNotification = settings.HighNotification;
+            var lowNotification = settings.LowNotification;
+            var criticalNotification = settings.CriticalNotification;
 
             // Initial update of the tray icon.
             Update();
@@ -75,6 +86,7 @@ namespace Percentage
                     @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
                     "SystemUsesLightTheme", null));
 
+                var notificationType = NotificationType.None;
                 Brush brush;
                 string trayIconText;
                 if (batteryChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
@@ -98,7 +110,7 @@ namespace Percentage
                     if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                     {
                         // When the battery is charging.
-                        brush = ChargingBrush;
+                        brush = chargingBrush;
                         SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
                             " until fully charged");
                     }
@@ -108,17 +120,34 @@ namespace Percentage
                         if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Critical))
                         {
                             // When battery capacity is critical.
-                            brush = CriticalBrush;
+                            brush = criticalBrush;
+                            if (criticalNotification)
+                            {
+                                notificationType = NotificationType.Critical;
+                            }
                         }
                         else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Low))
                         {
                             // When battery capacity is low.
-                            brush = LowBrush;
+                            brush = lowBrush;
+                            if (lowNotification)
+                            {
+                                notificationType = NotificationType.Low;
+                            }
                         }
                         else
                         {
                             // When battery capacity is normal.
                             SetBrush();
+                            switch (percent)
+                            {
+                                case 80 when highNotification:
+                                    notificationType = NotificationType.High;
+                                    break;
+                                case 100 when fullNotification:
+                                    notificationType = NotificationType.Full;
+                                    break;
+                            }
                         }
 
                         SetText(
@@ -243,10 +272,44 @@ namespace Percentage
                         // This should be the very last call when updating the tray icon.
                     }
                 }
+
+                // Check and send notification.
+                if (notificationType == NotificationType.None)
+                {
+                    // No notification required.
+                    return;
+                }
+
+                var utcNow = DateTime.UtcNow;
+                if (_lastNotification.Type != notificationType)
+                {
+                    // Notification required, and battery status has changed from last notification, notify user.
+                    notifyIcon.ShowBalloonTip(0);
+                }
+                else
+                {
+                    if (utcNow - _lastNotification.DateTime > TimeSpan.FromMinutes(5))
+                    {
+                        // Notification required, but battery status is the same as last notification for more than 5 minutes,
+                        // notify user.
+                        notifyIcon.ShowBalloonTip(0);
+                    }
+                }
+
+                _lastNotification = (notificationType, utcNow);
             }
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
+
+        private enum NotificationType : byte
+        {
+            None = 0,
+            Critical,
+            Low,
+            High,
+            Full
+        }
     }
 }
