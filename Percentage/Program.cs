@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using Percentage.Properties;
 
@@ -12,11 +15,21 @@ namespace Percentage
 {
     internal static class Program
     {
-        private static (NotificationType Type, DateTime DateTime) _lastNotification;
-
         [STAThread]
         private static void Main()
         {
+            // Check if this application is set to start with Windows.
+            var settings = Settings.Default;
+            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Percentage.lnk");
+            if (settings.AutoStart)
+            {
+                EnableAutoStart();
+            }
+            else
+            {
+                DisableAutoStart();
+            }
+            
             // Allows this application to be DPI aware.
             // This is required to determine the current system DPI value
             // for scaling the tray icon text to support high DPI settings.
@@ -51,8 +64,8 @@ namespace Percentage
                 }
             };
 
-            // Setup variables used in the repetitively run "Update" local function.
-            var settings = Settings.Default;
+            // Setup variables used in the repetitively ran "Update" local function.
+            (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
             var chargingBrush = new SolidBrush(settings.ChargingColor);
             var lowBrush = new SolidBrush(settings.LowColor);
             var criticalBrush = new SolidBrush(settings.CriticalColor);
@@ -60,6 +73,8 @@ namespace Percentage
             var highNotification = settings.HighNotification;
             var lowNotification = settings.LowNotification;
             var criticalNotification = settings.CriticalNotification;
+
+            // Update setting variables when their corresponding value changes.
             settings.PropertyChanged += (sender, args) =>
             {
                 switch (args.PropertyName)
@@ -85,6 +100,12 @@ namespace Percentage
                     case nameof(settings.LowNotification):
                         lowNotification = settings.LowNotification;
                         break;
+                    case nameof (settings.AutoStart) when settings.AutoStart:
+                        EnableAutoStart();
+                        break;
+                    case nameof(settings.AutoStart) when !settings.AutoStart:
+                        DisableAutoStart();
+                        break;
                 }
             };
 
@@ -92,12 +113,26 @@ namespace Percentage
             Update();
 
             // Setup timer to update the try icon every 10 seconds.
-            var timer = new Timer {Interval = 1000};
+            var timer = new Timer {Interval = 10000};
             timer.Tick += (_, __) => Update();
             timer.Start();
 
             // Start the application and hold the thread.
             Application.Run();
+
+            // Local function to enable starting application with Windows.
+            void EnableAutoStart()
+            {
+                var shortcut = (IWshShortcut)new WshShell().CreateShortcut(shortcutPath);
+                shortcut.TargetPath = Path.ChangeExtension(Application.ExecutablePath, "exe");
+                shortcut.Save();
+            }
+
+            // Local function to disable starting application with Windows.
+            void DisableAutoStart()
+            {
+                System.IO.File.Delete(shortcutPath);
+            }
 
             // Local function to update the tray icon.
             void Update()
@@ -300,6 +335,8 @@ namespace Percentage
                     }
                 }
 
+                Debug.WriteLine(DateTime.Now);
+
                 // Check and send notification.
                 if (notificationType == NotificationType.None)
                 {
@@ -308,14 +345,14 @@ namespace Percentage
                 }
 
                 var utcNow = DateTime.UtcNow;
-                if (_lastNotification.Type != notificationType)
+                if (lastNotification.Type != notificationType)
                 {
                     // Notification required, and battery status has changed from last notification, notify user.
                     notifyIcon.ShowBalloonTip(0);
                 }
                 else
                 {
-                    if (utcNow - _lastNotification.DateTime > TimeSpan.FromMinutes(5))
+                    if (utcNow - lastNotification.DateTime > TimeSpan.FromMinutes(5))
                     {
                         // Notification required, but battery status is the same as last notification for more than 5 minutes,
                         // notify user.
@@ -323,7 +360,7 @@ namespace Percentage
                     }
                 }
 
-                _lastNotification = (notificationType, utcNow);
+                lastNotification = (notificationType, utcNow);
             }
         }
 

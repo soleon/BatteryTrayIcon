@@ -28,6 +28,7 @@ namespace Percentage
             LowNotificationCheckBox.Checked = Settings.LowNotification;
             HighNotificationCheckBox.Checked = Settings.HighNotification;
             FullNotificationCheckBox.Checked = Settings.FullNotification;
+            AutoStartCheckBox.Checked = Settings.AutoStart;
 
             LowColorButton.Click += ButtonClick;
             CriticalColorButton.Click += ButtonClick;
@@ -36,6 +37,7 @@ namespace Percentage
             LowNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             HighNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             FullNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
+            AutoStartCheckBox.CheckedChanged += CheckBoxCheckedChanged;
 
             ResetButton.Click += (_, __) =>
             {
@@ -43,9 +45,9 @@ namespace Percentage
                 CriticalColorButton.BackColor = Settings.CriticalColor = CriticalColor;
                 ChargingColorButton.BackColor = Settings.ChargingColor = ChargingColor;
                 CriticalNotificationCheckBox.Checked = LowNotificationCheckBox.Checked =
-                    HighNotificationCheckBox.Checked = FullNotificationCheckBox.Checked =
-                        Settings.CriticalNotification = Settings.LowNotification =
-                            Settings.FullNotification = Settings.HighNotification = true;
+                    HighNotificationCheckBox.Checked = FullNotificationCheckBox.Checked = AutoStartCheckBox.Checked =
+                        Settings.CriticalNotification = Settings.LowNotification = Settings.FullNotification =
+                            Settings.HighNotification = Settings.AutoStart = true;
                 Settings.Save();
             };
 
@@ -74,6 +76,17 @@ namespace Percentage
                 Settings[(string) button.Tag] = button.BackColor = dialog.Color;
                 Settings.Save();
             }
+        }
+        
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData != Keys.Escape)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            Close();
+            return true;
         }
     }
 }
