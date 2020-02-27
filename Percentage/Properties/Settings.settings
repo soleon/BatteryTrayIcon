@@ -23,7 +23,7 @@
     <Setting Name="ChargingColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">16, 137, 62</Value>
     </Setting>
-    <Setting Name="AutoStart" Type="System.Boolean" Scope="User">
+    <Setting Name="IsFirstRun" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

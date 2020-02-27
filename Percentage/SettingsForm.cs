@@ -7,9 +7,6 @@ namespace Percentage
 {
     public partial class SettingsForm : Form
     {
-        private static readonly Color ChargingColor = Color.FromArgb(16, 137, 62);
-        private static readonly Color LowColor = Color.FromArgb(202, 80, 16);
-        private static readonly Color CriticalColor = Color.FromArgb(232, 17, 35);
         private static readonly Settings Settings = Settings.Default;
 
         public SettingsForm()
@@ -28,7 +25,7 @@ namespace Percentage
             LowNotificationCheckBox.Checked = Settings.LowNotification;
             HighNotificationCheckBox.Checked = Settings.HighNotification;
             FullNotificationCheckBox.Checked = Settings.FullNotification;
-            AutoStartCheckBox.Checked = Settings.AutoStart;
+            AutoStartCheckBox.Checked = RegistryHelper.IsAutoStart();
 
             LowColorButton.Click += ButtonClick;
             CriticalColorButton.Click += ButtonClick;
@@ -37,18 +34,19 @@ namespace Percentage
             LowNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             HighNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             FullNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
-            AutoStartCheckBox.CheckedChanged += CheckBoxCheckedChanged;
+            AutoStartCheckBox.CheckedChanged += AutoStartCheckBoxCheckedChanged;
 
             ResetButton.Click += (_, __) =>
             {
-                LowColorButton.BackColor = Settings.LowColor = LowColor;
-                CriticalColorButton.BackColor = Settings.CriticalColor = CriticalColor;
-                ChargingColorButton.BackColor = Settings.ChargingColor = ChargingColor;
+                LowColorButton.BackColor = Settings.LowColor = Color.FromArgb(202, 80, 16);
+                CriticalColorButton.BackColor = Settings.CriticalColor = Color.FromArgb(232, 17, 35);
+                ChargingColorButton.BackColor = Settings.ChargingColor = Color.FromArgb(16, 137, 62);
                 CriticalNotificationCheckBox.Checked = LowNotificationCheckBox.Checked =
                     HighNotificationCheckBox.Checked = FullNotificationCheckBox.Checked = AutoStartCheckBox.Checked =
                         Settings.CriticalNotification = Settings.LowNotification = Settings.FullNotification =
-                            Settings.HighNotification = Settings.AutoStart = true;
+                            Settings.HighNotification = true;
                 Settings.Save();
+                RegistryHelper.EnableAutoStart();
             };
 
             static void CheckBoxCheckedChanged(object sender, EventArgs _)
@@ -58,7 +56,7 @@ namespace Percentage
                 Settings.Save();
             }
 
-            static void ButtonClick(object sender, EventArgs e)
+            static void ButtonClick(object sender, EventArgs _)
             {
                 var button = (Button) sender;
                 var dialog = new ColorDialog
@@ -76,8 +74,20 @@ namespace Percentage
                 Settings[(string) button.Tag] = button.BackColor = dialog.Color;
                 Settings.Save();
             }
+
+            void AutoStartCheckBoxCheckedChanged(object _, EventArgs __)
+            {
+                if (AutoStartCheckBox.Checked)
+                {
+                    RegistryHelper.EnableAutoStart();
+                }
+                else
+                {
+                    RegistryHelper.DisableAutoRun();
+                }
+            }
         }
-        
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData != Keys.Escape)

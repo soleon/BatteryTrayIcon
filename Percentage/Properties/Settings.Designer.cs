@@ -110,12 +110,12 @@ namespace Percentage.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoStart {
+        public bool IsFirstRun {
             get {
-                return ((bool)(this["AutoStart"]));
+                return ((bool)(this["IsFirstRun"]));
             }
             set {
-                this["AutoStart"] = value;
+                this["IsFirstRun"] = value;
             }
         }
     }

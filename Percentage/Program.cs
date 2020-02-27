@@ -3,12 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Globalization;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using IWshRuntimeLibrary;
-using Microsoft.Win32;
 using Percentage.Properties;
 
 namespace Percentage
@@ -18,18 +15,6 @@ namespace Percentage
         [STAThread]
         private static void Main()
         {
-            // Check if this application is set to start with Windows.
-            var settings = Settings.Default;
-            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Percentage.lnk");
-            if (settings.AutoStart)
-            {
-                EnableAutoStart();
-            }
-            else
-            {
-                DisableAutoStart();
-            }
-            
             // Allows this application to be DPI aware.
             // This is required to determine the current system DPI value
             // for scaling the tray icon text to support high DPI settings.
@@ -66,6 +51,8 @@ namespace Percentage
 
             // Setup variables used in the repetitively ran "Update" local function.
             (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
+            var isLightTheme = RegistryHelper.IsUsingLightTheme();
+            var settings = Settings.Default;
             var chargingBrush = new SolidBrush(settings.ChargingColor);
             var lowBrush = new SolidBrush(settings.LowColor);
             var criticalBrush = new SolidBrush(settings.CriticalColor);
@@ -73,6 +60,14 @@ namespace Percentage
             var highNotification = settings.HighNotification;
             var lowNotification = settings.LowNotification;
             var criticalNotification = settings.CriticalNotification;
+
+            // Enable auto start if this is the first run.
+            if (settings.IsFirstRun)
+            {
+                RegistryHelper.EnableAutoStart();
+                settings.IsFirstRun = false;
+                settings.Save();
+            }
 
             // Update setting variables when their corresponding value changes.
             settings.PropertyChanged += (sender, args) =>
@@ -100,12 +95,6 @@ namespace Percentage
                     case nameof(settings.LowNotification):
                         lowNotification = settings.LowNotification;
                         break;
-                    case nameof (settings.AutoStart) when settings.AutoStart:
-                        EnableAutoStart();
-                        break;
-                    case nameof(settings.AutoStart) when !settings.AutoStart:
-                        DisableAutoStart();
-                        break;
                 }
             };
 
@@ -120,33 +109,12 @@ namespace Percentage
             // Start the application and hold the thread.
             Application.Run();
 
-            // Local function to enable starting application with Windows.
-            void EnableAutoStart()
-            {
-                var shortcut = (IWshShortcut)new WshShell().CreateShortcut(shortcutPath);
-                shortcut.TargetPath = Path.ChangeExtension(Application.ExecutablePath, "exe");
-                shortcut.Save();
-            }
-
-            // Local function to disable starting application with Windows.
-            void DisableAutoStart()
-            {
-                System.IO.File.Delete(shortcutPath);
-            }
-
             // Local function to update the tray icon.
             void Update()
             {
                 var powerStatus = SystemInformation.PowerStatus;
                 var batteryChargeStatus = powerStatus.BatteryChargeStatus;
                 var percent = (int) Math.Round(powerStatus.BatteryLifePercent * 100);
-
-                // Determine if the Windows 10 light theme is in use.
-                // False if dark theme is in use or registry key doesn't exist
-                // for versions of Windows that don't support light theme.
-                var isLightTheme = 1.Equals(Registry.GetValue(
-                    @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
-                    "SystemUsesLightTheme", null));
 
                 var notificationType = NotificationType.None;
                 Brush brush;
