@@ -31,7 +31,7 @@ namespace Percentage
             // Set the "using" scope of the tray icon to this method,
             // so that when "Main" method ends (i.e. the application exits)
             // the tray icon is disposed and removed from the system tray.
-            using var notifyIcon = new NotifyIcon {Visible = true, BalloonTipIcon = ToolTipIcon.Info};
+            using var notifyIcon = new NotifyIcon {Visible = true};
 
             // Right click menu with "Exit" item to exit this application.
             var exitMenuItem = new ToolStripMenuItem("Exit");
@@ -102,7 +102,7 @@ namespace Percentage
             Update();
 
             // Setup timer to update the try icon every 10 seconds.
-            var timer = new Timer {Interval = 10000};
+            using var timer = new Timer {Interval = 10000};
             timer.Tick += (_, __) => Update();
             timer.Start();
 
@@ -125,6 +125,7 @@ namespace Percentage
                     trayIconText = "❌";
                     SetBrush();
                     notifyIcon.Text = notifyIcon.BalloonTipText = "No battery detected";
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
                 }
                 else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Unknown))
                 {
@@ -132,6 +133,7 @@ namespace Percentage
                     trayIconText = "❓";
                     SetBrush();
                     notifyIcon.Text = notifyIcon.BalloonTipText = "Battery status unknown";
+                    notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
                 }
                 else
                 {
@@ -143,6 +145,7 @@ namespace Percentage
                         brush = chargingBrush;
                         SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
                             " until fully charged");
+                        notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                     }
                     else
                     {
@@ -151,6 +154,7 @@ namespace Percentage
                         {
                             // When battery capacity is critical.
                             brush = criticalBrush;
+                            notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
                             if (criticalNotification)
                             {
                                 notificationType = NotificationType.Critical;
@@ -160,6 +164,7 @@ namespace Percentage
                         {
                             // When battery capacity is low.
                             brush = lowBrush;
+                            notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
                             if (lowNotification)
                             {
                                 notificationType = NotificationType.Low;
@@ -169,6 +174,7 @@ namespace Percentage
                         {
                             // When battery capacity is normal.
                             SetBrush();
+                            notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                             switch (percent)
                             {
                                 case 80 when highNotification:
