@@ -143,7 +143,7 @@ namespace Percentage
                     {
                         // When the battery is charging.
                         brush = chargingBrush;
-                        SetText(notifyIcon.BalloonTipTitle = "Charging", powerStatus.BatteryFullLifetime,
+                        SetText(notifyIcon.BalloonTipTitle = percent + "% Charging", powerStatus.BatteryFullLifetime,
                             " until fully charged");
                         notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                     }
@@ -188,9 +188,10 @@ namespace Percentage
 
                         SetText(
                             // Check if power line is connected even when it's not charging.
-                            notifyIcon.BalloonTipTitle = powerStatus.PowerLineStatus == PowerLineStatus.Online
-                                ? "Connected (not charging)"
-                                : "On battery", powerStatus.BatteryLifeRemaining, "remaining");
+                            notifyIcon.BalloonTipTitle =
+                                percent + "% " + (powerStatus.PowerLineStatus == PowerLineStatus.Online
+                                    ? "Connected (not charging)"
+                                    : "On battery"), powerStatus.BatteryLifeRemaining, "remaining");
                     }
 
                     // Local function to set tool tip and balloon notification text.
