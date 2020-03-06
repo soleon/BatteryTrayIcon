@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Percentage.Properties;
 
 namespace Percentage
@@ -40,7 +41,7 @@ namespace Percentage
             settingsMenuItem.Click += (_, __) => new SettingsForm().Show();
             notifyIcon.ContextMenuStrip = new ContextMenuStrip {Items = {settingsMenuItem, exitMenuItem}};
 
-            // Show balloon notification when the try icon is clicked.
+            // Show balloon notification when the tray icon is clicked.
             notifyIcon.MouseClick += (_, e) =>
             {
                 if (e.Button == MouseButtons.Left)
@@ -51,15 +52,19 @@ namespace Percentage
 
             // Setup variables used in the repetitively ran "Update" local function.
             (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
-            var isLightTheme = RegistryHelper.IsUsingLightTheme();
             var settings = Settings.Default;
             var chargingBrush = new SolidBrush(settings.ChargingColor);
             var lowBrush = new SolidBrush(settings.LowColor);
             var criticalBrush = new SolidBrush(settings.CriticalColor);
-            var fullNotification = settings.FullNotification;
-            var highNotification = settings.HighNotification;
-            var lowNotification = settings.LowNotification;
-            var criticalNotification = settings.CriticalNotification;
+
+            // Update battery status when the computer resumes or when the power status changes.
+            SystemEvents.PowerModeChanged += (_, args) =>
+            {
+                if (args.Mode == PowerModes.Resume || args.Mode == PowerModes.StatusChange)
+                {
+                    Update();
+                }
+            };
 
             // Enable auto start if this is the first run.
             if (settings.IsFirstRun)
@@ -69,13 +74,15 @@ namespace Percentage
                 settings.Save();
             }
 
-            // Update setting variables when their corresponding value changes.
-            settings.PropertyChanged += (sender, args) =>
+            // Setup timer to update the tray icon.
+            using var timer = new Timer {Interval = settings.RefreshSeconds * 1000};
+            timer.Tick += (_, __) => Update();
+            settings.PropertyChanged += (_, e) =>
             {
-                switch (args.PropertyName)
+                switch (e.PropertyName)
                 {
-                    case nameof(settings.CriticalColor):
-                        criticalBrush.Color = settings.CriticalColor;
+                    case nameof(settings.RefreshSeconds):
+                        timer.Interval = settings.RefreshSeconds * 1000;
                         break;
                     case nameof(settings.ChargingColor):
                         chargingBrush.Color = settings.ChargingColor;
@@ -83,27 +90,14 @@ namespace Percentage
                     case nameof(settings.LowColor):
                         lowBrush.Color = settings.LowColor;
                         break;
-                    case nameof(settings.FullNotification):
-                        fullNotification = settings.FullNotification;
-                        break;
-                    case nameof(settings.CriticalNotification):
-                        criticalNotification = settings.CriticalNotification;
-                        break;
-                    case nameof(settings.HighNotification):
-                        highNotification = settings.HighNotification;
-                        break;
-                    case nameof(settings.LowNotification):
-                        lowNotification = settings.LowNotification;
+                    case nameof(settings.CriticalColor):
+                        criticalBrush.Color = settings.CriticalColor;
                         break;
                 }
             };
 
-            // Initial update of the tray icon.
+            // Initial update and start update timer.
             Update();
-
-            // Setup timer to update the try icon every 10 seconds.
-            using var timer = new Timer {Interval = 10000};
-            timer.Tick += (_, __) => Update();
             timer.Start();
 
             // Start the application and hold the thread.
@@ -155,7 +149,7 @@ namespace Percentage
                             // When battery capacity is critical.
                             brush = criticalBrush;
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                            if (criticalNotification)
+                            if (settings.CriticalNotification)
                             {
                                 notificationType = NotificationType.Critical;
                             }
@@ -165,7 +159,7 @@ namespace Percentage
                             // When battery capacity is low.
                             brush = lowBrush;
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                            if (lowNotification)
+                            if (settings.LowNotification)
                             {
                                 notificationType = NotificationType.Low;
                             }
@@ -175,14 +169,13 @@ namespace Percentage
                             // When battery capacity is normal.
                             SetBrush();
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
-                            switch (percent)
+                            if (percent == settings.HighNotificationValue && settings.HighNotification)
                             {
-                                case 80 when highNotification:
-                                    notificationType = NotificationType.High;
-                                    break;
-                                case 100 when fullNotification:
-                                    notificationType = NotificationType.Full;
-                                    break;
+                                notificationType = NotificationType.High;
+                            }
+                            else if (percent == 100 && settings.FullNotification)
+                            {
+                                notificationType = NotificationType.Full;
                             }
                         }
 
@@ -238,7 +231,7 @@ namespace Percentage
                 // Local function to set normal brush according to the Windows theme used.
                 void SetBrush()
                 {
-                    brush = isLightTheme ? Brushes.Black : Brushes.White;
+                    brush = RegistryHelper.IsUsingLightTheme() ? Brushes.Black : Brushes.White;
                 }
 
 
@@ -271,7 +264,7 @@ namespace Percentage
                 {
                     using (var graphics = Graphics.FromImage(bitmap))
                     {
-                        if (isLightTheme)
+                        if (RegistryHelper.IsUsingLightTheme())
                         {
                             // Using anti aliasing provides the best clarity in Windows 10 light theme.
                             // ClearType rendering causes black edges around the text making it thick

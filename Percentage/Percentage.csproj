@@ -4,9 +4,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyVersion>1.4.2.0</AssemblyVersion>
-    <FileVersion>1.4.2.0</FileVersion>
-    <Version>1.4.2</Version>
+    <AssemblyVersion>1.4.3.0</AssemblyVersion>
+    <FileVersion>1.4.3.0</FileVersion>
+    <Version>1.4.3</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Description>See your battery percentage and charging status in the Windows system tray.</Description>
@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/soleon/Percentage.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <Authors>Leon Zhou</Authors>
-    <Product>Battery Percentage Icon</Product>
+    <Product>Battery Percentage</Product>
   </PropertyGroup>
 
   <ItemGroup>

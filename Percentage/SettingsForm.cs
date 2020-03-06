@@ -12,6 +12,13 @@ namespace Percentage
         public SettingsForm()
         {
             InitializeComponent();
+
+            HighNotificationComboBox.Items.Add(80);
+            HighNotificationComboBox.Items.Add(75);
+            HighNotificationComboBox.Items.Add(50);
+            RefreshSecondsComboBox.Items.Add(10);
+            RefreshSecondsComboBox.Items.Add(30);
+            RefreshSecondsComboBox.Items.Add(60);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -24,7 +31,10 @@ namespace Percentage
             CriticalNotificationCheckBox.Checked = Settings.CriticalNotification;
             LowNotificationCheckBox.Checked = Settings.LowNotification;
             HighNotificationCheckBox.Checked = Settings.HighNotification;
+            HighNotificationComboBox.SelectedItem = Settings.HighNotificationValue;
+            RefreshSecondsComboBox.SelectedItem = Settings.RefreshSeconds;
             FullNotificationCheckBox.Checked = Settings.FullNotification;
+            RefreshSecondsComboBox.SelectedItem = Settings.RefreshSeconds;
             AutoStartCheckBox.Checked = RegistryHelper.IsAutoStart();
 
             LowColorButton.Click += ButtonClick;
@@ -35,6 +45,10 @@ namespace Percentage
             HighNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             FullNotificationCheckBox.CheckedChanged += CheckBoxCheckedChanged;
             AutoStartCheckBox.CheckedChanged += AutoStartCheckBoxCheckedChanged;
+            HighNotificationComboBox.SelectionChangeCommitted += (_, __) =>
+                Settings.HighNotificationValue = (int) HighNotificationComboBox.SelectedItem;
+            RefreshSecondsComboBox.SelectionChangeCommitted += (_, __) =>
+                Settings.RefreshSeconds = (int) RefreshSecondsComboBox.SelectedItem;
 
             ResetButton.Click += (_, __) =>
             {
@@ -45,6 +59,8 @@ namespace Percentage
                     HighNotificationCheckBox.Checked = FullNotificationCheckBox.Checked = AutoStartCheckBox.Checked =
                         Settings.CriticalNotification = Settings.LowNotification = Settings.FullNotification =
                             Settings.HighNotification = true;
+                HighNotificationComboBox.SelectedItem = Settings.HighNotificationValue = 80;
+                RefreshSecondsComboBox.SelectedItem = Settings.RefreshSeconds = 10;
                 Settings.Save();
                 RegistryHelper.EnableAutoStart();
             };
