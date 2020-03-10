@@ -65,14 +65,14 @@ namespace Percentage
                 RegistryHelper.EnableAutoStart();
             };
 
-            static void CheckBoxCheckedChanged(object sender, EventArgs _)
+            void CheckBoxCheckedChanged(object sender, EventArgs _)
             {
                 var checkBox = (CheckBox) sender;
                 Settings[(string) checkBox.Tag] = checkBox.Checked;
                 Settings.Save();
             }
 
-            static void ButtonClick(object sender, EventArgs _)
+            void ButtonClick(object sender, EventArgs _)
             {
                 var button = (Button) sender;
                 var dialog = new ColorDialog
