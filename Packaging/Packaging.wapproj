@@ -56,7 +56,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\Percentage\Percentage.csproj</EntryPointProjectUniqueName>
-    <PackageCertificateThumbprint>100DB96CE567F8C01AB843EF0E3B4E2126C937DF</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>74FC31A230EC70D6C3206C3B8969B313D863268D</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>

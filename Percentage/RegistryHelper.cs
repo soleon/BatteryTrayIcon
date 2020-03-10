@@ -30,8 +30,7 @@ namespace Percentage
         /// </summary>
         internal static void EnableAutoStart()
         {
-            OpenAutoStartKey().SetValue(Application.ProductName,
-                Path.ChangeExtension(Application.ExecutablePath, "exe"));
+            OpenAutoStartKey().SetValue(Application.ProductName, Application.ExecutablePath);
         }
 
         /// <summary>
