@@ -5,7 +5,7 @@
 2. Get Windows notification when your battery is critical, low, high, and full.
 
 ## Requirement
-This application requires [the latest .NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-core).
+This application requires [the latest .NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework/net48).
 
 For the Microsoft Store version, it requries Windows 10 version 18362.0 or higher.
 
