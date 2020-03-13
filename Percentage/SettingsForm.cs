@@ -14,7 +14,8 @@ namespace Percentage
             InitializeComponent();
 
             HighNotificationComboBox.Items.Add(80);
-            HighNotificationComboBox.Items.Add(75);
+            HighNotificationComboBox.Items.Add(70);
+            HighNotificationComboBox.Items.Add(60);
             HighNotificationComboBox.Items.Add(50);
             RefreshSecondsComboBox.Items.Add(10);
             RefreshSecondsComboBox.Items.Add(30);
