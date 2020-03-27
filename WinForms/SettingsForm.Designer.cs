@@ -1,4 +1,4 @@
-﻿namespace Percentage
+﻿namespace Percentage.WinForms
 {
     partial class SettingsForm
     {

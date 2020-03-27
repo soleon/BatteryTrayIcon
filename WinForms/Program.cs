@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Percentage.Properties;
+using Percentage.WinForms;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Percentage
@@ -227,7 +227,7 @@ namespace Percentage
                             string GetReadableDuration(int seconds)
                             {
                                 var hours = seconds / 3600;
-                                var minutes = (seconds - 3600 * hours) / 60;
+                                var minutes = seconds % 3600 / 60;
                                 return hours > 0
                                     ? hours > 1
                                         ? hours + " hours"
@@ -236,7 +236,9 @@ namespace Percentage
                                         ? minutes > 1
                                             ? minutes + " minutes"
                                             : minutes + "minute"
-                                        : null;
+                                        : seconds > 0
+                                            ? "less than 1 minute"
+                                            : null;
                             }
                         }
 
