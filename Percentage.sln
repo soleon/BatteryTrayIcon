@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{DCD247EB-B1FA-4664-B750-BED922F6382E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForms", "WinForms\WinForms.csproj", "{3C82F041-E619-479C-BC0E-3A510B5308DF}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Packaging", "Packaging\Packaging.wapproj", "{72C80C7F-2968-434A-B04B-BEEFF231D582}"
@@ -25,24 +23,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|Any CPU.ActiveCfg = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|ARM.ActiveCfg = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|ARM.Build.0 = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|ARM64.ActiveCfg = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|ARM64.Build.0 = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|x64.ActiveCfg = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|x64.Build.0 = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|x86.ActiveCfg = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Debug|x86.Build.0 = Debug
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|Any CPU.ActiveCfg = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|ARM.ActiveCfg = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|ARM.Build.0 = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|ARM64.ActiveCfg = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|ARM64.Build.0 = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|x64.ActiveCfg = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|x64.Build.0 = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|x86.ActiveCfg = Release
-		{DCD247EB-B1FA-4664-B750-BED922F6382E}.Release|x86.Build.0 = Release
 		{3C82F041-E619-479C-BC0E-3A510B5308DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C82F041-E619-479C-BC0E-3A510B5308DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C82F041-E619-479C-BC0E-3A510B5308DF}.Debug|ARM.ActiveCfg = Debug|Any CPU
