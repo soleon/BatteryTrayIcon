@@ -25,6 +25,13 @@ namespace Wpf
 
         public App()
         {
+            if (!IsNewInstance)
+            {
+                // Do not allow a second instance to run.
+                Shutdown();
+                return;
+            }
+
             DispatcherUnhandledException += (s, e) =>
             {
                 e.Handled = true;
@@ -50,11 +57,7 @@ namespace Wpf
         {
             base.OnStartup(args);
 
-            if (!IsNewInstance)
-            {
-                // Do not allow a second instance to run.
-                return;
-            }
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             _notifyIcon = new NotifyIcon {Visible = true};
 
