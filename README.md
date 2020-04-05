@@ -1,8 +1,15 @@
 # Battery Percentage Icon
-![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/percentage.png)
-
 1. See your battery percentage and charging status in the Windows system tray.
 2. Get Windows notification when your battery is critical, low, high, and full.
+
+#### Dark theme
+![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/dark.png)
+
+#### Light theme
+![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/light.png)
+
+#### Settings
+![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/settings.png)
 
 ## Requirement
 This application requires:
