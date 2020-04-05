@@ -1,50 +1,51 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Microsoft.Win32;
-using Percentage.WinForms;
-using Timer = System.Windows.Forms.Timer;
+using Wpf.Properties;
+using Application = System.Windows.Application;
+using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
-namespace Percentage
+namespace Wpf
 {
-    internal static class Program
+    internal class Program
     {
-        private const string ApplicationId = "f05f920a-c997-4817-84bd-c54d87e40625";
-
         [STAThread]
-        private static void Main()
+        public static void Main()
         {
-            using (new Mutex(true, ApplicationId, out var isNew))
+            using (new Mutex(true, "f05f920a-c997-4817-84bd-c54d87e40625", out var isNewInstance))
             {
-                if (!isNew)
+                if (!isNewInstance)
                 {
-                    // Do not allow a second instance to run.
                     return;
                 }
 
-                // This call is required to apply the "PerMonitorV2" DPI awareness mode defined in app.manifest.
-                Application.EnableVisualStyles();
+                var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
 
-                // Use GDI based TextRenderer instead of GDI+ based Graphics class
-                // for text rendering. The latter is pre .NET 2.0 which has performance
-                // and localisation issues. 
-                Application.SetCompatibleTextRenderingDefault(false);
+                // Right click menu with "Exit" item to exit this application.
+                var exitMenuItem = new ToolStripMenuItem("Exit");
+                exitMenuItem.Click += (_, __) => app.Shutdown();
+                var settingsMenuItem = new ToolStripMenuItem("Settings");
+                settingsMenuItem.Click += (_, __) => new SettingsView().ShowDialog();
 
-                // Set the "using" scope of the tray icon to this method,
-                // so that when "Main" method ends (i.e. the application exits)
-                // the tray icon is disposed and removed from the system tray.
-                using (var notifyIcon = new NotifyIcon {Visible = true})
+                // Setup variables used in the repetitively ran "Update" local function.
+                (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
+                var settings = Settings.Default;
+                var chargingBrush = new SolidBrush(settings.ChargingColor);
+                var lowBrush = new SolidBrush(settings.LowColor);
+                var criticalBrush = new SolidBrush(settings.CriticalColor);
+
+                using (var notifyIcon = new NotifyIcon
                 {
-                    // Right click menu with "Exit" item to exit this application.
-                    var exitMenuItem = new ToolStripMenuItem("Exit");
-                    exitMenuItem.Click += (_, __) => Application.Exit();
-                    var settingsMenuItem = new ToolStripMenuItem("Settings");
-                    settingsMenuItem.Click += (_, __) => new SettingsForm().Show();
-                    notifyIcon.ContextMenuStrip = new ContextMenuStrip {Items = {settingsMenuItem, exitMenuItem}};
-
+                    Visible = true,
+                    ContextMenuStrip = new ContextMenuStrip {Items = {settingsMenuItem, exitMenuItem}}
+                })
+                {
                     // Show balloon notification when the tray icon is clicked.
                     notifyIcon.MouseClick += (_, e) =>
                     {
@@ -54,26 +55,24 @@ namespace Percentage
                         }
                     };
 
-                    // Setup variables used in the repetitively ran "Update" local function.
-                    (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
-                    var settings = Settings.Default;
-                    var chargingBrush = new SolidBrush(settings.ChargingColor);
-                    var lowBrush = new SolidBrush(settings.LowColor);
-                    var criticalBrush = new SolidBrush(settings.CriticalColor);
-
                     // Update battery status when the computer resumes or when the power status changes.
-                    SystemEvents.PowerModeChanged += (_, args) =>
+                    SystemEvents.PowerModeChanged += (_, e) =>
                     {
-                        if (args.Mode == PowerModes.Resume || args.Mode == PowerModes.StatusChange)
+                        if (e.Mode == PowerModes.Resume || e.Mode == PowerModes.StatusChange)
                         {
                             Update();
                         }
                     };
 
+                    // Update battery status when the display settings change.
+                    // This will redrew the tray icon to ensure optimal icon resolution
+                    // under the current display settings.
+                    SystemEvents.DisplaySettingsChanged += (_, __) => Update();
+
                     // Enable auto start if this is the first run.
                     if (settings.IsFirstRun)
                     {
-                        RegistryHelper.EnableAutoStart();
+                        Helper.EnableAutoStart();
                         settings.IsFirstRun = false;
                         settings.Save();
                     }
@@ -82,33 +81,41 @@ namespace Percentage
                     Update();
 
                     // Setup timer to update the tray icon.
-                    using (var timer = new Timer {Interval = settings.RefreshSeconds * 1000})
+                    var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(settings.RefreshSeconds)};
+                    timer.Tick += (_, __) => Update();
+                    timer.Start();
+
+                    // Handle settings change.
+                    settings.PropertyChanged += (_, e) =>
                     {
-                        timer.Tick += (_, __) => Update();
-                        settings.PropertyChanged += (_, e) =>
+                        switch (e.PropertyName)
                         {
-                            switch (e.PropertyName)
-                            {
-                                case nameof(settings.RefreshSeconds):
-                                    timer.Interval = settings.RefreshSeconds * 1000;
-                                    break;
-                                case nameof(settings.ChargingColor):
-                                    chargingBrush.Color = settings.ChargingColor;
-                                    break;
-                                case nameof(settings.LowColor):
-                                    lowBrush.Color = settings.LowColor;
-                                    break;
-                                case nameof(settings.CriticalColor):
-                                    criticalBrush.Color = settings.CriticalColor;
-                                    break;
-                            }
-                        };
+                            case nameof(settings.RefreshSeconds):
+                                timer.Interval = TimeSpan.FromSeconds(settings.RefreshSeconds);
+                                break;
+                            case nameof(settings.ChargingColor):
+                                chargingBrush.Color = settings.ChargingColor;
+                                Update();
+                                break;
+                            case nameof(settings.LowColor):
+                                lowBrush.Color = settings.LowColor;
+                                Update();
+                                break;
+                            case nameof(settings.CriticalColor):
+                                criticalBrush.Color = settings.CriticalColor;
+                                Update();
+                                break;
+                            case nameof(settings.HighNotification):
+                            case nameof(settings.LowNotification):
+                            case nameof(settings.CriticalNotification):
+                            case nameof(settings.FullNotification):
+                                Update();
+                                break;
+                        }
+                    };
 
-                        timer.Start();
-
-                        // Start the application and hold the thread.
-                        Application.Run();
-                    }
+                    // Run application and hold the thread.
+                    app.Run();
 
                     // Local function to update the tray icon.
                     void Update()
@@ -250,7 +257,7 @@ namespace Percentage
                         // Local function to set normal brush according to the Windows theme used.
                         void SetBrush()
                         {
-                            brush = RegistryHelper.IsUsingLightTheme() ? Brushes.Black : Brushes.White;
+                            brush = Helper.IsUsingLightTheme() ? Brushes.Black : Brushes.White;
                         }
 
                         int textWidth, textHeight;
@@ -282,7 +289,7 @@ namespace Percentage
                         {
                             using (var graphics = Graphics.FromImage(bitmap))
                             {
-                                if (RegistryHelper.IsUsingLightTheme())
+                                if (Helper.IsUsingLightTheme())
                                 {
                                     // Using anti aliasing provides the best clarity in Windows 10 light theme.
                                     // The default ClearType rendering causes black edges around the text making

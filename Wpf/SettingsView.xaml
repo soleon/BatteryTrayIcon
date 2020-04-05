@@ -153,14 +153,14 @@
                   Grid.Column="0"
                   Grid.Row="3"
                   x:Name="AutoStart" />
-        <Button Content="Reset"
-                Grid.Column="0"
-                Grid.Row="4"
-                Width="85"
-                HorizontalAlignment="Left"
-                Padding="4"
-                x:Name="ResetButton"
-                Click="OnResetButtonCLick" />
+        <TextBlock Grid.Column="0"
+                   Grid.Row="4"
+                   HorizontalAlignment="Left">
+            <Hyperlink Click="OnResetButtonCLick"
+                       TextDecorations="None">
+                Reset all settings
+            </Hyperlink>
+        </TextBlock>
         <Button IsCancel="True"
                 Content="Close"
                 Grid.Column="2"
