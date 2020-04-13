@@ -8,6 +8,9 @@
 #### Light theme
 ![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/light.png)
 
+#### Battery Details
+![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/details.png)
+
 #### Settings
 ![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/settings.png)
 

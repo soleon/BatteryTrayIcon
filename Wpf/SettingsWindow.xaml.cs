@@ -11,9 +11,9 @@ using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace Wpf
 {
-    public partial class SettingsView
+    public partial class SettingsWindow
     {
-        public SettingsView()
+        public SettingsWindow()
         {
             InitializeComponent();
             LowColor.Background = new SolidColorBrush(Default.LowColor.ToMediaColor());

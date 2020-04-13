@@ -52,7 +52,7 @@
   <PropertyGroup>
     <ProjectGuid>72c80c7f-2968-434a-b04b-beeff231d582</ProjectGuid>
     <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageCertificateThumbprint>F985901879D14B8F9594723C4A2DCC02C341A89B</PackageCertificateThumbprint>

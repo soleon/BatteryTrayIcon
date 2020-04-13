@@ -31,7 +31,9 @@ namespace Wpf
                 var exitMenuItem = new ToolStripMenuItem("Exit");
                 exitMenuItem.Click += (_, __) => app.Shutdown();
                 var settingsMenuItem = new ToolStripMenuItem("Settings");
-                settingsMenuItem.Click += (_, __) => new SettingsView().ShowDialog();
+                settingsMenuItem.Click += (_, __) => new SettingsWindow().ShowDialog();
+                var detailsMenuItem = new ToolStripMenuItem("Battery Details");
+                detailsMenuItem.Click += (_, __) => new DetailsWindow().ShowDialog();
 
                 // Setup variables used in the repetitively ran "Update" local function.
                 (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
@@ -43,7 +45,7 @@ namespace Wpf
                 using (var notifyIcon = new NotifyIcon
                 {
                     Visible = true,
-                    ContextMenuStrip = new ContextMenuStrip {Items = {settingsMenuItem, exitMenuItem}}
+                    ContextMenuStrip = new ContextMenuStrip {Items = {detailsMenuItem, settingsMenuItem, exitMenuItem}}
                 })
                 {
                     // Show balloon notification when the tray icon is clicked.
