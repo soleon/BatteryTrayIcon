@@ -42,8 +42,8 @@ namespace Wpf
                     : report.RemainingCapacityInMilliwattHours + " mWh";
                 if (designCapacity != null && fullChargeCapacity != null)
                 {
-                    Health.Text = ((double) fullChargeCapacity.Value /
-                                   designCapacity.Value).ToString("P");
+                    var health = (double) fullChargeCapacity.Value / designCapacity.Value;
+                    Health.Text = (health > 1 ? 1 : health).ToString("P");
                 }
                 else
                 {

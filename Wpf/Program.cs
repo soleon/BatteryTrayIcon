@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -28,32 +29,42 @@ namespace Wpf
                 var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
 
                 // Right click menu with "Exit" item to exit this application.
-                var exitMenuItem = new ToolStripMenuItem("Exit");
-                exitMenuItem.Click += (_, __) => app.Shutdown();
-                var settingsMenuItem = new ToolStripMenuItem("Settings");
-                settingsMenuItem.Click += (_, __) => new SettingsWindow().ShowDialog();
-                var detailsMenuItem = new ToolStripMenuItem("Battery Details");
-                detailsMenuItem.Click += (_, __) => new DetailsWindow().ShowDialog();
-
-                // Setup variables used in the repetitively ran "Update" local function.
-                (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
-                var settings = Settings.Default;
-                var chargingBrush = new SolidBrush(settings.ChargingColor);
-                var lowBrush = new SolidBrush(settings.LowColor);
-                var criticalBrush = new SolidBrush(settings.CriticalColor);
-
-                using (var notifyIcon = new NotifyIcon
+                using (var exitMenuItem = new ToolStripMenuItem("Exit"))
+                using (var settingsMenuItem = new ToolStripMenuItem("Settings"))
+                using (var detailsMenuItem = new ToolStripMenuItem("Battery Details"))
+                using (var menu = new ContextMenuStrip {Items = {detailsMenuItem, settingsMenuItem, exitMenuItem}})
+                using (var notifyIcon = new NotifyIcon {Visible = true, ContextMenuStrip = menu})
                 {
-                    Visible = true,
-                    ContextMenuStrip = new ContextMenuStrip {Items = {detailsMenuItem, settingsMenuItem, exitMenuItem}}
-                })
-                {
+                    void ActivateDialog<T>() where T : Window, new()
+                    {
+                        var existingWindow = app.Windows.OfType<T>().FirstOrDefault();
+                        if (existingWindow == null)
+                        {
+                            new T().ShowDialog();
+                        }
+                        else
+                        {
+                            existingWindow.Activate();
+                        }
+                    }
+
+                    exitMenuItem.Click += (_, __) => app.Shutdown();
+                    settingsMenuItem.Click += (_, __) => ActivateDialog<SettingsWindow>();
+                    detailsMenuItem.Click += (_, __) => ActivateDialog<DetailsWindow>();
+
+                    // Setup variables used in the repetitively ran "Update" local function.
+                    (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
+                    var settings = Settings.Default;
+                    var chargingBrush = new SolidBrush(settings.ChargingColor);
+                    var lowBrush = new SolidBrush(settings.LowColor);
+                    var criticalBrush = new SolidBrush(settings.CriticalColor);
+
                     // Show balloon notification when the tray icon is clicked.
                     notifyIcon.MouseClick += (_, e) =>
                     {
                         if (e.Button == MouseButtons.Left)
                         {
-                            notifyIcon.ShowBalloonTip(0);
+                            ActivateDialog<DetailsWindow>();
                         }
                     };
 
