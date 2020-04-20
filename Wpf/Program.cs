@@ -40,7 +40,7 @@ namespace Wpf
                         var existingWindow = app.Windows.OfType<T>().FirstOrDefault();
                         if (existingWindow == null)
                         {
-                            new T().ShowDialog();
+                            new T().Show();
                         }
                         else
                         {

@@ -35,7 +35,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Padding="5"
-                                    IsCancel="True">
+                                    x:Name="CloseButton">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background"
