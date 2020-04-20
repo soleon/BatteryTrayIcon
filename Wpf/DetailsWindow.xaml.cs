@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
@@ -50,7 +49,7 @@ namespace Wpf
                     Health.Text = "Unknown";
                 }
 
-                Status.Text = Regex.Replace(report.Status.ToString(), @"\B[A-Z]", " $0");
+                Status.Text = report.Status.ToString().CamelCaseSplit();
             }
         }
     }

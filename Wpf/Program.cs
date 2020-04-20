@@ -4,22 +4,26 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using Wpf.Properties;
 using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
 namespace Wpf
 {
     internal class Program
     {
+        internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
+
         [STAThread]
         public static void Main()
         {
-            using (new Mutex(true, "f05f920a-c997-4817-84bd-c54d87e40625", out var isNewInstance))
+            using (new Mutex(true, Id, out var isNewInstance))
             {
                 if (!isNewInstance)
                 {
@@ -27,6 +31,24 @@ namespace Wpf
                 }
 
                 var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
+
+                app.DispatcherUnhandledException += (_, e) => { ShowFeedbackMessage(e.Exception); };
+
+                AppDomain.CurrentDomain.UnhandledException += (_, e) => { ShowFeedbackMessage(e.ExceptionObject); };
+
+                TaskScheduler.UnobservedTaskException += (_, e) => { ShowFeedbackMessage(e.Exception); };
+
+                void ShowFeedbackMessage(object exception)
+                {
+                    MessageBox.Show("Battery Percentage Icon has run into an error. You can help to fix this by:\r\n" +
+                                    "1. press Ctrl+C on this message\r\n" +
+                                    "2. paste it in an email\r\n" +
+                                    "3. send it to soleon@live.com\r\n\r\n" +
+                                    (exception is Exception exp
+                                        ? exp.ToString()
+                                        : $"Error type: {exception.GetType().FullName}\r\n{exception}"),
+                        "You Found An Error");
+                }
 
                 // Right click menu with "Exit" item to exit this application.
                 using (var exitMenuItem = new ToolStripMenuItem("Exit"))
@@ -81,14 +103,6 @@ namespace Wpf
                     // This will redrew the tray icon to ensure optimal icon resolution
                     // under the current display settings.
                     SystemEvents.DisplaySettingsChanged += (_, __) => Update();
-
-                    // Enable auto start if this is the first run.
-                    if (settings.IsFirstRun)
-                    {
-                        Helper.EnableAutoStart();
-                        settings.IsFirstRun = false;
-                        settings.Save();
-                    }
 
                     // Initial update.
                     Update();
@@ -270,7 +284,7 @@ namespace Wpf
                         // Local function to set normal brush according to the Windows theme used.
                         void SetBrush()
                         {
-                            brush = Helper.IsUsingLightTheme() ? Brushes.Black : Brushes.White;
+                            brush = IsUsingLightTheme() ? Brushes.Black : Brushes.White;
                         }
 
                         int textWidth, textHeight;
@@ -302,7 +316,7 @@ namespace Wpf
                         {
                             using (var graphics = Graphics.FromImage(bitmap))
                             {
-                                if (Helper.IsUsingLightTheme())
+                                if (IsUsingLightTheme())
                                 {
                                     // Using anti aliasing provides the best clarity in Windows 10 light theme.
                                     // The default ClearType rendering causes black edges around the text making
@@ -365,6 +379,13 @@ namespace Wpf
                         }
 
                         lastNotification = (notificationType, utcNow);
+                    }
+
+                    bool IsUsingLightTheme()
+                    {
+                        return 1.Equals(Registry.CurrentUser.OpenSubKey(
+                            @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\",
+                            false)?.GetValue("SystemUsesLightTheme", null));
                     }
                 }
             }

@@ -1,8 +1,6 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Wpf.Properties" GeneratedClassName="Settings">
+  <Profiles />
   <Settings>
     <Setting Name="CriticalNotification" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -24,9 +22,6 @@
     </Setting>
     <Setting Name="ChargingColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">16, 137, 62</Value>
-    </Setting>
-    <Setting Name="IsFirstRun" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HighNotificationValue" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">80</Value>

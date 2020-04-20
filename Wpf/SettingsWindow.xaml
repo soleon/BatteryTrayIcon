@@ -40,8 +40,7 @@
                         Value="SemiBold" />
             </Style>
             <Style TargetType="CheckBox"
-                   BasedOn="{StaticResource VerticalCenterAlignedElement}">
-            </Style>
+                   BasedOn="{StaticResource VerticalCenterAlignedElement}" />
         </Grid.Resources>
         <Grid>
             <Grid.Resources>
@@ -77,15 +76,19 @@
                        Grid.Column="0" />
             <Button Grid.Row="1"
                     Grid.Column="1"
-                    x:Name="CriticalColor" />
+                    x:Name="CriticalColor"
+                    x:FieldModifier="private" />
             <Button Grid.Row="2"
                     Grid.Column="1"
-                    x:Name="LowColor" />
+                    x:Name="LowColor"
+                    x:FieldModifier="private" />
             <Button Grid.Row="3"
                     Grid.Column="1"
-                    x:Name="ChargingColor" />
+                    x:Name="ChargingColor"
+                    x:FieldModifier="private" />
         </Grid>
-        <Rectangle Grid.Column="1"
+        <Rectangle Grid.Row="0"
+                   Grid.Column="1"
                    Width="1"
                    Fill="LightGray" />
         <Grid Grid.Column="2"
@@ -107,25 +110,30 @@
             <CheckBox Content="Critical"
                       Grid.Row="1"
                       Grid.Column="0"
-                      x:Name="CriticalNotification" />
+                      x:Name="CriticalNotification"
+                      x:FieldModifier="private" />
             <CheckBox Content="Low"
                       Grid.Row="2"
                       Grid.Column="0"
-                      x:Name="LowNotification" />
+                      x:Name="LowNotification"
+                      x:FieldModifier="private" />
             <CheckBox Content="High:"
                       Grid.Row="3"
                       Grid.Column="0"
-                      x:Name="HighNotification" />
+                      x:Name="HighNotification"
+                      x:FieldModifier="private" />
             <CheckBox Content="Full"
                       Grid.Row="4"
                       Grid.Column="0"
-                      x:Name="FullNotification" />
+                      x:Name="FullNotification"
+                      x:FieldModifier="private" />
             <ComboBox Grid.Column="1"
                       Grid.Row="3"
                       SelectedIndex="0"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Left"
-                      x:Name="HighNotificationValue">
+                      x:Name="HighNotificationValue"
+                      x:FieldModifier="private">
                 <system:Int32>80</system:Int32>
                 <system:Int32>70</system:Int32>
                 <system:Int32>60</system:Int32>
@@ -133,6 +141,7 @@
             </ComboBox>
         </Grid>
         <Rectangle Grid.ColumnSpan="3"
+                   Grid.Column="0"
                    Grid.Row="1"
                    Height="1"
                    Fill="LightGray" />
@@ -141,7 +150,8 @@
                    Grid.ColumnSpan="3">
             <Run BaselineAlignment="Center">Refresh every</Run>
             <ComboBox SelectedIndex="0"
-                      x:Name="RefreshSeconds">
+                      x:Name="RefreshSeconds"
+                      x:FieldModifier="private">
                 <system:Int32>10</system:Int32>
                 <system:Int32>30</system:Int32>
                 <system:Int32>60</system:Int32>
@@ -152,11 +162,13 @@
                   Grid.ColumnSpan="3"
                   Grid.Column="0"
                   Grid.Row="3"
-                  x:Name="AutoStart" />
+                  x:Name="AutoStart"
+                  IsEnabled="False"
+                  x:FieldModifier="private" />
         <TextBlock Grid.Column="0"
                    Grid.Row="4"
                    HorizontalAlignment="Left">
-            <Hyperlink Click="OnResetButtonCLick"
+            <Hyperlink Click="OnResetButtonClick"
                        TextDecorations="None">
                 Reset all settings
             </Hyperlink>
