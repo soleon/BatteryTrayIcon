@@ -16,6 +16,7 @@ namespace Wpf
 
             var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(10)};
             timer.Tick += (sender, args) => Update();
+            timer.Start();
 
             void Update()
             {
