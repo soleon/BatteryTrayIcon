@@ -7,7 +7,7 @@
                  mc:Ignorable="d"
                  Title="Battery Details"
                  Height="300"
-                 Width="350"
+                 SizeToContent="Width"
                  WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.Resources>
