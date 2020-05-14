@@ -30,13 +30,16 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock Text="Battery Capacity"
                    FontWeight="SemiBold" />
-        <TextBlock Grid.Column="1"
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
                    x:Name="Percentage"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="1"
+                   Grid.Column="0"
                    Text="Charge Rate"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="1"
@@ -44,6 +47,7 @@
                    x:Name="ChargeRate"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="2"
+                   Grid.Column="0"
                    Text="Design Capacity"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="2"
@@ -51,6 +55,7 @@
                    x:Name="DesignCapacity"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="3"
+                   Grid.Column="0"
                    Text="Full Charge Capacity"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="3"
@@ -58,6 +63,7 @@
                    x:Name="FullChargeCapacity"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="4"
+                   Grid.Column="0"
                    Text="Remaining Charge Capacity"
                    FontWeight="SemiBold"
                    Margin="0,0,32,0" />
@@ -66,6 +72,7 @@
                    x:Name="RemainingChargeCapacity"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="5"
+                   Grid.Column="0"
                    Text="Battery Status"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="5"
@@ -73,11 +80,23 @@
                    x:Name="Status"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="6"
+                   Grid.Column="0"
                    Text="Battery Health"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="6"
                    Grid.Column="1"
                    x:Name="Health"
                    x:FieldModifier="private" />
+        <TextBlock Grid.Row="7"
+                   Grid.ColumnSpan="2"
+                   Grid.Column="0"
+                   FontSize="12"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom">
+            <Hyperlink TextDecorations="None"
+                       Click="Hyperlink_OnClick">
+                Rate this app
+            </Hyperlink>
+        </TextBlock>
     </Grid>
 </wpf:MetroWindow>

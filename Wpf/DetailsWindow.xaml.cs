@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
@@ -52,6 +53,11 @@ namespace Wpf
 
                 Status.Text = report.Status.ToString().CamelCaseSplit();
             }
+        }
+
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            Helper.ShowRatingView();
         }
     }
 }

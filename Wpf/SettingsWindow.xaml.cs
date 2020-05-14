@@ -190,5 +190,10 @@ namespace Wpf
         {
             return Color.FromRgb(color.R, color.G, color.B);
         }
+
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            Helper.ShowRatingView();
+        }
     }
 }

@@ -173,5 +173,13 @@
                 Reset all settings
             </Hyperlink>
         </TextBlock>
+        <TextBlock Grid.Row="4"
+                   Grid.Column="2"
+                   HorizontalAlignment="Right">
+            <Hyperlink TextDecorations="None"
+                       Click="Hyperlink_OnClick">
+                Rate this app
+            </Hyperlink>
+        </TextBlock>
     </Grid>
 </wpf:MetroWindow>
