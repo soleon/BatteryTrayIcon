@@ -178,7 +178,6 @@ namespace Wpf
                         {
                             // When battery status is normal, display percentage in tray icon.
                             trayIconText = percent.ToString();
-                            trayIconText = "43";
                             if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                             {
                                 // When the battery is charging.
