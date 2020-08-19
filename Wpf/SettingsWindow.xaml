@@ -9,20 +9,9 @@
                  Title="Settings"
                  SizeToContent="WidthAndHeight"
                  WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="24" />
-            <ColumnDefinition Width="100" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="24" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.Resources>
+    <StackPanel>
+        <StackPanel.Resources>
+            <system:Double x:Key="DefaultFontSize">13</system:Double>
             <Style TargetType="FrameworkElement"
                    x:Key="VerticalCenterAlignedElement">
                 <Setter Property="VerticalAlignment"
@@ -31,105 +20,87 @@
             <Style TargetType="Button"
                    BasedOn="{StaticResource VerticalCenterAlignedElement}" />
             <Style TargetType="TextBlock"
-                   BasedOn="{StaticResource VerticalCenterAlignedElement}" />
+                   BasedOn="{StaticResource VerticalCenterAlignedElement}">
+                <Setter Property="FontSize"
+                        Value="{StaticResource DefaultFontSize}" />
+                <Setter Property="Margin"
+                        Value="0,5"></Setter>
+            </Style>
             <Style TargetType="TextBlock"
                    x:Key="SectionHeader">
                 <Setter Property="FontSize"
-                        Value="16" />
+                        Value="18" />
                 <Setter Property="FontWeight"
                         Value="SemiBold" />
+                <Setter Property="Margin"
+                        Value="0,12" />
             </Style>
             <Style TargetType="CheckBox"
-                   BasedOn="{StaticResource VerticalCenterAlignedElement}" />
-        </Grid.Resources>
+                   BasedOn="{StaticResource VerticalCenterAlignedElement}">
+                <Setter Property="FontSize"
+                        Value="{StaticResource DefaultFontSize}" />
+                <Setter Property="Margin"
+                        Value="0,5"></Setter>
+            </Style>
+        </StackPanel.Resources>
+        <TextBlock Text="Percentage Text Colors"
+                   Style="{StaticResource SectionHeader}" />
         <Grid>
             <Grid.Resources>
                 <Style TargetType="Button">
                     <EventSetter Event="Click"
                                  Handler="OnColorButtonClick" />
                     <Setter Property="Width"
-                            Value="32" />
+                            Value="72" />
                     <Setter Property="Height"
                             Value="32" />
                 </Style>
             </Grid.Resources>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="Colors"
-                       Style="{StaticResource SectionHeader}" />
-            <TextBlock Text="Critical"
-                       Grid.Row="1"
-                       Grid.Column="0" />
-            <TextBlock Text="Low"
-                       Grid.Row="2"
-                       Grid.Column="0" />
-            <TextBlock Text="Charging"
-                       Grid.Row="3"
-                       Grid.Column="0" />
-            <Button Grid.Row="1"
-                    Grid.Column="1"
-                    x:Name="CriticalColor"
-                    x:FieldModifier="private" />
-            <Button Grid.Row="2"
-                    Grid.Column="1"
-                    x:Name="LowColor"
-                    x:FieldModifier="private" />
-            <Button Grid.Row="3"
-                    Grid.Column="1"
-                    x:Name="ChargingColor"
-                    x:FieldModifier="private" />
-        </Grid>
-        <Rectangle Grid.Row="0"
-                   Grid.Column="1"
-                   Width="1"
-                   Fill="LightGray" />
-        <Grid Grid.Column="2"
-              Grid.Row="0">
-            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
             </Grid.RowDefinitions>
-            <TextBlock Text="Notifications"
-                       Style="{StaticResource SectionHeader}"
-                       Grid.ColumnSpan="2" />
-            <CheckBox Content="Critical"
-                      Grid.Row="1"
-                      Grid.Column="0"
-                      x:Name="CriticalNotification"
-                      x:FieldModifier="private" />
-            <CheckBox Content="Low"
-                      Grid.Row="2"
-                      Grid.Column="0"
-                      x:Name="LowNotification"
-                      x:FieldModifier="private" />
-            <CheckBox Content="High:"
-                      Grid.Row="3"
-                      Grid.Column="0"
+            <TextBlock Text="Critical"
+                       Grid.Row="0"
+                       Grid.Column="0" />
+            <TextBlock Text="Low"
+                       Grid.Row="1"
+                       Grid.Column="0" />
+            <TextBlock Text="Charging"
+                       Grid.Row="2"
+                       Grid.Column="0" />
+            <Button Grid.Row="0"
+                    Grid.Column="1"
+                    x:Name="CriticalColor"
+                    x:FieldModifier="private" />
+            <Button Grid.Row="1"
+                    Grid.Column="1"
+                    x:Name="LowColor"
+                    x:FieldModifier="private" />
+            <Button Grid.Row="2"
+                    Grid.Column="1"
+                    x:Name="ChargingColor"
+                    x:FieldModifier="private" />
+        </Grid>
+        <TextBlock Text="Battery Notifications"
+                   Style="{StaticResource SectionHeader}" />
+        <TextBlock Text="Show a notification when battery is:" />
+        <CheckBox Content="Critical"
+                  x:Name="CriticalNotification"
+                  x:FieldModifier="private" />
+        <CheckBox Content="Low"
+                  x:Name="LowNotification"
+                  x:FieldModifier="private" />
+        <StackPanel Orientation="Horizontal">
+            <CheckBox Content="Custom percentage: "
                       x:Name="HighNotification"
                       x:FieldModifier="private" />
-            <CheckBox Content="Full"
-                      Grid.Row="4"
-                      Grid.Column="0"
-                      x:Name="FullNotification"
-                      x:FieldModifier="private" />
-            <ComboBox Grid.Column="1"
-                      Grid.Row="3"
-                      SelectedIndex="0"
+            <ComboBox SelectedIndex="0"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Left"
                       x:Name="HighNotificationValue"
@@ -139,16 +110,14 @@
                 <system:Int32>60</system:Int32>
                 <system:Int32>50</system:Int32>
             </ComboBox>
-        </Grid>
-        <Rectangle Grid.ColumnSpan="3"
-                   Grid.Column="0"
-                   Grid.Row="1"
-                   Height="1"
-                   Fill="LightGray" />
-        <TextBlock Grid.Column="0"
-                   Grid.Row="2"
-                   Grid.ColumnSpan="3">
-            <Run BaselineAlignment="Center">Refresh every</Run>
+        </StackPanel>
+        <CheckBox Content="Full"
+                  x:Name="FullNotification"
+                  x:FieldModifier="private" />
+        <TextBlock Text="Other Settings"
+                   Style="{StaticResource SectionHeader}" />
+        <TextBlock>
+            <Run BaselineAlignment="Center">Refresh battery percentage every</Run>
             <ComboBox SelectedIndex="0"
                       x:Name="RefreshSeconds"
                       x:FieldModifier="private">
@@ -159,27 +128,22 @@
             <Run BaselineAlignment="Center">seconds</Run>
         </TextBlock>
         <CheckBox Content="Start with Windows"
-                  Grid.ColumnSpan="3"
-                  Grid.Column="0"
-                  Grid.Row="3"
                   x:Name="AutoStart"
                   IsEnabled="False"
                   x:FieldModifier="private" />
-        <TextBlock Grid.Column="0"
-                   Grid.Row="4"
-                   HorizontalAlignment="Left">
-            <Hyperlink Click="OnResetButtonClick"
-                       TextDecorations="None">
-                Reset all settings
-            </Hyperlink>
-        </TextBlock>
-        <TextBlock Grid.Row="4"
-                   Grid.Column="2"
-                   HorizontalAlignment="Right">
-            <Hyperlink TextDecorations="None"
-                       Click="Hyperlink_OnClick">
-                Rate this app
-            </Hyperlink>
-        </TextBlock>
-    </Grid>
+        <Grid Margin="0,22,0,0">
+            <TextBlock HorizontalAlignment="Left">
+                <Hyperlink Click="OnResetButtonClick"
+                           TextDecorations="None">
+                    Reset all settings
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock HorizontalAlignment="Right">
+                <Hyperlink TextDecorations="None"
+                           Click="Hyperlink_OnClick">
+                    Rate this app
+                </Hyperlink>
+            </TextBlock>
+        </Grid>
+    </StackPanel>
 </wpf:MetroWindow>

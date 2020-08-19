@@ -11,8 +11,10 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using Wpf.Properties;
 using Application = System.Windows.Application;
+using FontStyle = System.Drawing.FontStyle;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
+using SystemFonts = System.Drawing.SystemFonts;
 
 namespace Wpf
 {
@@ -176,6 +178,7 @@ namespace Wpf
                         {
                             // When battery status is normal, display percentage in tray icon.
                             trayIconText = percent.ToString();
+                            trayIconText = "43";
                             if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                             {
                                 // When the battery is charging.
@@ -297,7 +300,7 @@ namespace Wpf
                             using (var graphics = Graphics.FromImage(bitmap))
                             {
                                 // Use the default menu font scaled to the current system DPI setting.
-                                font = SystemInformation.GetMenuFontForDpi((int) graphics.DpiX);
+                                font = new Font(SystemFonts.DefaultFont.FontFamily, 8);
 
                                 // Measure the rendering size of the tray icon text using this fort.
                                 size = graphics.MeasureString(trayIconText, font);
@@ -325,13 +328,13 @@ namespace Wpf
                                 }
 
                                 // Scale the text to 1.3 times bigger.
-                                graphics.ScaleTransform(1.3f, 1.3f);
+                                graphics.ScaleTransform(1.4f, 1.4f);
 
                                 // Draw the text, with a starting position aim to centre align the text,
                                 // but removing about 1 percent from top and left.
                                 graphics.DrawString(trayIconText, font, brush,
-                                    (iconDimension - textWidth) / 2f - textWidth * 0.1f,
-                                    (iconDimension - textHeight) / 2f - textHeight * 0.1f);
+                                    (iconDimension - textWidth) / 2f - textWidth * 0.13f,
+                                    (iconDimension - textHeight) / 2f - textHeight * 0.13f);
 
                                 // The above scaling and start position alignments aim to remove the
                                 // padding of the font so that the text fills the tray icon edge to edge.
