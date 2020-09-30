@@ -5,7 +5,7 @@ using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.System.Power;
 
-namespace Wpf
+namespace Percentage.Wpf
 {
     public partial class DetailsWindow
     {

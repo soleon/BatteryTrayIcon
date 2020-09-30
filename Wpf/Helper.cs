@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace Wpf
+namespace Percentage.Wpf
 {
     internal static class Helper
     {

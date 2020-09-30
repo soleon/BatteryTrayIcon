@@ -4,13 +4,12 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.ApplicationModel;
-using static Wpf.Properties.Settings;
 using Button = System.Windows.Controls.Button;
 using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Cursors = System.Windows.Input.Cursors;
 
-namespace Wpf
+namespace Percentage.Wpf
 {
     public partial class SettingsWindow
     {

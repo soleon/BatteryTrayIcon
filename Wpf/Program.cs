@@ -9,14 +9,12 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Microsoft.Win32;
-using Wpf.Properties;
 using Application = System.Windows.Application;
-using FontStyle = System.Drawing.FontStyle;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using SystemFonts = System.Drawing.SystemFonts;
 
-namespace Wpf
+namespace Percentage.Wpf
 {
     internal class Program
     {
