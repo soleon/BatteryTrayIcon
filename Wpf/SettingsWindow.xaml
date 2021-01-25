@@ -5,6 +5,9 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:system="clr-namespace:System;assembly=mscorlib"
                  xmlns:wpf="clr-namespace:Percentage.Wpf"
+                 xmlns:properties="clr-namespace:Percentage.Wpf.Properties"
+                 xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing"
+                 xmlns:converters="clr-namespace:Percentage.Wpf.Converters"
                  mc:Ignorable="d"
                  Title="Settings"
                  SizeToContent="WidthAndHeight"
@@ -24,7 +27,7 @@
                 <Setter Property="FontSize"
                         Value="{StaticResource DefaultFontSize}" />
                 <Setter Property="Margin"
-                        Value="0,5"></Setter>
+                        Value="0,5" />
             </Style>
             <Style TargetType="TextBlock"
                    x:Key="SectionHeader">
@@ -40,7 +43,7 @@
                 <Setter Property="FontSize"
                         Value="{StaticResource DefaultFontSize}" />
                 <Setter Property="Margin"
-                        Value="0,5"></Setter>
+                        Value="0,5" />
             </Style>
         </StackPanel.Resources>
         <TextBlock Text="Percentage Text Colors"
@@ -90,37 +93,102 @@
         <TextBlock Text="Battery Notifications"
                    Style="{StaticResource SectionHeader}" />
         <TextBlock Text="Show a notification when battery is:" />
-        <CheckBox Content="Critical"
-                  x:Name="CriticalNotification"
-                  x:FieldModifier="private" />
-        <CheckBox Content="Low"
-                  x:Name="LowNotification"
-                  x:FieldModifier="private" />
-        <StackPanel Orientation="Horizontal">
-            <CheckBox Content="Custom percentage: "
-                      x:Name="HighNotification"
-                      x:FieldModifier="private" />
-            <ComboBox SelectedIndex="0"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <CheckBox Content="Critical"
+                      x:Name="CriticalNotification"
+                      x:FieldModifier="private"
+                      IsChecked="{Binding CriticalNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+            <ComboBox Grid.Row="0"
+                      Grid.Column="1"
                       VerticalAlignment="Center"
-                      HorizontalAlignment="Left"
-                      x:Name="HighNotificationValue"
-                      x:FieldModifier="private">
-                <system:Int32>80</system:Int32>
-                <system:Int32>70</system:Int32>
-                <system:Int32>60</system:Int32>
-                <system:Int32>50</system:Int32>
+                      Width="80"
+                      x:Name="CriticalNotificationValue"
+                      x:FieldModifier="private"
+                      SelectedValue="{Binding CriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                <system:Int32>5</system:Int32>
+                <system:Int32>10</system:Int32>
             </ComboBox>
-        </StackPanel>
-        <CheckBox Content="Full"
-                  x:Name="FullNotification"
-                  x:FieldModifier="private" />
+            <CheckBox Content="Low"
+                      Grid.Row="1"
+                      Grid.Column="0"
+                      x:Name="LowNotification"
+                      x:FieldModifier="private"
+                      IsChecked="{Binding LowNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+            <ComboBox Grid.Row="1"
+                      VerticalAlignment="Center"
+                      Grid.Column="1"
+                      Width="80"
+                      x:Name="LowNotificationValue"
+                      x:FieldModifier="private"
+                      SelectedValue="{Binding LowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                <system:Int32>15</system:Int32>
+                <system:Int32>20</system:Int32>
+                <system:Int32>25</system:Int32>
+                <system:Int32>30</system:Int32>
+                <system:Int32>35</system:Int32>
+                <system:Int32>40</system:Int32>
+                <system:Int32>45</system:Int32>
+            </ComboBox>
+            <CheckBox Grid.Row="2"
+                      Grid.Column="0"
+                      Content="Normal"
+                      x:Name="HighNotification"
+                      x:FieldModifier="private"
+                      IsChecked="{Binding HighNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+            <ComboBox Grid.Row="2"
+                      Grid.Column="1"
+                      VerticalAlignment="Center"
+                      Width="80"
+                      x:Name="HighNotificationValue"
+                      x:FieldModifier="private"
+                      SelectedValue="{Binding HighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                <system:Int32>50</system:Int32>
+                <system:Int32>60</system:Int32>
+                <system:Int32>70</system:Int32>
+                <system:Int32>80</system:Int32>
+            </ComboBox>
+            <CheckBox Content="Full"
+                      Grid.Row="3"
+                      Grid.Column="0"
+                      x:Name="FullNotification"
+                      x:FieldModifier="private"
+                      IsChecked="{Binding FullNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+        </Grid>
         <TextBlock Text="Other Settings"
                    Style="{StaticResource SectionHeader}" />
+        <DockPanel>
+            <TextBlock Text="Tray icon font: " />
+            <ComboBox ItemsSource="{x:Static drawing:FontFamily.Families}"
+                      x:Name="TrayIconFontName"
+                      x:FieldModifier="private"
+                      FontFamily="{Binding SelectedItem, RelativeSource={RelativeSource Self}}"
+                      VerticalContentAlignment="Center"
+                      SelectedValue="{Binding TrayIconFontName, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                      SelectedValuePath="Name">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="drawing:FontFamily">
+                        <TextBlock
+                            FontFamily="{Binding Mode=OneTime, Converter={x:Static converters:NameToFontFamilyConverter.Instance}}"
+                            Text="{Binding Name, Mode=OneTime}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </DockPanel>
         <TextBlock>
             <Run BaselineAlignment="Center">Refresh battery percentage every</Run>
-            <ComboBox SelectedIndex="0"
-                      x:Name="RefreshSeconds"
-                      x:FieldModifier="private">
+            <ComboBox x:Name="RefreshSeconds"
+                      x:FieldModifier="private"
+                      SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
                 <system:Int32>10</system:Int32>
                 <system:Int32>30</system:Int32>
                 <system:Int32>60</system:Int32>
@@ -131,19 +199,27 @@
                   x:Name="AutoStart"
                   IsEnabled="False"
                   x:FieldModifier="private" />
-        <Grid Margin="0,22,0,0">
+        <StackPanel Margin="0,22,0,0">
             <TextBlock HorizontalAlignment="Left">
                 <Hyperlink Click="OnResetButtonClick"
                            TextDecorations="None">
                     Reset all settings
                 </Hyperlink>
             </TextBlock>
-            <TextBlock HorizontalAlignment="Right">
-                <Hyperlink TextDecorations="None"
-                           Click="Hyperlink_OnClick">
-                    Rate this app
-                </Hyperlink>
-            </TextBlock>
-        </Grid>
+            <Grid>
+                <TextBlock HorizontalAlignment="Left">
+                    <Hyperlink Click="OnFeedbackButtonClick"
+                               TextDecorations="None">
+                        Send a feedback
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Right">
+                    <Hyperlink TextDecorations="None"
+                               Click="Hyperlink_OnClick">
+                        Rate this app
+                    </Hyperlink>
+                </TextBlock>
+            </Grid>
+        </StackPanel>
     </StackPanel>
 </wpf:MetroWindow>

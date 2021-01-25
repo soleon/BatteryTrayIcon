@@ -1,16 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.ApplicationModel;
+using Percentage.Wpf.Properties;
 using Button = System.Windows.Controls.Button;
-using CheckBox = System.Windows.Controls.CheckBox;
-using ComboBox = System.Windows.Controls.ComboBox;
 using Cursors = System.Windows.Input.Cursors;
 
 namespace Percentage.Wpf
 {
+    using static Settings;
+
     public partial class SettingsWindow
     {
         private StartupTask _startupTask;
@@ -21,12 +22,6 @@ namespace Percentage.Wpf
             LowColor.Background = new SolidColorBrush(ToMediaColor(Default.LowColor));
             CriticalColor.Background = new SolidColorBrush(ToMediaColor(Default.CriticalColor));
             ChargingColor.Background = new SolidColorBrush(ToMediaColor(Default.ChargingColor));
-            CriticalNotification.IsChecked = Default.CriticalNotification;
-            LowNotification.IsChecked = Default.LowNotification;
-            HighNotification.IsChecked = Default.HighNotification;
-            FullNotification.IsChecked = Default.FullNotification;
-            HighNotificationValue.SelectedItem = Default.HighNotificationValue;
-            RefreshSeconds.SelectedItem = Default.RefreshSeconds;
             RegisterEventHandling();
             new Action(async () =>
             {
@@ -49,32 +44,19 @@ namespace Percentage.Wpf
             })();
         }
 
-        private void RegisterEventHandling()
+        private static void RegisterEventHandling()
         {
-            CriticalNotification.Checked += OnCheckBoxChecked;
-            CriticalNotification.Unchecked += OnCheckedBoxUnChecked;
-            LowNotification.Checked += OnCheckBoxChecked;
-            LowNotification.Unchecked += OnCheckedBoxUnChecked;
-            HighNotification.Checked += OnCheckBoxChecked;
-            HighNotification.Unchecked += OnCheckedBoxUnChecked;
-            FullNotification.Checked += OnCheckBoxChecked;
-            FullNotification.Unchecked += OnCheckedBoxUnChecked;
-            HighNotificationValue.SelectionChanged += OnComboBoxSelectionChanged;
-            RefreshSeconds.SelectionChanged += OnComboBoxSelectionChanged;
+            Default.PropertyChanged += OnSettingPropertyChanged;
         }
 
-        private void UnRegisterEventHandling()
+        private static void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            CriticalNotification.Checked -= OnCheckBoxChecked;
-            CriticalNotification.Unchecked -= OnCheckedBoxUnChecked;
-            LowNotification.Checked -= OnCheckBoxChecked;
-            LowNotification.Unchecked -= OnCheckedBoxUnChecked;
-            HighNotification.Checked -= OnCheckBoxChecked;
-            HighNotification.Unchecked -= OnCheckedBoxUnChecked;
-            FullNotification.Checked -= OnCheckBoxChecked;
-            FullNotification.Unchecked -= OnCheckedBoxUnChecked;
-            HighNotificationValue.SelectionChanged -= OnComboBoxSelectionChanged;
-            RefreshSeconds.SelectionChanged -= OnComboBoxSelectionChanged;
+            Default.Save();
+        }
+
+        private static void UnRegisterEventHandling()
+        {
+            Default.PropertyChanged -= OnSettingPropertyChanged;
         }
 
         private void OnColorButtonClick(object sender, RoutedEventArgs e)
@@ -98,27 +80,6 @@ namespace Percentage.Wpf
             button.Background = new SolidColorBrush(ToMediaColor(dialog.Color));
         }
 
-        private static void OnCheckBoxChecked(object sender, RoutedEventArgs e)
-        {
-            var checkBox = (CheckBox) sender;
-            Default[checkBox.Name] = true;
-            Default.Save();
-        }
-
-        private static void OnCheckedBoxUnChecked(object sender, RoutedEventArgs e)
-        {
-            var checkBox = (CheckBox) sender;
-            Default[checkBox.Name] = false;
-            Default.Save();
-        }
-
-        private static void OnComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var comboBox = (ComboBox) sender;
-            Default[comboBox.Name] = comboBox.SelectedItem;
-            Default.Save();
-        }
-
         private void OnResetButtonClick(object sender, RoutedEventArgs e)
         {
             UnRegisterEventHandling();
@@ -129,11 +90,12 @@ namespace Percentage.Wpf
             ChargingColor.Background =
                 new SolidColorBrush(ToMediaColor(Default.ChargingColor = System.Drawing.Color.FromArgb(16, 137, 62)));
             CriticalNotification.IsChecked = LowNotification.IsChecked =
-                HighNotification.IsChecked = FullNotification.IsChecked =
-                    Default.CriticalNotification = Default.LowNotification = Default.FullNotification =
-                        Default.HighNotification = true;
-            HighNotificationValue.SelectedItem = Default.HighNotificationValue = 80;
-            RefreshSeconds.SelectedItem = Default.RefreshSeconds = 10;
+                HighNotification.IsChecked = FullNotification.IsChecked = true;
+            HighNotificationValue.SelectedItem = 80;
+            LowNotificationValue.SelectedItem = 20;
+            CriticalNotificationValue.SelectedItem = 10;
+            RefreshSeconds.SelectedItem = 10;
+            TrayIconFontName.SelectedValue = SystemFonts.IconFontFamily.Source;
             Default.Save();
             RegisterEventHandling();
             EnableAutoStart();
@@ -193,6 +155,11 @@ namespace Percentage.Wpf
         private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
         {
             Helper.ShowRatingView();
+        }
+
+        private void OnFeedbackButtonClick(object sender, RoutedEventArgs e)
+        {
+            Helper.SendFeedBack();
         }
     }
 }

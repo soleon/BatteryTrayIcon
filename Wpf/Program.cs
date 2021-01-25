@@ -9,13 +9,16 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using Percentage.Wpf.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
-using SystemFonts = System.Drawing.SystemFonts;
+using SystemFonts = System.Windows.SystemFonts;
 
 namespace Percentage.Wpf
 {
+    using static Environment;
+
     internal class Program
     {
         internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
@@ -28,6 +31,13 @@ namespace Percentage.Wpf
                 if (!isNewInstance)
                 {
                     return;
+                }
+
+                if (Settings.Default.FirstRun)
+                {
+                    Settings.Default.TrayIconFontName = SystemFonts.IconFontFamily.Source;
+                    Settings.Default.FirstRun = false;
+                    Settings.Default.Save();
                 }
 
                 var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
@@ -53,8 +63,10 @@ namespace Percentage.Wpf
                 // Right click menu with "Exit" item to exit this application.
                 using (var exitMenuItem = new ToolStripMenuItem("Exit"))
                 using (var settingsMenuItem = new ToolStripMenuItem("Settings"))
-                using (var detailsMenuItem = new ToolStripMenuItem("Battery Details"))
-                using (var menu = new ContextMenuStrip {Items = {detailsMenuItem, settingsMenuItem, exitMenuItem}})
+                using (var detailsMenuItem = new ToolStripMenuItem("Battery details"))
+                using (var feedbackMenuItem = new ToolStripMenuItem("Send a feedback"))
+                using (var menu = new ContextMenuStrip
+                    {Items = {detailsMenuItem, settingsMenuItem, feedbackMenuItem, exitMenuItem}})
                 using (var notifyIcon = new NotifyIcon {Visible = true, ContextMenuStrip = menu})
                 {
                     void ActivateDialog<T>() where T : Window, new()
@@ -73,8 +85,9 @@ namespace Percentage.Wpf
                     exitMenuItem.Click += (_, __) => app.Shutdown();
                     settingsMenuItem.Click += (_, __) => ActivateDialog<SettingsWindow>();
                     detailsMenuItem.Click += (_, __) => ActivateDialog<DetailsWindow>();
+                    feedbackMenuItem.Click += (_, __) => Helper.SendFeedBack();
 
-                    // Setup variables used in the repetitively ran "Update" local function.
+                        // Setup variables used in the repetitively ran "Update" local function.
                     (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
                     var settings = Settings.Default;
                     var chargingBrush = new SolidBrush(settings.ChargingColor);
@@ -136,6 +149,7 @@ namespace Percentage.Wpf
                             case nameof(settings.LowNotification):
                             case nameof(settings.CriticalNotification):
                             case nameof(settings.FullNotification):
+                            case nameof(settings.TrayIconFontName):
                                 Update();
                                 break;
                         }
@@ -171,6 +185,24 @@ namespace Percentage.Wpf
                             notifyIcon.BalloonTipTitle = null;
                             notifyIcon.BalloonTipText = "Battery status unknown";
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
+                        }
+                        else if (percent == 100)
+                        {
+                            notifyIcon.Icon?.Dispose();
+                            notifyIcon.Icon = Resource.BatterFullIcon;
+                            notifyIcon.BalloonTipTitle = notifyIcon.Text = "Fully charged";
+                            notifyIcon.BalloonTipText = "Your battery is fully charged";
+                            notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+
+                            if (!settings.FullNotification)
+                            {
+                                return;
+                            }
+
+                            notificationType = NotificationType.Full;
+                            CheckAndSendNotification();
+
+                            return;
                         }
                         else
                         {
@@ -279,7 +311,7 @@ namespace Percentage.Wpf
                         // Set tray icon tool tip based on the balloon notification texts.
                         notifyIcon.Text = notifyIcon.BalloonTipTitle == null
                             ? notifyIcon.BalloonTipText
-                            : notifyIcon.BalloonTipTitle + Environment.NewLine + notifyIcon.BalloonTipText;
+                            : notifyIcon.BalloonTipTitle + NewLine + notifyIcon.BalloonTipText;
 
                         // Local function to set normal brush according to the Windows theme used.
                         void SetBrush()
@@ -297,7 +329,7 @@ namespace Percentage.Wpf
                             using (var graphics = Graphics.FromImage(bitmap))
                             {
                                 // Use the default menu font scaled to the current system DPI setting.
-                                font = new Font(SystemFonts.DefaultFont.FontFamily, 8);
+                                font = new Font(new FontFamily(settings.TrayIconFontName), 8);
 
                                 // Measure the rendering size of the tray icon text using this fort.
                                 size = graphics.MeasureString(trayIconText, font);
@@ -355,30 +387,35 @@ namespace Percentage.Wpf
                             }
                         }
 
-                        // Check and send notification.
-                        if (notificationType == NotificationType.None)
-                        {
-                            // No notification required.
-                            return;
-                        }
+                        CheckAndSendNotification();
 
-                        var utcNow = DateTime.UtcNow;
-                        if (lastNotification.Type != notificationType)
+                        // Check and send notification.
+                        void CheckAndSendNotification()
                         {
-                            // Notification required, and battery status has changed from last notification, notify user.
-                            notifyIcon.ShowBalloonTip(0);
-                        }
-                        else
-                        {
-                            if (utcNow - lastNotification.DateTime > TimeSpan.FromMinutes(5))
+                            if (notificationType == NotificationType.None)
                             {
-                                // Notification required, but battery status is the same as last notification for more than 5 minutes,
-                                // notify user.
+                                // No notification required.
+                                return;
+                            }
+
+                            var utcNow = DateTime.UtcNow;
+                            if (lastNotification.Type != notificationType)
+                            {
+                                // Notification required, and battery status has changed from last notification, notify user.
                                 notifyIcon.ShowBalloonTip(0);
                             }
-                        }
+                            else
+                            {
+                                if (utcNow - lastNotification.DateTime > TimeSpan.FromMinutes(5))
+                                {
+                                    // Notification required, but battery status is the same as last notification for more than 5 minutes,
+                                    // notify user.
+                                    notifyIcon.ShowBalloonTip(0);
+                                }
+                            }
 
-                        lastNotification = (notificationType, utcNow);
+                            lastNotification = (notificationType, utcNow);
+                        }
                     }
 
                     bool IsUsingLightTheme()

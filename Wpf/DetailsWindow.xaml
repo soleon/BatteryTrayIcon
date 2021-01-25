@@ -88,13 +88,22 @@
                    x:Name="Health"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="7"
-                   Grid.ColumnSpan="2"
                    Grid.Column="0"
+                   FontSize="12"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom">
+            <Hyperlink TextDecorations="None"
+                       Click="OnFeedbackClick">
+                Send a feedback
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock Grid.Row="7"
+                   Grid.Column="1"
                    FontSize="12"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom">
             <Hyperlink TextDecorations="None"
-                       Click="Hyperlink_OnClick">
+                       Click="OnRatingClick">
                 Rate this app
             </Hyperlink>
         </TextBlock>

@@ -55,9 +55,14 @@ namespace Percentage.Wpf
             }
         }
 
-        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        private void OnRatingClick(object sender, RoutedEventArgs e)
         {
             Helper.ShowRatingView();
+        }
+
+        private void OnFeedbackClick(object sender, RoutedEventArgs e)
+        {
+            Helper.SendFeedBack();
         }
     }
 }
