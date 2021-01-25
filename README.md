@@ -9,10 +9,10 @@
 ![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/light.png)
 
 #### Battery Details
-![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/details.png)
+![Battery Details screenshot](https://raw.githubusercontent.com/soleon/Percentage/master/details.png)
 
 #### Settings
-![Application screenshot](https://raw.githubusercontent.com/soleon/percentage/master/settings.png)
+![Settings screenshot](https://raw.githubusercontent.com/soleon/Percentage/master/settings.png)
 
 ## Requirement
 This application requires:
