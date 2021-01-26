@@ -6,6 +6,7 @@ using System.Windows.Media;
 using Windows.ApplicationModel;
 using Percentage.Wpf.Properties;
 using Button = System.Windows.Controls.Button;
+using Color = System.Drawing.Color;
 using Cursors = System.Windows.Input.Cursors;
 
 namespace Percentage.Wpf
@@ -19,10 +20,6 @@ namespace Percentage.Wpf
         public SettingsWindow()
         {
             InitializeComponent();
-            LowColor.Background = new SolidColorBrush(ToMediaColor(Default.LowColor));
-            CriticalColor.Background = new SolidColorBrush(ToMediaColor(Default.CriticalColor));
-            ChargingColor.Background = new SolidColorBrush(ToMediaColor(Default.ChargingColor));
-            RegisterEventHandling();
             new Action(async () =>
             {
                 try
@@ -42,6 +39,19 @@ namespace Percentage.Wpf
                 RegisterAutoStartEventHandling();
                 AutoStart.IsEnabled = true;
             })();
+        }
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            RegisterEventHandling();
+            base.OnContentRendered(e);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            UnRegisterEventHandling();
+            UnRegisterAutoStarEventHandling();
         }
 
         private static void RegisterEventHandling()
@@ -65,7 +75,7 @@ namespace Percentage.Wpf
             var mediaColor = ((SolidColorBrush) button.Background).Color;
             var dialog = new ColorDialog
             {
-                Color = System.Drawing.Color.FromArgb(mediaColor.R, mediaColor.G, mediaColor.B),
+                Color = Color.FromArgb(mediaColor.R, mediaColor.G, mediaColor.B),
                 AllowFullOpen = true,
                 AnyColor = true,
                 FullOpen = true
@@ -75,27 +85,23 @@ namespace Percentage.Wpf
                 return;
             }
 
-            Default[button.Name] = dialog.Color;
-            Default.Save();
-            button.Background = new SolidColorBrush(ToMediaColor(dialog.Color));
+            Default[(string)button.Tag] = dialog.Color;
         }
 
         private void OnResetButtonClick(object sender, RoutedEventArgs e)
         {
             UnRegisterEventHandling();
-            LowColor.Background =
-                new SolidColorBrush(ToMediaColor(Default.LowColor = System.Drawing.Color.FromArgb(202, 80, 16)));
-            CriticalColor.Background =
-                new SolidColorBrush(ToMediaColor(Default.CriticalColor = System.Drawing.Color.FromArgb(232, 17, 35)));
-            ChargingColor.Background =
-                new SolidColorBrush(ToMediaColor(Default.ChargingColor = System.Drawing.Color.FromArgb(16, 137, 62)));
+            Default.LowColor = Color.FromArgb(202, 80, 16);
+            Default.CriticalColor = Color.FromArgb(232, 17, 35);
+            Default.ChargingColor = Color.FromArgb(16, 137, 62);
+            Default.NormalColor = Color.Transparent;
             CriticalNotification.IsChecked = LowNotification.IsChecked =
                 HighNotification.IsChecked = FullNotification.IsChecked = true;
             HighNotificationValue.SelectedItem = 80;
             LowNotificationValue.SelectedItem = 20;
             CriticalNotificationValue.SelectedItem = 10;
             RefreshSeconds.SelectedItem = 10;
-            TrayIconFontName.SelectedValue = SystemFonts.IconFontFamily.Source;
+            TrayIconFontName.SelectedValue = System.Drawing.FontFamily.GenericSansSerif.Name;
             Default.Save();
             RegisterEventHandling();
             EnableAutoStart();
@@ -145,11 +151,6 @@ namespace Percentage.Wpf
         {
             AutoStart.Checked += OnAutoStartChecked;
             AutoStart.Unchecked += OnAutoStartUnchecked;
-        }
-
-        private static Color ToMediaColor(System.Drawing.Color color)
-        {
-            return Color.FromRgb(color.R, color.G, color.B);
         }
 
         private void Hyperlink_OnClick(object sender, RoutedEventArgs e)

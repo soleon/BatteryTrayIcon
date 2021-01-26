@@ -178,5 +178,17 @@ namespace Percentage.Wpf.Properties {
                 this["FirstRun"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0, 0, 0")]
+        public global::System.Drawing.Color NormalColor {
+            get {
+                return ((global::System.Drawing.Color)(this["NormalColor"]));
+            }
+            set {
+                this["NormalColor"] = value;
+            }
+        }
     }
 }

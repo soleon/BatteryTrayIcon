@@ -21,7 +21,12 @@
                         Value="Center" />
             </Style>
             <Style TargetType="Button"
-                   BasedOn="{StaticResource VerticalCenterAlignedElement}" />
+                   BasedOn="{StaticResource VerticalCenterAlignedElement}">
+                <Setter Property="Width"
+                        Value="72" />
+                <Setter Property="Height"
+                        Value="32" />
+            </Style>
             <Style TargetType="TextBlock"
                    BasedOn="{StaticResource VerticalCenterAlignedElement}">
                 <Setter Property="FontSize"
@@ -45,134 +50,206 @@
                 <Setter Property="Margin"
                         Value="0,5" />
             </Style>
+            <Style TargetType="ComboBox"
+                   BasedOn="{StaticResource VerticalCenterAlignedElement}">
+                <Setter Property="Height"
+                        Value="32" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Center" />
+            </Style>
         </StackPanel.Resources>
-        <TextBlock Text="Percentage Text Colors"
-                   Style="{StaticResource SectionHeader}" />
-        <Grid>
-            <Grid.Resources>
-                <Style TargetType="Button">
-                    <EventSetter Event="Click"
-                                 Handler="OnColorButtonClick" />
-                    <Setter Property="Width"
-                            Value="72" />
-                    <Setter Property="Height"
-                            Value="32" />
-                </Style>
-            </Grid.Resources>
+        <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="Critical"
-                       Grid.Row="0"
-                       Grid.Column="0" />
-            <TextBlock Text="Low"
-                       Grid.Row="1"
-                       Grid.Column="0" />
-            <TextBlock Text="Charging"
-                       Grid.Row="2"
-                       Grid.Column="0" />
-            <Button Grid.Row="0"
-                    Grid.Column="1"
-                    x:Name="CriticalColor"
-                    x:FieldModifier="private" />
-            <Button Grid.Row="1"
-                    Grid.Column="1"
-                    x:Name="LowColor"
-                    x:FieldModifier="private" />
-            <Button Grid.Row="2"
-                    Grid.Column="1"
-                    x:Name="ChargingColor"
-                    x:FieldModifier="private" />
-        </Grid>
-        <TextBlock Text="Battery Notifications"
-                   Style="{StaticResource SectionHeader}" />
-        <TextBlock Text="Show a notification when battery is:" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <CheckBox Content="Critical"
-                      x:Name="CriticalNotification"
-                      x:FieldModifier="private"
-                      IsChecked="{Binding CriticalNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
-            <ComboBox Grid.Row="0"
-                      Grid.Column="1"
-                      VerticalAlignment="Center"
-                      Width="80"
-                      x:Name="CriticalNotificationValue"
-                      x:FieldModifier="private"
-                      SelectedValue="{Binding CriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
-                <system:Int32>5</system:Int32>
-                <system:Int32>10</system:Int32>
-            </ComboBox>
-            <CheckBox Content="Low"
-                      Grid.Row="1"
-                      Grid.Column="0"
-                      x:Name="LowNotification"
-                      x:FieldModifier="private"
-                      IsChecked="{Binding LowNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
-            <ComboBox Grid.Row="1"
-                      VerticalAlignment="Center"
-                      Grid.Column="1"
-                      Width="80"
-                      x:Name="LowNotificationValue"
-                      x:FieldModifier="private"
-                      SelectedValue="{Binding LowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
-                <system:Int32>15</system:Int32>
-                <system:Int32>20</system:Int32>
-                <system:Int32>25</system:Int32>
-                <system:Int32>30</system:Int32>
-                <system:Int32>35</system:Int32>
-                <system:Int32>40</system:Int32>
-                <system:Int32>45</system:Int32>
-            </ComboBox>
-            <CheckBox Grid.Row="2"
-                      Grid.Column="0"
-                      Content="Normal"
-                      x:Name="HighNotification"
-                      x:FieldModifier="private"
-                      IsChecked="{Binding HighNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
-            <ComboBox Grid.Row="2"
-                      Grid.Column="1"
-                      VerticalAlignment="Center"
-                      Width="80"
-                      x:Name="HighNotificationValue"
-                      x:FieldModifier="private"
-                      SelectedValue="{Binding HighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
-                <system:Int32>50</system:Int32>
-                <system:Int32>60</system:Int32>
-                <system:Int32>70</system:Int32>
-                <system:Int32>80</system:Int32>
-            </ComboBox>
-            <CheckBox Content="Full"
-                      Grid.Row="3"
-                      Grid.Column="0"
-                      x:Name="FullNotification"
-                      x:FieldModifier="private"
-                      IsChecked="{Binding FullNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+            <DockPanel>
+                <TextBlock Text="Percentage Text Colors"
+                           Style="{StaticResource SectionHeader}"
+                           DockPanel.Dock="Top" />
+                <TextBlock Text="Show tray icon text as:"
+                           DockPanel.Dock="Top" />
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource {x:Type Button}}">
+                            <EventSetter Event="Click"
+                                         Handler="OnColorButtonClick" />
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Right" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Critical"
+                               Grid.Row="0"
+                               Grid.Column="0" />
+                    <TextBlock Text="Low"
+                               Grid.Row="1"
+                               Grid.Column="0" />
+                    <TextBlock Text="Charging"
+                               Grid.Row="2"
+                               Grid.Column="0" />
+                    <TextBlock Text="Normal"
+                               Grid.Row="3"
+                               Grid.Column="0" />
+                    <Button Grid.Row="0"
+                            Grid.Column="1"
+                            Tag="CriticalColor"
+                            Background="{Binding CriticalColor, Source={x:Static properties:Settings.Default}, Converter={x:Static converters:DrawingColorToBrushConverter.Instance}}" />
+                    <Button Grid.Row="1"
+                            Grid.Column="1"
+                            Tag="LowColor"
+                            Background="{Binding LowColor, Source={x:Static properties:Settings.Default}, Converter={x:Static converters:DrawingColorToBrushConverter.Instance}}" />
+                    <Button Grid.Row="2"
+                            Grid.Column="1"
+                            Tag="ChargingColor"
+                            Background="{Binding ChargingColor, Source={x:Static properties:Settings.Default}, Converter={x:Static converters:DrawingColorToBrushConverter.Instance}}" />
+                    <Button Grid.Row="3"
+                            Grid.Column="1"
+                            Tag="NormalColor"
+                            Background="{Binding NormalColor, Source={x:Static properties:Settings.Default}, Converter={x:Static converters:DrawingColorToBrushConverter.Instance}}">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource {x:Type Button}}"
+                                   TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding NormalColor.A, Source={x:Static properties:Settings.Default}, Mode=OneWay}"
+                                        Value="0">
+                                        <Setter Property="Content"
+                                                Value="System" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </DockPanel>
+            <Rectangle Grid.Column="1"
+                       Width="2"
+                       Margin="15,60,15,0"
+                       Fill="LightGray" />
+            <DockPanel Grid.Column="2">
+                <TextBlock Text="Battery Notifications"
+                           Style="{StaticResource SectionHeader}"
+                           DockPanel.Dock="Top" />
+                <TextBlock Text="Show a notification when battery is:"
+                           DockPanel.Dock="Top" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="ComboBox"
+                               BasedOn="{StaticResource {x:Type ComboBox}}">
+                            <Setter Property="Width"
+                                    Value="72" />
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Right" />
+                        </Style>
+                    </Grid.Resources>
+                    <CheckBox Content="Critical"
+                              x:Name="CriticalNotification"
+                              x:FieldModifier="private"
+                              IsChecked="{Binding CriticalNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+                    <ComboBox Grid.Row="0"
+                              Grid.Column="1"
+                              VerticalAlignment="Center"
+                              Width="80"
+                              x:Name="CriticalNotificationValue"
+                              x:FieldModifier="private"
+                              ItemStringFormat="{}{0}%"
+                              SelectedValue="{Binding CriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                        <system:Int32>5</system:Int32>
+                        <system:Int32>10</system:Int32>
+                    </ComboBox>
+                    <CheckBox Content="Low"
+                              Grid.Row="1"
+                              Grid.Column="0"
+                              x:Name="LowNotification"
+                              x:FieldModifier="private"
+                              IsChecked="{Binding LowNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+                    <ComboBox Grid.Row="1"
+                              VerticalAlignment="Center"
+                              Grid.Column="1"
+                              Width="80"
+                              ItemStringFormat="{}{0}%"
+                              x:Name="LowNotificationValue"
+                              x:FieldModifier="private"
+                              SelectedValue="{Binding LowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                        <system:Int32>15</system:Int32>
+                        <system:Int32>20</system:Int32>
+                        <system:Int32>25</system:Int32>
+                        <system:Int32>30</system:Int32>
+                        <system:Int32>35</system:Int32>
+                        <system:Int32>40</system:Int32>
+                        <system:Int32>45</system:Int32>
+                    </ComboBox>
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="0"
+                              Content="Normal"
+                              x:Name="HighNotification"
+                              x:FieldModifier="private"
+                              IsChecked="{Binding HighNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+                    <ComboBox Grid.Row="2"
+                              Grid.Column="1"
+                              VerticalAlignment="Center"
+                              Width="80"
+                              ItemStringFormat="{}{0}%"
+                              x:Name="HighNotificationValue"
+                              x:FieldModifier="private"
+                              SelectedValue="{Binding HighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                        <system:Int32>50</system:Int32>
+                        <system:Int32>60</system:Int32>
+                        <system:Int32>70</system:Int32>
+                        <system:Int32>80</system:Int32>
+                    </ComboBox>
+                    <CheckBox Content="Full"
+                              Grid.Row="3"
+                              Grid.Column="0"
+                              x:Name="FullNotification"
+                              x:FieldModifier="private"
+                              IsChecked="{Binding FullNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+                </Grid>
+            </DockPanel>
         </Grid>
         <TextBlock Text="Other Settings"
                    Style="{StaticResource SectionHeader}" />
-        <DockPanel>
-            <TextBlock Text="Tray icon font: " />
-            <ComboBox ItemsSource="{x:Static drawing:FontFamily.Families}"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Tray icon font " />
+            <ComboBox Grid.Row="0"
+                      Grid.Column="1"
+                      ItemsSource="{x:Static drawing:FontFamily.Families}"
                       x:Name="TrayIconFontName"
                       x:FieldModifier="private"
                       FontFamily="{Binding SelectedItem, RelativeSource={RelativeSource Self}}"
                       VerticalContentAlignment="Center"
+                      VerticalAlignment="Center"
                       SelectedValue="{Binding TrayIconFontName, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
                       SelectedValuePath="Name">
                 <ComboBox.ItemTemplate>
@@ -183,23 +260,31 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-        </DockPanel>
-        <TextBlock>
-            <Run BaselineAlignment="Center">Refresh battery percentage every</Run>
-            <ComboBox x:Name="RefreshSeconds"
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Text="Refresh battery every " />
+            <ComboBox Grid.Row="1"
+                      Grid.Column="1"
+                      x:Name="RefreshSeconds"
                       x:FieldModifier="private"
+                      VerticalAlignment="Center"
+                      ItemStringFormat="{}{0} seconds"
                       SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
                 <system:Int32>10</system:Int32>
                 <system:Int32>30</system:Int32>
                 <system:Int32>60</system:Int32>
             </ComboBox>
-            <Run BaselineAlignment="Center">seconds</Run>
-        </TextBlock>
-        <CheckBox Content="Start with Windows"
-                  x:Name="AutoStart"
-                  IsEnabled="False"
-                  x:FieldModifier="private" />
-        <StackPanel Margin="0,22,0,0">
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       Text="Start with Windows" />
+            <CheckBox Grid.Row="2"
+                      Grid.Column="1"
+                      x:Name="AutoStart"
+                      IsEnabled="False"
+                      HorizontalAlignment="Left"
+                      x:FieldModifier="private" />
+        </Grid>
+        <StackPanel Margin="0,10,0,0">
             <TextBlock HorizontalAlignment="Left">
                 <Hyperlink Click="OnResetButtonClick"
                            TextDecorations="None">

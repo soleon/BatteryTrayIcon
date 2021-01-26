@@ -13,11 +13,11 @@ using Percentage.Wpf.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
-using SystemFonts = System.Windows.SystemFonts;
 
 namespace Percentage.Wpf
 {
     using static Environment;
+    using static Settings;
 
     internal class Program
     {
@@ -33,20 +33,20 @@ namespace Percentage.Wpf
                     return;
                 }
 
-                if (Settings.Default.FirstRun)
+                if (Default.FirstRun)
                 {
-                    Settings.Default.TrayIconFontName = SystemFonts.IconFontFamily.Source;
-                    Settings.Default.FirstRun = false;
-                    Settings.Default.Save();
+                    Default.TrayIconFontName = FontFamily.GenericSerif.Name;
+                    Default.FirstRun = false;
+                    Default.Save();
                 }
 
                 var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
 
-                app.DispatcherUnhandledException += (_, e) => { ShowFeedbackMessage(e.Exception); };
+                app.DispatcherUnhandledException += (_, e) => ShowFeedbackMessage(e.Exception);
 
-                AppDomain.CurrentDomain.UnhandledException += (_, e) => { ShowFeedbackMessage(e.ExceptionObject); };
+                AppDomain.CurrentDomain.UnhandledException += (_, e) => ShowFeedbackMessage(e.ExceptionObject);
 
-                TaskScheduler.UnobservedTaskException += (_, e) => { ShowFeedbackMessage(e.Exception); };
+                TaskScheduler.UnobservedTaskException += (_, e) => ShowFeedbackMessage(e.Exception);
 
                 void ShowFeedbackMessage(object exception)
                 {
@@ -87,12 +87,13 @@ namespace Percentage.Wpf
                     detailsMenuItem.Click += (_, __) => ActivateDialog<DetailsWindow>();
                     feedbackMenuItem.Click += (_, __) => Helper.SendFeedBack();
 
-                        // Setup variables used in the repetitively ran "Update" local function.
+                    // Setup variables used in the repetitively ran "Update" local function.
                     (NotificationType Type, DateTime DateTime) lastNotification = (default, default);
-                    var settings = Settings.Default;
-                    var chargingBrush = new SolidBrush(settings.ChargingColor);
-                    var lowBrush = new SolidBrush(settings.LowColor);
-                    var criticalBrush = new SolidBrush(settings.CriticalColor);
+                    var chargingBrush = new SolidBrush(Default.ChargingColor);
+                    var lowBrush = new SolidBrush(Default.LowColor);
+                    var criticalBrush = new SolidBrush(Default.CriticalColor);
+                    Brush normalBrush;
+                    SetNormalBrush();
 
                     // Show balloon notification when the tray icon is clicked.
                     notifyIcon.MouseClick += (_, e) =>
@@ -121,39 +122,50 @@ namespace Percentage.Wpf
                     Update();
 
                     // Setup timer to update the tray icon.
-                    var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(settings.RefreshSeconds)};
+                    var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(Default.RefreshSeconds)};
                     timer.Tick += (_, __) => Update();
                     timer.Start();
 
                     // Handle settings change.
-                    settings.PropertyChanged += (_, e) =>
+                    Default.PropertyChanged += (_, e) =>
                     {
                         switch (e.PropertyName)
                         {
-                            case nameof(settings.RefreshSeconds):
-                                timer.Interval = TimeSpan.FromSeconds(settings.RefreshSeconds);
+                            case nameof(Default.RefreshSeconds):
+                                timer.Interval = TimeSpan.FromSeconds(Default.RefreshSeconds);
                                 break;
-                            case nameof(settings.ChargingColor):
-                                chargingBrush.Color = settings.ChargingColor;
+                            case nameof(Default.ChargingColor):
+                                chargingBrush.Color = Default.ChargingColor;
                                 Update();
                                 break;
-                            case nameof(settings.LowColor):
-                                lowBrush.Color = settings.LowColor;
+                            case nameof(Default.LowColor):
+                                lowBrush.Color = Default.LowColor;
                                 Update();
                                 break;
-                            case nameof(settings.CriticalColor):
-                                criticalBrush.Color = settings.CriticalColor;
+                            case nameof(Default.CriticalColor):
+                                criticalBrush.Color = Default.CriticalColor;
                                 Update();
                                 break;
-                            case nameof(settings.HighNotification):
-                            case nameof(settings.LowNotification):
-                            case nameof(settings.CriticalNotification):
-                            case nameof(settings.FullNotification):
-                            case nameof(settings.TrayIconFontName):
+                            case nameof(Default.NormalColor):
+                                SetNormalBrush();
+                                Update();
+                                break;
+                            case nameof(Default.HighNotification):
+                            case nameof(Default.LowNotification):
+                            case nameof(Default.CriticalNotification):
+                            case nameof(Default.FullNotification):
+                            case nameof(Default.TrayIconFontName):
                                 Update();
                                 break;
                         }
                     };
+
+                    void SetNormalBrush()
+                    {
+                        normalBrush = Default.NormalColor.A == 0
+                            ? IsUsingLightTheme() ? Brushes.Black : Brushes.White
+                            : new SolidBrush(Default.NormalColor);
+                    }
 
                     // Run application and hold the thread.
                     app.Run();
@@ -172,7 +184,7 @@ namespace Percentage.Wpf
                         {
                             // When no battery detected.
                             trayIconText = "❌";
-                            SetBrush();
+                            brush = normalBrush;
                             notifyIcon.BalloonTipTitle = null;
                             notifyIcon.BalloonTipText = "No battery detected";
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
@@ -181,7 +193,7 @@ namespace Percentage.Wpf
                         {
                             // When battery status is unknown.
                             trayIconText = "❓";
-                            SetBrush();
+                            brush = normalBrush;
                             notifyIcon.BalloonTipTitle = null;
                             notifyIcon.BalloonTipText = "Battery status unknown";
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
@@ -194,7 +206,7 @@ namespace Percentage.Wpf
                             notifyIcon.BalloonTipText = "Your battery is fully charged";
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
 
-                            if (!settings.FullNotification)
+                            if (!Default.FullNotification)
                             {
                                 return;
                             }
@@ -230,22 +242,22 @@ namespace Percentage.Wpf
                             else
                             {
                                 // When battery is not charging.
-                                if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                                if (percent <= Default.CriticalNotificationValue)
                                 {
                                     // When battery capacity is critical.
                                     brush = criticalBrush;
                                     notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                                    if (settings.CriticalNotification)
+                                    if (Default.CriticalNotification)
                                     {
                                         notificationType = NotificationType.Critical;
                                     }
                                 }
-                                else if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                                else if (percent <= Default.LowNotificationValue)
                                 {
                                     // When battery capacity is low.
                                     brush = lowBrush;
                                     notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                                    if (settings.LowNotification)
+                                    if (Default.LowNotification)
                                     {
                                         notificationType = NotificationType.Low;
                                     }
@@ -253,7 +265,7 @@ namespace Percentage.Wpf
                                 else
                                 {
                                     // When battery capacity is normal.
-                                    SetBrush();
+                                    brush = normalBrush;
                                     notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                                     SetHighOrFullNotification();
                                 }
@@ -279,11 +291,11 @@ namespace Percentage.Wpf
 
                             void SetHighOrFullNotification()
                             {
-                                if (percent == settings.HighNotificationValue && settings.HighNotification)
+                                if (percent == Default.HighNotificationValue && Default.HighNotification)
                                 {
                                     notificationType = NotificationType.High;
                                 }
-                                else if (percent == 100 && settings.FullNotification)
+                                else if (percent == 100 && Default.FullNotification)
                                 {
                                     notificationType = NotificationType.Full;
                                 }
@@ -313,12 +325,6 @@ namespace Percentage.Wpf
                             ? notifyIcon.BalloonTipText
                             : notifyIcon.BalloonTipTitle + NewLine + notifyIcon.BalloonTipText;
 
-                        // Local function to set normal brush according to the Windows theme used.
-                        void SetBrush()
-                        {
-                            brush = IsUsingLightTheme() ? Brushes.Black : Brushes.White;
-                        }
-
                         int textWidth, textHeight;
                         Font font;
 
@@ -329,7 +335,7 @@ namespace Percentage.Wpf
                             using (var graphics = Graphics.FromImage(bitmap))
                             {
                                 // Use the default menu font scaled to the current system DPI setting.
-                                font = new Font(new FontFamily(settings.TrayIconFontName), 8);
+                                font = new Font(new FontFamily(Default.TrayIconFontName), 8);
 
                                 // Measure the rendering size of the tray icon text using this fort.
                                 size = graphics.MeasureString(trayIconText, font);
