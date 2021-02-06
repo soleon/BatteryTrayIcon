@@ -6,14 +6,13 @@ using FontFamily = System.Drawing.FontFamily;
 
 namespace Percentage.Wpf.Converters
 {
-    internal class NameToFontFamilyConverter : IValueConverter
+    internal class DrawingFontToMediaFontConverter : IValueConverter
     {
-        public static NameToFontFamilyConverter Instance { get; } = new NameToFontFamilyConverter();
+        public static DrawingFontToMediaFontConverter Instance { get; } = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new FontFamilyConverter().ConvertFromString(((FontFamily) value)
-                .Name);
+            return new FontFamilyConverter().ConvertFromString(((FontFamily) value).Name);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -58,7 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\DrawingColorToBrushConverter.cs" />
-    <Compile Include="Converters\NameToFontFamilyConverter.cs" />
+    <Compile Include="Converters\FontNameToMediaFontConverter.cs" />
+    <Compile Include="Converters\FontFamilySettingFontConverter.cs" />
+    <Compile Include="Converters\FontSizeSettingFontConverter.cs" />
     <Compile Include="DetailsWindow.xaml.cs">
       <DependentUpon>DetailsWindow.xaml</DependentUpon>
     </Compile>
@@ -122,6 +126,8 @@
   <ItemGroup>
     <None Include="Resources\BatterFullIcon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Help.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

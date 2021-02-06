@@ -157,13 +157,13 @@ namespace Percentage.Wpf.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Segoe UI")]
-        public string TrayIconFontName {
+        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft Sans Serif, 11pt")]
+        public global::System.Drawing.Font TrayIconFont {
             get {
-                return ((string)(this["TrayIconFontName"]));
+                return ((global::System.Drawing.Font)(this["TrayIconFont"]));
             }
             set {
-                this["TrayIconFontName"] = value;
+                this["TrayIconFont"] = value;
             }
         }
         

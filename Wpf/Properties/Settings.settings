@@ -35,8 +35,8 @@
     <Setting Name="CriticalNotificationValue" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
-    <Setting Name="TrayIconFontName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Segoe UI</Value>
+    <Setting Name="TrayIconFont" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">Microsoft Sans Serif, 11pt</Value>
     </Setting>
     <Setting Name="FirstRun" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

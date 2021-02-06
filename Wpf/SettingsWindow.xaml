@@ -165,15 +165,11 @@
                         </Style>
                     </Grid.Resources>
                     <CheckBox Content="Critical"
-                              x:Name="CriticalNotification"
-                              x:FieldModifier="private"
                               IsChecked="{Binding CriticalNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                     <ComboBox Grid.Row="0"
                               Grid.Column="1"
                               VerticalAlignment="Center"
                               Width="80"
-                              x:Name="CriticalNotificationValue"
-                              x:FieldModifier="private"
                               ItemStringFormat="{}{0}%"
                               SelectedValue="{Binding CriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
                         <system:Int32>5</system:Int32>
@@ -182,16 +178,12 @@
                     <CheckBox Content="Low"
                               Grid.Row="1"
                               Grid.Column="0"
-                              x:Name="LowNotification"
-                              x:FieldModifier="private"
                               IsChecked="{Binding LowNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                     <ComboBox Grid.Row="1"
                               VerticalAlignment="Center"
                               Grid.Column="1"
                               Width="80"
                               ItemStringFormat="{}{0}%"
-                              x:Name="LowNotificationValue"
-                              x:FieldModifier="private"
                               SelectedValue="{Binding LowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
                         <system:Int32>15</system:Int32>
                         <system:Int32>20</system:Int32>
@@ -204,16 +196,12 @@
                     <CheckBox Grid.Row="2"
                               Grid.Column="0"
                               Content="Normal"
-                              x:Name="HighNotification"
-                              x:FieldModifier="private"
                               IsChecked="{Binding HighNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                     <ComboBox Grid.Row="2"
                               Grid.Column="1"
                               VerticalAlignment="Center"
                               Width="80"
                               ItemStringFormat="{}{0}%"
-                              x:Name="HighNotificationValue"
-                              x:FieldModifier="private"
                               SelectedValue="{Binding HighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
                         <system:Int32>50</system:Int32>
                         <system:Int32>60</system:Int32>
@@ -223,8 +211,6 @@
                     <CheckBox Content="Full"
                               Grid.Row="3"
                               Grid.Column="0"
-                              x:Name="FullNotification"
-                              x:FieldModifier="private"
                               IsChecked="{Binding FullNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                 </Grid>
             </DockPanel>
@@ -233,40 +219,73 @@
                    Style="{StaticResource SectionHeader}" />
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="125" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="55" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock Text="Tray icon font " />
             <ComboBox Grid.Row="0"
                       Grid.Column="1"
                       ItemsSource="{x:Static drawing:FontFamily.Families}"
-                      x:Name="TrayIconFontName"
-                      x:FieldModifier="private"
-                      FontFamily="{Binding SelectedItem, RelativeSource={RelativeSource Self}}"
                       VerticalContentAlignment="Center"
                       VerticalAlignment="Center"
-                      SelectedValue="{Binding TrayIconFontName, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                      SelectedValuePath="Name">
+                      SelectedValuePath="Name"
+                      SelectedValue="{Binding TrayIconFont, Source={x:Static properties:Settings.Default}, Mode=TwoWay, Converter={x:Static converters:FontNameSettingFontConverter.Instance}}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="drawing:FontFamily">
                         <TextBlock
-                            FontFamily="{Binding Mode=OneTime, Converter={x:Static converters:NameToFontFamilyConverter.Instance}}"
+                            FontFamily="{Binding Mode=OneTime, Converter={x:Static converters:DrawingFontToMediaFontConverter.Instance}}"
                             Text="{Binding Name, Mode=OneTime}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Size"
+                       Grid.Row="0"
+                       Grid.Column="2"
+                       HorizontalAlignment="Center" />
+            <ComboBox Grid.Row="0"
+                      Grid.Column="3"
+                      SelectedItem="{Binding TrayIconFont, Source={x:Static properties:Settings.Default}, Mode=TwoWay, Converter={x:Static converters:FontSizeSettingFontConverter.Instance}}"
+                      ItemStringFormat="{}{0} point">
+                <system:Single>5</system:Single>
+                <system:Single>6</system:Single>
+                <system:Single>7</system:Single>
+                <system:Single>8</system:Single>
+                <system:Single>9</system:Single>
+                <system:Single>10</system:Single>
+                <system:Single>11</system:Single>
+                <system:Single>12</system:Single>
+                <system:Single>13</system:Single>
+                <system:Single>14</system:Single>
+                <system:Single>15</system:Single>
+                <system:Single>16</system:Single>
+                <system:Single>17</system:Single>
+                <system:Single>18</system:Single>
+                <system:Single>19</system:Single>
+                <system:Single>20</system:Single>
+                <system:Single>21</system:Single>
+                <system:Single>22</system:Single>
+                <system:Single>23</system:Single>
+                <system:Single>24</system:Single>
+                <system:Single>25</system:Single>
+                <system:Single>26</system:Single>
+                <system:Single>27</system:Single>
+                <system:Single>28</system:Single>
+                <system:Single>29</system:Single>
+                <system:Single>30</system:Single>
             </ComboBox>
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
                        Text="Refresh battery every " />
             <ComboBox Grid.Row="1"
                       Grid.Column="1"
-                      x:Name="RefreshSeconds"
-                      x:FieldModifier="private"
                       VerticalAlignment="Center"
                       ItemStringFormat="{}{0} seconds"
                       SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
@@ -283,6 +302,25 @@
                       IsEnabled="False"
                       HorizontalAlignment="Left"
                       x:FieldModifier="private" />
+            <TextBlock Grid.Row="3"
+                       Grid.ColumnSpan="4"
+                       Grid.Column="0"
+                       TextWrapping="Wrap"
+                       Foreground="DimGray"
+                       FontStyle="Italic"
+                       FontSize="12">
+                <Run FontWeight="SemiBold"
+                     BaselineAlignment="Center">
+                    Why can't I make the tray icon bigger
+                </Run>
+                <Image Source="Resources/Help.png"
+                       Width="16"
+                       RenderOptions.BitmapScalingMode="Fant"
+                       Margin="0,5,0,0"/>
+                <LineBreak></LineBreak>
+                Windows limits tray icons to be a 16 × 16 pixel square.<LineBreak/>
+                Anything goes out of this box will be cut off.
+            </TextBlock>
         </Grid>
         <StackPanel Margin="0,10,0,0">
             <TextBlock HorizontalAlignment="Left">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -95,13 +96,16 @@ namespace Percentage.Wpf
             Default.CriticalColor = Color.FromArgb(232, 17, 35);
             Default.ChargingColor = Color.FromArgb(16, 137, 62);
             Default.NormalColor = Color.Transparent;
-            CriticalNotification.IsChecked = LowNotification.IsChecked =
-                HighNotification.IsChecked = FullNotification.IsChecked = true;
-            HighNotificationValue.SelectedItem = 80;
-            LowNotificationValue.SelectedItem = 20;
-            CriticalNotificationValue.SelectedItem = 10;
-            RefreshSeconds.SelectedItem = 10;
-            TrayIconFontName.SelectedValue = System.Drawing.FontFamily.GenericSansSerif.Name;
+            Default.CriticalNotification = Default.LowNotification =
+                Default.HighNotification = Default.FullNotification = true;
+            Default.HighNotificationValue = 80;
+            Default.LowNotificationValue = 20;
+            Default.CriticalNotificationValue = 10;
+            Default.RefreshSeconds = 10;
+            using (Default.TrayIconFont)
+            {
+                Default.TrayIconFont = new Font(System.Drawing.FontFamily.GenericSansSerif, 11);
+            }
             Default.Save();
             RegisterEventHandling();
             EnableAutoStart();
