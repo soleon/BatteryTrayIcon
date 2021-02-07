@@ -9,6 +9,7 @@ using Percentage.Wpf.Properties;
 using Button = System.Windows.Controls.Button;
 using Color = System.Drawing.Color;
 using Cursors = System.Windows.Input.Cursors;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Percentage.Wpf
 {
@@ -129,9 +130,22 @@ namespace Percentage.Wpf
             switch (state)
             {
                 case StartupTaskState.Disabled:
+                    AutoStart.IsChecked = false;
+                    MessageBox.Show(
+                        "Auto start for this app has been disabled.\r\n\r\nTo re-enable it, please go to \"Settings > Apps > Startup\" to enable \"Battery Percentage Icon\".",
+                        "Auto start disabled", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    break;
                 case StartupTaskState.DisabledByUser:
+                    AutoStart.IsChecked = false;
+                    MessageBox.Show(
+                        "Auto start for this app has been disabled manually in system settings.\r\n\r\nTo re-enable it, please go to \"Settings > Apps > Startup\" to enable \"Battery Percentage Icon\".",
+                        "Auto start disabled by user", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    break;
                 case StartupTaskState.DisabledByPolicy:
                     AutoStart.IsChecked = false;
+                    MessageBox.Show(
+                        "Auto start for this app has been disabled manually by system policy.\r\n\r\nTo re-enable it, remove any system policies that restrict auto start, and go to \"Settings > Apps > Startup\" to enable \"Battery Percentage Icon\".",
+                        "Auto start disabled by policy", MessageBoxButton.OK, MessageBoxImage.Warning);
                     break;
                 case StartupTaskState.Enabled:
                 case StartupTaskState.EnabledByPolicy:
