@@ -8,11 +8,12 @@ namespace Percentage.Wpf.Converters
 {
     internal class DrawingFontToMediaFontConverter : IValueConverter
     {
+        private static readonly FontFamilyConverter FontFamilyConverter = new();
         public static DrawingFontToMediaFontConverter Instance { get; } = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new FontFamilyConverter().ConvertFromString(((FontFamily) value).Name);
+            return FontFamilyConverter.ConvertFromString(((FontFamily) value).Name);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

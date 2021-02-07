@@ -8,7 +8,7 @@ namespace Percentage.Wpf.Converters
 {
     internal class DrawingColorToBrushConverter : IValueConverter
     {
-        public static DrawingColorToBrushConverter Instance { get; } = new DrawingColorToBrushConverter();
+        public static DrawingColorToBrushConverter Instance { get; } = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
