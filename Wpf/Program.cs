@@ -200,8 +200,11 @@ namespace Percentage.Wpf
                     {
                         notifyIcon.Icon?.Dispose();
                         notifyIcon.Icon = Resource.BatterFullIcon;
-                        notifyIcon.BalloonTipTitle = notifyIcon.Text = "Fully charged";
-                        notifyIcon.BalloonTipText = "Your battery is fully charged";
+                        var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
+                            ? " and connected to power"
+                            : null;
+                        notifyIcon.BalloonTipTitle = notifyIcon.Text = "Fully charged" + powerLineText;
+                        notifyIcon.BalloonTipText = "Your battery is fully charged" + powerLineText;
                         notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
 
                         if (!Default.FullNotification)

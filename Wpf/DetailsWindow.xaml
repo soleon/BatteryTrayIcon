@@ -31,6 +31,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock Text="Battery Capacity"
                    FontWeight="SemiBold" />
@@ -48,46 +49,54 @@
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="2"
                    Grid.Column="0"
-                   Text="Design Capacity"
+                   Text="Power Line Status"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="2"
                    Grid.Column="1"
-                   x:Name="DesignCapacity"
+                   x:Name="PowerLineStatus"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="3"
                    Grid.Column="0"
-                   Text="Full Charge Capacity"
+                   Text="Design Capacity"
                    FontWeight="SemiBold" />
         <TextBlock Grid.Row="3"
                    Grid.Column="1"
-                   x:Name="FullChargeCapacity"
+                   x:Name="DesignCapacity"
                    x:FieldModifier="private" />
         <TextBlock Grid.Row="4"
+                   Grid.Column="0"
+                   Text="Full Charge Capacity"
+                   FontWeight="SemiBold" />
+        <TextBlock Grid.Row="4"
+                   Grid.Column="1"
+                   x:Name="FullChargeCapacity"
+                   x:FieldModifier="private" />
+        <TextBlock Grid.Row="5"
                    Grid.Column="0"
                    Text="Remaining Charge Capacity"
                    FontWeight="SemiBold"
                    Margin="0,0,32,0" />
-        <TextBlock Grid.Row="4"
+        <TextBlock Grid.Row="5"
                    Grid.Column="1"
                    x:Name="RemainingChargeCapacity"
                    x:FieldModifier="private" />
-        <TextBlock Grid.Row="5"
+        <TextBlock Grid.Row="6"
                    Grid.Column="0"
                    Text="Battery Status"
                    FontWeight="SemiBold" />
-        <TextBlock Grid.Row="5"
+        <TextBlock Grid.Row="6"
                    Grid.Column="1"
                    x:Name="Status"
                    x:FieldModifier="private" />
-        <TextBlock Grid.Row="6"
+        <TextBlock Grid.Row="7"
                    Grid.Column="0"
                    Text="Battery Health"
                    FontWeight="SemiBold" />
-        <TextBlock Grid.Row="6"
+        <TextBlock Grid.Row="7"
                    Grid.Column="1"
                    x:Name="Health"
                    x:FieldModifier="private" />
-        <TextBlock Grid.Row="7"
+        <TextBlock Grid.Row="8"
                    Grid.Column="0"
                    FontSize="12"
                    HorizontalAlignment="Left"
@@ -97,7 +106,7 @@
                 Send a feedback
             </Hyperlink>
         </TextBlock>
-        <TextBlock Grid.Row="7"
+        <TextBlock Grid.Row="8"
                    Grid.Column="1"
                    FontSize="12"
                    HorizontalAlignment="Right"

@@ -16,7 +16,7 @@ namespace Percentage.Wpf
             Update();
 
             var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(10)};
-            timer.Tick += (sender, args) => Update();
+            timer.Tick += (_, _) => Update();
             timer.Start();
 
             void Update()
@@ -30,6 +30,12 @@ namespace Percentage.Wpf
                     : report.ChargeRateInMilliwatts == 0
                         ? "Not Charging"
                         : report.ChargeRateInMilliwatts + " mW";
+                PowerLineStatus.Text = SystemInformation.PowerStatus.PowerLineStatus switch
+                {
+                    System.Windows.Forms.PowerLineStatus.Online => "Connected",
+                    System.Windows.Forms.PowerLineStatus.Offline => "Disconnected",
+                    _ => "Unknown"
+                };
                 var designCapacity = report.DesignCapacityInMilliwattHours;
                 DesignCapacity.Text = designCapacity == null
                     ? "Unknown"
