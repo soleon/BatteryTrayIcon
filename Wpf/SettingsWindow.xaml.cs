@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -8,7 +9,6 @@ using Windows.ApplicationModel;
 using Percentage.Wpf.Properties;
 using Button = System.Windows.Controls.Button;
 using Color = System.Drawing.Color;
-using Cursors = System.Windows.Input.Cursors;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Percentage.Wpf;
@@ -22,19 +22,16 @@ public partial class SettingsWindow
     public SettingsWindow()
     {
         InitializeComponent();
-        new Action(async () =>
+        new Func<Task>(async () =>
         {
             try
             {
                 AutoStart.IsChecked = (_startupTask = await StartupTask.GetAsync(Program.Id)).State ==
                                       StartupTaskState.Enabled;
             }
-            catch (Exception e)
+            catch
             {
-                AutoStart.IsEnabled = true;
-                AutoStart.Cursor = Cursors.No;
-                AutoStart.Opacity = 0.3;
-                AutoStart.ToolTip = "Auto start requires this app to run as UWP.\r\n\r\n" + e.Message;
+                AutoStartDisabledText.Visibility = Visibility.Visible;
                 return;
             }
 
@@ -125,6 +122,10 @@ public partial class SettingsWindow
 
     private async void EnableAutoStart()
     {
+        if (_startupTask == null)
+        {
+            return;
+        }
         AutoStart.IsEnabled = false;
         var state = await _startupTask.RequestEnableAsync();
         UnRegisterAutoStarEventHandling();

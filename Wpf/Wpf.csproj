@@ -121,10 +121,11 @@
     <EmbeddedResource Include="Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BatterFullIcon.ico" />
+    <None Include="Resources\BatteryFullIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Help.png" />

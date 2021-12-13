@@ -23,6 +23,9 @@ internal class Program
 {
     internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
 
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern bool DestroyIcon(IntPtr handle);
+
     [STAThread]
     public static void Main()
     {
@@ -39,24 +42,35 @@ internal class Program
                 Default.Save();
             }
 
-            var app = new Application {ShutdownMode = ShutdownMode.OnExplicitShutdown};
+            var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
 
-            app.DispatcherUnhandledException += (_, e) => ShowFeedbackMessage(e.Exception);
+            app.DispatcherUnhandledException += (_, e) => HandleException(e.Exception);
 
-            AppDomain.CurrentDomain.UnhandledException += (_, e) => ShowFeedbackMessage(e.ExceptionObject);
+            AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException(e.ExceptionObject);
 
-            TaskScheduler.UnobservedTaskException += (_, e) => ShowFeedbackMessage(e.Exception);
+            TaskScheduler.UnobservedTaskException += (_, e) => HandleException(e.Exception);
 
-            static void ShowFeedbackMessage(object exception)
+            static void HandleException(object exception)
             {
-                MessageBox.Show("Battery Percentage Icon has run into an error. You can help to fix this by:\r\n" +
-                                "1. press Ctrl+C on this message\r\n" +
-                                "2. paste it in an email\r\n" +
-                                "3. send it to soleon@live.com\r\n\r\n" +
-                                (exception is Exception exp
-                                    ? exp.ToString()
-                                    : $"Error type: {exception.GetType().FullName}\r\n{exception}"),
-                    "You Found An Error");
+                if (exception is OutOfMemoryException)
+                {
+                    MessageBox.Show("Battery Percentage Icon did not have enough memory to perform some work.\r\n" +
+                                    "Please consider closing some running applications or background services to free up some memory.",
+                        "Your system memory is running low",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("Battery Percentage Icon has run into an error. You can help to fix this by:\r\n" +
+                                    "1. press Ctrl+C on this message\r\n" +
+                                    "2. paste it in an email\r\n" +
+                                    "3. send it to soleon@live.com\r\n\r\n" +
+                                    (exception is Exception exp
+                                        ? exp.ToString()
+                                        : $"Error type: {exception.GetType().FullName}\r\n{exception}"),
+                        "You Found An Error");
+                }
             }
 
             // Right click menu with "Exit" item to exit this application.
@@ -65,25 +79,48 @@ internal class Program
             using var detailsMenuItem = new ToolStripMenuItem("Battery details");
             using var feedbackMenuItem = new ToolStripMenuItem("Send a feedback");
             using var menu = new ContextMenuStrip
-                {Items = {detailsMenuItem, settingsMenuItem, feedbackMenuItem, exitMenuItem}};
-            using var notifyIcon = new NotifyIcon {Visible = true, ContextMenuStrip = menu};
+                { Items = { detailsMenuItem, settingsMenuItem, feedbackMenuItem, exitMenuItem } };
+            using var notifyIcon = new NotifyIcon { Visible = true, ContextMenuStrip = menu };
 
-            void ActivateDialog<T>() where T : Window, new()
+            void ActivateDialog<T>(Action<T> windowCreated = null, Action<T> windowClosed = null)
+                where T : Window, new()
             {
-                var existingWindow = app.Windows.OfType<T>().FirstOrDefault();
-                if (existingWindow == null)
+                var window = app.Windows.OfType<T>().FirstOrDefault();
+                if (window == null)
                 {
-                    new T().Show();
+                    window = new T();
+                    windowCreated?.Invoke(window);
+
+                    void OnWindowClosed(object sender, EventArgs args)
+                    {
+                        window.Closed -= OnWindowClosed;
+                        windowClosed?.Invoke(window);
+                    }
+
+                    window.Closed += OnWindowClosed;
+                    window.Show();
                 }
                 else
                 {
-                    existingWindow.Activate();
+                    window.Activate();
                 }
             }
 
+            void OpenSettingsWindow()
+            {
+                ActivateDialog<SettingsWindow>();
+            }
+
+            void OpenDetailsWindow()
+            {
+                ActivateDialog<DetailsWindow>(
+                    w => w.SettingsWindowRequested += OpenSettingsWindow,
+                    w => w.SettingsWindowRequested -= OpenSettingsWindow);
+            }
+
             exitMenuItem.Click += (_, _) => app.Shutdown();
-            settingsMenuItem.Click += (_, _) => ActivateDialog<SettingsWindow>();
-            detailsMenuItem.Click += (_, _) => ActivateDialog<DetailsWindow>();
+            settingsMenuItem.Click += (_, _) => OpenSettingsWindow();
+            detailsMenuItem.Click += (_, _) => OpenDetailsWindow();
             feedbackMenuItem.Click += (_, _) => Helper.SendFeedBack();
 
             // Setup variables used in the repetitively ran "Update" local function.
@@ -99,7 +136,7 @@ internal class Program
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    ActivateDialog<DetailsWindow>();
+                    OpenDetailsWindow();
                 }
             };
 
@@ -121,7 +158,7 @@ internal class Program
             Update();
 
             // Setup timer to update the tray icon.
-            var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(Default.RefreshSeconds)};
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
             timer.Tick += (_, _) => Update();
             timer.Start();
 
@@ -174,7 +211,7 @@ internal class Program
             {
                 var powerStatus = SystemInformation.PowerStatus;
                 var batteryChargeStatus = powerStatus.BatteryChargeStatus;
-                var percent = (int) Math.Round(powerStatus.BatteryLifePercent * 100);
+                var percent = (int)Math.Round(powerStatus.BatteryLifePercent * 100);
 
                 var notificationType = NotificationType.None;
                 Brush brush;
@@ -200,7 +237,7 @@ internal class Program
                 else if (percent == 100)
                 {
                     notifyIcon.Icon?.Dispose();
-                    notifyIcon.Icon = Resource.BatterFullIcon;
+                    notifyIcon.Icon = Resource.BatteryFullIcon;
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
                         ? " and connected to power"
                         : null;
@@ -343,12 +380,12 @@ internal class Program
                     }
 
                     // Round the size to integer.
-                    textWidth = (int) Math.Round(size.Width);
-                    textHeight = (int) Math.Round(size.Height);
+                    textWidth = (int)Math.Round(size.Width);
+                    textHeight = (int)Math.Round(size.Height);
                 }
 
                 // Use the larger number of the text size as the dimension of the square tray icon.
-                var iconDimension = (int) Math.Round(16 * (dpi / 96));
+                var iconDimension = (int)Math.Round(16 * (dpi / 96));
 
                 // Draw the tray icon.
                 using (var bitmap = new Bitmap(iconDimension, iconDimension))
@@ -430,9 +467,6 @@ internal class Program
             }
         }
     }
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern bool DestroyIcon(IntPtr handle);
 
     private enum NotificationType : byte
     {

@@ -296,12 +296,21 @@
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
                        Text="Start with Windows" />
-            <CheckBox Grid.Row="2"
-                      Grid.Column="1"
-                      x:Name="AutoStart"
-                      IsEnabled="False"
-                      HorizontalAlignment="Left"
-                      x:FieldModifier="private" />
+            <DockPanel Grid.Row="2"
+                       Grid.Column="1"
+                       Grid.ColumnSpan="3">
+                <CheckBox x:Name="AutoStart"
+                          IsEnabled="False"
+                          HorizontalAlignment="Left"
+                          x:FieldModifier="private" />
+                <TextBlock Text=" auto start requires this app to run as UWP"
+                           FontStyle="Italic"
+                           Foreground="Chocolate"
+                           FontSize="11"
+                           x:Name="AutoStartDisabledText"
+                           x:FieldModifier="private"
+                           Visibility="Collapsed"/>
+            </DockPanel>
             <TextBlock Grid.Row="3"
                        Grid.ColumnSpan="4"
                        Grid.Column="0"

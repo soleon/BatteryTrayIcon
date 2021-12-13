@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
@@ -9,6 +10,8 @@ namespace Percentage.Wpf;
 
 public partial class DetailsWindow
 {
+    internal event Action SettingsWindowRequested;
+
     public DetailsWindow()
     {
         InitializeComponent();
@@ -58,7 +61,7 @@ public partial class DetailsWindow
                 Health.Text = "Unknown";
             }
 
-            Status.Text = report.Status.ToString().CamelCaseSplit();
+            Status.Text = Regex.Replace(report.Status.ToString(), @"\B[A-Z]", " $0");
         }
     }
 
@@ -70,5 +73,10 @@ public partial class DetailsWindow
     private void OnFeedbackClick(object sender, RoutedEventArgs e)
     {
         Helper.SendFeedBack();
+    }
+
+    private void OnSettingsClick(object sender, RoutedEventArgs e)
+    {
+        SettingsWindowRequested?.Invoke();
     }
 }

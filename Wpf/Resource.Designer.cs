@@ -19,7 +19,7 @@ namespace Percentage.Wpf {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resource {
@@ -63,9 +63,9 @@ namespace Percentage.Wpf {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon BatterFullIcon {
+        internal static System.Drawing.Icon BatteryFullIcon {
             get {
-                object obj = ResourceManager.GetObject("BatterFullIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("BatteryFullIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
