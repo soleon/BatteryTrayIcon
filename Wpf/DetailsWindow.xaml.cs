@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.System.Power;
+using Percentage.Wpf.Properties;
 
 namespace Percentage.Wpf;
 
@@ -16,7 +17,14 @@ public partial class DetailsWindow
 
         Update();
 
-        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Settings.Default.RefreshSeconds) };
+        Settings.Default.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(Settings.Default.RefreshSeconds))
+            {
+                timer.Interval = TimeSpan.FromSeconds(Settings.Default.RefreshSeconds);
+            }
+        };
         timer.Tick += (_, _) => Update();
         timer.Start();
 
