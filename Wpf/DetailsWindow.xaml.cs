@@ -10,31 +10,65 @@ namespace Percentage.Wpf;
 
 public partial class DetailsWindow
 {
-    internal event Action SettingsWindowRequested;
-
     public DetailsWindow()
     {
         InitializeComponent();
 
         Update();
 
-        var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(10)};
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
         timer.Tick += (_, _) => Update();
         timer.Start();
 
         void Update()
         {
             var report = Battery.AggregateBattery.GetReport();
+            var powerStatus = SystemInformation.PowerStatus;
             Percentage.Text = report.Status == BatteryStatus.NotPresent
                 ? "Unknown"
-                : SystemInformation.PowerStatus.BatteryLifePercent.ToString("P");
-            ChargeRate.Text = report.ChargeRateInMilliwatts switch
+                : powerStatus.BatteryLifePercent.ToString("P");
+            var chargeRateInMilliwatts = report.ChargeRateInMilliwatts;
+            var fullChargeCapacityInMilliwattHours = report.FullChargeCapacityInMilliwattHours;
+            var remainingCapacityInMilliwattHours = report.RemainingCapacityInMilliwattHours;
+            switch (chargeRateInMilliwatts)
             {
-                null => "Unknown",
-                0 => "Not Charging",
-                _ => report.ChargeRateInMilliwatts + " mW"
-            };
-            PowerLineStatus.Text = SystemInformation.PowerStatus.PowerLineStatus switch
+                case null:
+                    TimeLabel.Text = "Remaining Time";
+                    ChargeRate.Text = TimeValue.Text = "Unknown";
+                    break;
+                case 0:
+                    TimeLabel.Text = "Remaining Time";
+                    TimeValue.Text = "Unknown";
+                    ChargeRate.Text = "Not Charging";
+                    break;
+                default:
+                    if (chargeRateInMilliwatts > 0)
+                    {
+                        TimeLabel.Text = "Time Until Full";
+                        if (fullChargeCapacityInMilliwattHours.HasValue && remainingCapacityInMilliwattHours.HasValue)
+                        {
+                            TimeValue.Text = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
+                                (fullChargeCapacityInMilliwattHours.Value -
+                                 remainingCapacityInMilliwattHours.Value) /
+                                (double)chargeRateInMilliwatts.Value));
+                        }
+                        else
+                        {
+                            TimeValue.Text = "Unknown";
+                        }
+                    }
+                    else
+                    {
+                        TimeLabel.Text = "Remaining Time";
+                        TimeValue.Text =
+                            Helper.GetReadableTimeSpan(TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining));
+                    }
+
+                    ChargeRate.Text = chargeRateInMilliwatts + " mW";
+                    break;
+            }
+
+            PowerLineStatus.Text = powerStatus.PowerLineStatus switch
             {
                 System.Windows.Forms.PowerLineStatus.Online => "Connected",
                 System.Windows.Forms.PowerLineStatus.Offline => "Disconnected",
@@ -44,16 +78,15 @@ public partial class DetailsWindow
             DesignCapacity.Text = designCapacity == null
                 ? "Unknown"
                 : designCapacity + " mWh";
-            var fullChargeCapacity = report.FullChargeCapacityInMilliwattHours;
-            FullChargeCapacity.Text = fullChargeCapacity == null
+            FullChargeCapacity.Text = fullChargeCapacityInMilliwattHours == null
                 ? "Unknown"
-                : fullChargeCapacity + " mWh";
-            RemainingChargeCapacity.Text = report.RemainingCapacityInMilliwattHours == null
+                : fullChargeCapacityInMilliwattHours + " mWh";
+            RemainingChargeCapacity.Text = remainingCapacityInMilliwattHours == null
                 ? "Unknown"
-                : report.RemainingCapacityInMilliwattHours + " mWh";
-            if (designCapacity != null && fullChargeCapacity != null)
+                : remainingCapacityInMilliwattHours + " mWh";
+            if (designCapacity != null && fullChargeCapacityInMilliwattHours != null)
             {
-                var health = (double) fullChargeCapacity.Value / designCapacity.Value;
+                var health = (double)fullChargeCapacityInMilliwattHours.Value / designCapacity.Value;
                 Health.Text = (health > 1 ? 1 : health).ToString("P");
             }
             else
@@ -65,14 +98,16 @@ public partial class DetailsWindow
         }
     }
 
-    private void OnRatingClick(object sender, RoutedEventArgs e)
-    {
-        Helper.ShowRatingView();
-    }
+    internal event Action SettingsWindowRequested;
 
     private void OnFeedbackClick(object sender, RoutedEventArgs e)
     {
         Helper.SendFeedBack();
+    }
+
+    private void OnRatingClick(object sender, RoutedEventArgs e)
+    {
+        Helper.ShowRatingView();
     }
 
     private void OnSettingsClick(object sender, RoutedEventArgs e)

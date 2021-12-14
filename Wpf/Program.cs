@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Windows.Devices.Power;
 using Microsoft.Win32;
 using Percentage.Wpf.Properties;
 using Application = System.Windows.Application;
@@ -264,11 +265,21 @@ internal class Program
                         // When the battery is charging.
                         brush = chargingBrush;
                         notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
-                        if (powerStatus.BatteryFullLifetime > 0)
+                        var report = Battery.AggregateBattery.GetReport();
+                        var chargeRateInMilliwatts = report.ChargeRateInMilliwatts;
+                        if (chargeRateInMilliwatts > 0)
                         {
                             notifyIcon.BalloonTipTitle = percent + "% charging";
-                            notifyIcon.BalloonTipText =
-                                GetReadableDuration(powerStatus.BatteryFullLifetime) + " until fully charged";
+
+                            var fullChargeCapacityInMilliwattHours = report.FullChargeCapacityInMilliwattHours;
+                            var remainingCapacityInMilliwattHours = report.RemainingCapacityInMilliwattHours;
+                            if (fullChargeCapacityInMilliwattHours.HasValue && remainingCapacityInMilliwattHours.HasValue)
+                            {
+                                notifyIcon.BalloonTipText = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
+                                    (fullChargeCapacityInMilliwattHours.Value -
+                                     remainingCapacityInMilliwattHours.Value) /
+                                    (double)chargeRateInMilliwatts.Value)) + " until fully charged";
+                            }
                         }
                         else
                         {
@@ -316,7 +327,8 @@ internal class Program
                                                              ? "connected (not charging)"
                                                              : "on battery");
                             notifyIcon.BalloonTipText =
-                                GetReadableDuration(powerStatus.BatteryLifeRemaining) + " remaining";
+                                Helper.GetReadableTimeSpan(TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining)) +
+                                " remaining";
                         }
                         else
                         {
@@ -338,24 +350,6 @@ internal class Program
                         {
                             notificationType = NotificationType.Full;
                         }
-                    }
-
-                    // Local function to get readable time span from seconds.
-                    static string GetReadableDuration(int seconds)
-                    {
-                        var hours = seconds / 3600;
-                        var minutes = seconds % 3600 / 60;
-                        return hours > 0
-                            ? hours > 1
-                                ? hours + " hours"
-                                : hours + " hour"
-                            : minutes > 0
-                                ? minutes > 1
-                                    ? minutes + " minutes"
-                                    : minutes + "minute"
-                                : seconds > 0
-                                    ? "less than 1 minute"
-                                    : null;
                     }
                 }
 
