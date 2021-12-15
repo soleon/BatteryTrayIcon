@@ -386,10 +386,13 @@ internal class Program
                 {
                     using (var graphics = Graphics.FromImage(bitmap))
                     {
-                        // Using anti aliasing provides the best clarity.
-                        // The default ClearType rendering causes black edges around the text making
-                        // it thick and pixelated.
-                        graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+                        if (IsUsingLightTheme())
+                        {
+                            // Using anti aliasing provides the best clarity in Windows 10 light theme.
+                            // The default ClearType rendering causes black edges around the text making
+                            // it thick and pixelated.
+                            graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+                        }
 
                         // Draw the text, with a starting position aim to centre align the text,
                         // but removing about 1 percent from top and left.
