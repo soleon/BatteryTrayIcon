@@ -63,9 +63,39 @@ namespace Percentage.Wpf {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon BatteryFullIcon {
+        internal static System.Drawing.Icon BatteryFullFluentDark {
             get {
-                object obj = ResourceManager.GetObject("BatteryFullIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("BatteryFullFluentDark", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon BatteryFullFluentLight {
+            get {
+                object obj = ResourceManager.GetObject("BatteryFullFluentLight", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon BatteryFullMetroDark {
+            get {
+                object obj = ResourceManager.GetObject("BatteryFullMetroDark", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon BatteryFullMetroLight {
+            get {
+                object obj = ResourceManager.GetObject("BatteryFullMetroLight", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

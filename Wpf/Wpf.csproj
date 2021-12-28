@@ -125,10 +125,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BatteryFullIcon.ico" />
+    <Resource Include="Resources\Help.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Help.png" />
+    <Resource Include="Resources\BatteryFullFluentDark.ico" />
+    <Resource Include="Resources\BatteryFullFluentLight.ico" />
+    <Resource Include="Resources\BatteryFullMetroDark.ico" />
+    <Resource Include="Resources\BatteryFullMetroLight.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

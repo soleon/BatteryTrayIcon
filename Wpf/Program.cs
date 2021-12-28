@@ -238,10 +238,18 @@ internal class Program
                 else if (percent == 100)
                 {
                     notifyIcon.Icon?.Dispose();
-                    notifyIcon.Icon = Resource.BatteryFullIcon;
+
+                    // If the build number is less than 22000, it is Windows 10, otherwise it's Windows 11.
+                    notifyIcon.Icon = OSVersion.Version.Build < 22000
+                        ? IsUsingLightTheme()
+                            ? Resource.BatteryFullMetroLight
+                            : Resource.BatteryFullMetroDark
+                        : IsUsingLightTheme()
+                            ? Resource.BatteryFullFluentLight
+                            : Resource.BatteryFullFluentDark;
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
-                        ? " and connected to power"
-                        : null;
+                    ? " and connected to power"
+                    : null;
                     notifyIcon.BalloonTipTitle = notifyIcon.Text = "Fully charged" + powerLineText;
                     notifyIcon.BalloonTipText = "Your battery is fully charged" + powerLineText;
                     notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
