@@ -12,7 +12,7 @@ internal class DrawingColorToBrushConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var drawingColor = (Color) value;
+        var drawingColor = (Color)value;
         return new SolidColorBrush(System.Windows.Media.Color.FromArgb(drawingColor.A, drawingColor.R,
             drawingColor.G, drawingColor.B));
     }

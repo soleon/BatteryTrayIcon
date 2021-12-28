@@ -309,7 +309,7 @@
                            FontSize="11"
                            x:Name="AutoStartDisabledText"
                            x:FieldModifier="private"
-                           Visibility="Collapsed"/>
+                           Visibility="Collapsed" />
             </DockPanel>
             <TextBlock Grid.Row="3"
                        Grid.ColumnSpan="4"

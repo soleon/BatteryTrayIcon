@@ -51,16 +51,16 @@ public class MetroWindow : Window
     [DllImport("user32.dll")]
     private static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
 
-    private readonly struct WindowCompositionAttributeData
+    private readonly struct AccentPolicy
     {
-        internal WindowCompositionAttributeData(int attribute, int sizeOfData, IntPtr data)
+        internal AccentPolicy(int accentState)
         {
         }
     }
 
-    private readonly struct AccentPolicy
+    private readonly struct WindowCompositionAttributeData
     {
-        internal AccentPolicy(int accentState)
+        internal WindowCompositionAttributeData(int attribute, int sizeOfData, IntPtr data)
         {
         }
     }

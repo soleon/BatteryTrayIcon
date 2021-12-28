@@ -40,17 +40,9 @@ public partial class SettingsWindow
         })();
     }
 
-    protected override void OnContentRendered(EventArgs e)
+    private static void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        RegisterEventHandling();
-        base.OnContentRendered(e);
-    }
-
-    protected override void OnClosed(EventArgs e)
-    {
-        base.OnClosed(e);
-        UnRegisterEventHandling();
-        UnRegisterAutoStarEventHandling();
+        Default.Save();
     }
 
     private static void RegisterEventHandling()
@@ -58,66 +50,9 @@ public partial class SettingsWindow
         Default.PropertyChanged += OnSettingPropertyChanged;
     }
 
-    private static void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-        Default.Save();
-    }
-
     private static void UnRegisterEventHandling()
     {
         Default.PropertyChanged -= OnSettingPropertyChanged;
-    }
-
-    private void OnColorButtonClick(object sender, RoutedEventArgs e)
-    {
-        var button = (Button) sender;
-        var mediaColor = ((SolidColorBrush) button.Background).Color;
-        var dialog = new ColorDialog
-        {
-            Color = Color.FromArgb(mediaColor.R, mediaColor.G, mediaColor.B),
-            AllowFullOpen = true,
-            AnyColor = true,
-            FullOpen = true
-        };
-        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-        {
-            return;
-        }
-
-        Default[(string) button.Tag] = dialog.Color;
-    }
-
-    private void OnResetButtonClick(object sender, RoutedEventArgs e)
-    {
-        UnRegisterEventHandling();
-        Default.LowColor = Color.FromArgb(202, 80, 16);
-        Default.CriticalColor = Color.FromArgb(232, 17, 35);
-        Default.ChargingColor = Color.FromArgb(16, 137, 62);
-        Default.NormalColor = Color.Transparent;
-        Default.CriticalNotification = Default.LowNotification =
-            Default.HighNotification = Default.FullNotification = true;
-        Default.HighNotificationValue = 80;
-        Default.LowNotificationValue = 20;
-        Default.CriticalNotificationValue = 10;
-        Default.RefreshSeconds = 10;
-        using (Default.TrayIconFont)
-        {
-            Default.TrayIconFont = new Font(System.Drawing.FontFamily.GenericSansSerif, 11);
-        }
-
-        Default.Save();
-        RegisterEventHandling();
-        EnableAutoStart();
-    }
-
-    private void OnAutoStartChecked(object sender, RoutedEventArgs e)
-    {
-        EnableAutoStart();
-    }
-
-    private void OnAutoStartUnchecked(object sender, RoutedEventArgs e)
-    {
-        _startupTask.Disable();
     }
 
     private async void EnableAutoStart()
@@ -126,6 +61,7 @@ public partial class SettingsWindow
         {
             return;
         }
+
         AutoStart.IsEnabled = false;
         var state = await _startupTask.RequestEnableAsync();
         UnRegisterAutoStarEventHandling();
@@ -161,10 +97,79 @@ public partial class SettingsWindow
         AutoStart.IsEnabled = true;
     }
 
-    private void UnRegisterAutoStarEventHandling()
+    private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
     {
-        AutoStart.Checked -= OnAutoStartChecked;
-        AutoStart.Unchecked -= OnAutoStartUnchecked;
+        Helper.ShowRatingView();
+    }
+
+    private void OnAutoStartChecked(object sender, RoutedEventArgs e)
+    {
+        EnableAutoStart();
+    }
+
+    private void OnAutoStartUnchecked(object sender, RoutedEventArgs e)
+    {
+        _startupTask.Disable();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        UnRegisterEventHandling();
+        UnRegisterAutoStarEventHandling();
+    }
+
+    private void OnColorButtonClick(object sender, RoutedEventArgs e)
+    {
+        var button = (Button)sender;
+        var mediaColor = ((SolidColorBrush)button.Background).Color;
+        var dialog = new ColorDialog
+        {
+            Color = Color.FromArgb(mediaColor.R, mediaColor.G, mediaColor.B),
+            AllowFullOpen = true,
+            AnyColor = true,
+            FullOpen = true
+        };
+        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+        {
+            return;
+        }
+
+        Default[(string)button.Tag] = dialog.Color;
+    }
+
+    protected override void OnContentRendered(EventArgs e)
+    {
+        RegisterEventHandling();
+        base.OnContentRendered(e);
+    }
+
+    private void OnFeedbackButtonClick(object sender, RoutedEventArgs e)
+    {
+        Helper.SendFeedBack();
+    }
+
+    private void OnResetButtonClick(object sender, RoutedEventArgs e)
+    {
+        UnRegisterEventHandling();
+        Default.LowColor = Color.FromArgb(202, 80, 16);
+        Default.CriticalColor = Color.FromArgb(232, 17, 35);
+        Default.ChargingColor = Color.FromArgb(16, 137, 62);
+        Default.NormalColor = Color.Transparent;
+        Default.CriticalNotification = Default.LowNotification =
+            Default.HighNotification = Default.FullNotification = true;
+        Default.HighNotificationValue = 80;
+        Default.LowNotificationValue = 20;
+        Default.CriticalNotificationValue = 10;
+        Default.RefreshSeconds = 10;
+        using (Default.TrayIconFont)
+        {
+            Default.TrayIconFont = new Font(System.Drawing.FontFamily.GenericSansSerif, 11);
+        }
+
+        Default.Save();
+        RegisterEventHandling();
+        EnableAutoStart();
     }
 
     private void RegisterAutoStartEventHandling()
@@ -173,13 +178,9 @@ public partial class SettingsWindow
         AutoStart.Unchecked += OnAutoStartUnchecked;
     }
 
-    private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+    private void UnRegisterAutoStarEventHandling()
     {
-        Helper.ShowRatingView();
-    }
-
-    private void OnFeedbackButtonClick(object sender, RoutedEventArgs e)
-    {
-        Helper.SendFeedBack();
+        AutoStart.Checked -= OnAutoStartChecked;
+        AutoStart.Unchecked -= OnAutoStartUnchecked;
     }
 }

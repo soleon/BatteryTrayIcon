@@ -12,12 +12,12 @@ internal class FontNameSettingFontConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return ((Font) value).FontFamily.Name;
+        return ((Font)value).FontFamily.Name;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         using var existingFont = Settings.Default.TrayIconFont;
-        return new Font(new FontFamily((string) value), existingFont.Size);
+        return new Font(new FontFamily((string)value), existingFont.Size);
     }
 }

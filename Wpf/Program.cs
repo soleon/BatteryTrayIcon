@@ -248,8 +248,8 @@ internal class Program
                             ? Resource.BatteryFullFluentLight
                             : Resource.BatteryFullFluentDark;
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
-                    ? " and connected to power"
-                    : null;
+                        ? " and connected to power"
+                        : null;
                     notifyIcon.BalloonTipTitle = notifyIcon.Text = "Fully charged" + powerLineText;
                     notifyIcon.BalloonTipText = "Your battery is fully charged" + powerLineText;
                     notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
@@ -281,7 +281,8 @@ internal class Program
 
                             var fullChargeCapacityInMilliwattHours = report.FullChargeCapacityInMilliwattHours;
                             var remainingCapacityInMilliwattHours = report.RemainingCapacityInMilliwattHours;
-                            if (fullChargeCapacityInMilliwattHours.HasValue && remainingCapacityInMilliwattHours.HasValue)
+                            if (fullChargeCapacityInMilliwattHours.HasValue &&
+                                remainingCapacityInMilliwattHours.HasValue)
                             {
                                 notifyIcon.BalloonTipText = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
                                     (fullChargeCapacityInMilliwattHours.Value -

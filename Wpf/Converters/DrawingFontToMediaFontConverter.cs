@@ -13,7 +13,7 @@ internal class DrawingFontToMediaFontConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return FontFamilyConverter.ConvertFromString(((FontFamily) value).Name);
+        return FontFamilyConverter.ConvertFromString(((FontFamily)value).Name);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

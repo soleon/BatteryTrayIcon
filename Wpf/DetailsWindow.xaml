@@ -63,7 +63,7 @@
                    Text="Time Until Full"
                    x:Name="TimeLabel"
                    x:FieldModifier="private"
-                   FontWeight="SemiBold"></TextBlock>
+                   FontWeight="SemiBold" />
         <TextBlock Grid.Row="3"
                    Grid.Column="1"
                    x:Name="TimeValue"
