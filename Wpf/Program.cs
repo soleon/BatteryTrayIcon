@@ -9,9 +9,12 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Microsoft.Win32;
 using Percentage.Wpf.Properties;
 using Application = System.Windows.Application;
+using Color = System.Drawing.Color;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
@@ -23,6 +26,7 @@ using static Settings;
 internal class Program
 {
     internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
+    private static readonly UISettings UiSettings = new();
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern bool DestroyIcon(IntPtr handle);
@@ -82,6 +86,12 @@ internal class Program
             using var menu = new ContextMenuStrip
                 { Items = { detailsMenuItem, settingsMenuItem, feedbackMenuItem, exitMenuItem } };
             using var notifyIcon = new NotifyIcon { Visible = true, ContextMenuStrip = menu };
+
+            // These seemingly redundant calls are necessary for the menu.SystemColorsChanged event handling to work
+            // before the menu is manually opened by the user. Without actually showing the menu forcing the menu to
+            // initialise, its SystemColorsChanged event won't trigger.
+            menu.Show();
+            menu.Close();
 
             void ActivateDialog<T>(Action<T> windowCreated = null, Action<T> windowClosed = null)
                 where T : Window, new()
@@ -144,7 +154,7 @@ internal class Program
             // Update battery status when the computer resumes or when the power status changes.
             SystemEvents.PowerModeChanged += (_, e) =>
             {
-                if (e.Mode == PowerModes.Resume || e.Mode == PowerModes.StatusChange)
+                if (e.Mode is PowerModes.Resume or PowerModes.StatusChange)
                 {
                     Update();
                 }
@@ -154,6 +164,14 @@ internal class Program
             // This will redrew the tray icon to ensure optimal icon resolution
             // under the current display settings.
             SystemEvents.DisplaySettingsChanged += (_, _) => Update();
+
+            // Update tray icon colour when system colour changes.
+            // This event can be triggered when Windows changes between dark and light theme.
+            menu.SystemColorsChanged += (_, _) =>
+            {
+                SetNormalBrush();
+                Update();
+            };
 
             // Initial update.
             Update();
@@ -199,8 +217,10 @@ internal class Program
 
             void SetNormalBrush()
             {
+                var foregroundUiColor = UiSettings.GetColorValue(UIColorType.Foreground);
                 normalBrush = Default.NormalColor.A == 0
-                    ? IsUsingLightTheme() ? Brushes.Black : Brushes.White
+                    ? new SolidBrush(Color.FromArgb(foregroundUiColor.A, foregroundUiColor.R, foregroundUiColor.G,
+                        foregroundUiColor.B))
                     : new SolidBrush(Default.NormalColor);
             }
 
@@ -213,7 +233,7 @@ internal class Program
                 var powerStatus = SystemInformation.PowerStatus;
                 var batteryChargeStatus = powerStatus.BatteryChargeStatus;
                 var percent = (int)Math.Round(powerStatus.BatteryLifePercent * 100);
-
+                percent = 86;
                 var notificationType = NotificationType.None;
                 Brush brush;
                 string trayIconText;
@@ -247,6 +267,7 @@ internal class Program
                         : IsUsingLightTheme()
                             ? Resource.BatteryFullFluentLight
                             : Resource.BatteryFullFluentDark;
+
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
                         ? " and connected to power"
                         : null;
@@ -464,9 +485,7 @@ internal class Program
 
             static bool IsUsingLightTheme()
             {
-                return 1.Equals(Registry.CurrentUser.OpenSubKey(
-                    @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\",
-                    false)?.GetValue("SystemUsesLightTheme", null));
+                return UiSettings.GetColorValue(UIColorType.Background) == Colors.White;
             }
         }
     }
