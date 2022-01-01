@@ -233,7 +233,6 @@ internal class Program
                 var powerStatus = SystemInformation.PowerStatus;
                 var batteryChargeStatus = powerStatus.BatteryChargeStatus;
                 var percent = (int)Math.Round(powerStatus.BatteryLifePercent * 100);
-                percent = 86;
                 var notificationType = NotificationType.None;
                 Brush brush;
                 string trayIconText;
