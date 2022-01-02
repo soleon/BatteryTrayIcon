@@ -4,7 +4,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using FontFamily = System.Drawing.FontFamily;
 
-namespace Percentage.Wpf.Converters;
+namespace Percentage.Ui.NetFramework.Converters;
 
 internal class DrawingFontToMediaFontConverter : IValueConverter
 {

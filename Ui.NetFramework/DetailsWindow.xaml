@@ -1,9 +1,9 @@
-﻿<wpf:MetroWindow x:Class="Percentage.Wpf.DetailsWindow"
+﻿<netFramework:MetroWindow x:Class="Percentage.Ui.NetFramework.DetailsWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:wpf="clr-namespace:Percentage.Wpf"
+                 xmlns:netFramework="clr-namespace:Percentage.Ui.NetFramework"
                  mc:Ignorable="d"
                  Title="Battery Details"
                  SizeToContent="WidthAndHeight"
@@ -141,4 +141,4 @@
             </Hyperlink>
         </TextBlock>
     </Grid>
-</wpf:MetroWindow>
+</netFramework:MetroWindow>

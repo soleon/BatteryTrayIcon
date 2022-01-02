@@ -4,7 +4,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Color = System.Drawing.Color;
 
-namespace Percentage.Wpf.Converters;
+namespace Percentage.Ui.NetFramework.Converters;
 
 internal class DrawingColorToBrushConverter : IValueConverter
 {

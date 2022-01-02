@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
-using Percentage.Wpf.Properties;
+using Percentage.Ui.NetFramework.Properties;
 
-namespace Percentage.Wpf.Converters;
+namespace Percentage.Ui.NetFramework.Converters;
 
 internal class FontNameSettingFontConverter : IValueConverter
 {

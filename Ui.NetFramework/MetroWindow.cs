@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 
-namespace Percentage.Wpf;
+namespace Percentage.Ui.NetFramework;
 
 public class MetroWindow : Window
 {

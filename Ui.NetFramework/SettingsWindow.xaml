@@ -1,13 +1,13 @@
-﻿<wpf:MetroWindow x:Class="Percentage.Wpf.SettingsWindow"
+﻿<netFramework:MetroWindow x:Class="Percentage.Ui.NetFramework.SettingsWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:system="clr-namespace:System;assembly=mscorlib"
-                 xmlns:wpf="clr-namespace:Percentage.Wpf"
-                 xmlns:properties="clr-namespace:Percentage.Wpf.Properties"
                  xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing"
-                 xmlns:converters="clr-namespace:Percentage.Wpf.Converters"
+                 xmlns:netFramework="clr-namespace:Percentage.Ui.NetFramework"
+                 xmlns:converters="clr-namespace:Percentage.Ui.NetFramework.Converters"
+                 xmlns:properties="clr-namespace:Percentage.Ui.NetFramework.Properties"
                  mc:Ignorable="d"
                  Title="Settings"
                  SizeToContent="WidthAndHeight"
@@ -354,4 +354,4 @@
             </Grid>
         </StackPanel>
     </StackPanel>
-</wpf:MetroWindow>
+</netFramework:MetroWindow>

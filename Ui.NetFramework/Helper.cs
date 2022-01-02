@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Percentage.Wpf;
+namespace Percentage.Ui.NetFramework;
 
 internal static class Helper
 {

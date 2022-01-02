@@ -12,13 +12,13 @@ using Windows.Devices.Power;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Microsoft.Win32;
-using Percentage.Wpf.Properties;
+using Percentage.Ui.NetFramework.Properties;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
-namespace Percentage.Wpf;
+namespace Percentage.Ui.NetFramework;
 
 using static Environment;
 using static Settings;

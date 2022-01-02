@@ -6,12 +6,12 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.ApplicationModel;
-using Percentage.Wpf.Properties;
+using Percentage.Ui.NetFramework.Properties;
 using Button = System.Windows.Controls.Button;
 using Color = System.Drawing.Color;
 using MessageBox = System.Windows.MessageBox;
 
-namespace Percentage.Wpf;
+namespace Percentage.Ui.NetFramework;
 
 using static Settings;
 

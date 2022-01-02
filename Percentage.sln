@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Packaging", "Packaging\Packaging.wapproj", "{72C80C7F-2968-434A-B04B-BEEFF231D582}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf", "Wpf\Wpf.csproj", "{A94B2B69-0AE4-44A2-BA60-863C686F327F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ui.NetFramework", "Ui.NetFramework\Ui.NetFramework.csproj", "{A94B2B69-0AE4-44A2-BA60-863C686F327F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ui.Net", "Ui.Net\Ui.Net.csproj", "{9634E157-0066-4E79-A99B-97E0445031F5}"
 EndProject

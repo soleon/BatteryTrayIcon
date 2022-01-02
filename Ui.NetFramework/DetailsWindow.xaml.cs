@@ -5,9 +5,11 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.System.Power;
-using Percentage.Wpf.Properties;
+using Percentage.Ui.NetFramework.Properties;
 
-namespace Percentage.Wpf;
+namespace Percentage.Ui.NetFramework;
+
+using static Settings;
 
 public partial class DetailsWindow
 {
@@ -17,12 +19,12 @@ public partial class DetailsWindow
 
         Update();
 
-        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Settings.Default.RefreshSeconds) };
-        Settings.Default.PropertyChanged += (_, args) =>
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
+        Default.PropertyChanged += (_, args) =>
         {
-            if (args.PropertyName == nameof(Settings.Default.RefreshSeconds))
+            if (args.PropertyName == nameof(Default.RefreshSeconds))
             {
-                timer.Interval = TimeSpan.FromSeconds(Settings.Default.RefreshSeconds);
+                timer.Interval = TimeSpan.FromSeconds(Default.RefreshSeconds);
             }
         };
         timer.Tick += (_, _) => Update();

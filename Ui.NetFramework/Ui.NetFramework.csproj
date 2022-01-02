@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A94B2B69-0AE4-44A2-BA60-863C686F327F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Percentage.Wpf</RootNamespace>
-    <AssemblyName>Percentage.Wpf</AssemblyName>
+    <RootNamespace>Percentage.Ui.NetFramework</RootNamespace>
+    <AssemblyName>Percentage.Ui.NetFramework</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -40,7 +40,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Percentage.Wpf.Program</StartupObject>
+    <StartupObject>Percentage.Ui.NetFramework.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
