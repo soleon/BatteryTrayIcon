@@ -6,7 +6,5 @@
         {
             InitializeComponent();
         }
-
-        public string XamlIslandMessage { get; set; }
     }
 }

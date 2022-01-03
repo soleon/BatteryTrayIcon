@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+using Windows.UI.ViewManagement;
+using Microsoft.Toolkit.Forms.UI.XamlHost;
 
 namespace Percentage.Ui.Net
 {
@@ -9,9 +13,21 @@ namespace Percentage.Ui.Net
         {
             using (new Ui.Uwp.App.App())
             {
-                var app = new App();
-                app.InitializeComponent();
-                app.Run();
+                var backgroundColor = new UISettings().GetColorValue(UIColorType.Background);
+                    backgroundColor.B);
+                Application.Run(new Form
+                {
+                    Controls =
+                    {
+                        new WindowsXamlHost
+                        {
+                            Dock = DockStyle.Fill,
+                            Child = new Ui.Uwp.SettingsView()
+                        }
+                    },
+                    BackColor = Color.FromArgb(backgroundColor.A, backgroundColor.R, backgroundColor.G,
+                        backgroundColor.B)
+                });
             }
         }
     }
