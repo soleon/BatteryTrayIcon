@@ -14,7 +14,6 @@ namespace Percentage.Ui.Net
             using (new Ui.Uwp.App.App())
             {
                 var backgroundColor = new UISettings().GetColorValue(UIColorType.Background);
-                    backgroundColor.B);
                 Application.Run(new Form
                 {
                     Controls =
