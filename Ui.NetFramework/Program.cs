@@ -122,7 +122,7 @@ internal class Program
             // This empty icon is required to get the background color of the tray icon in the first "Update" method call.
             using (var bitmap = new Bitmap(1, 1))
             {
-                var handle = bitmap.GetHicon();
+                var handle = ExecuteWithRetry(bitmap.GetHicon);
                 notifyIcon.Icon = Icon.FromHandle(handle);
                 DestroyIcon(handle);
             }
@@ -133,66 +133,70 @@ internal class Program
                 byte[] rgbValues;
                 try
                 {
-                    var notifyIconType = typeof(NotifyIcon);
-                    var iconId = (int)notifyIconType.GetField("id", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .GetValue(notifyIcon);
-                    var iconHandle = ((NativeWindow)notifyIconType
-                            .GetField("window", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(notifyIcon))
-                        .Handle;
-                    var nid = new NotifyIconIdentifier
+                    rgbValues = ExecuteWithRetry(() =>
                     {
-                        hWnd = iconHandle,
-                        uID = (uint)iconId
-                    };
-                    nid.cbSize = (uint)Marshal.SizeOf(nid);
-                    Shell_NotifyIconGetRect(ref nid, out var rect);
+                        // Use reflection to get the private "id" and "window" field from the managed NotifyIcon instance.
+                        var notifyIconType = typeof(NotifyIcon);
+                        var iconId = (int)notifyIconType.GetField("id", BindingFlags.NonPublic | BindingFlags.Instance)
+                            .GetValue(notifyIcon);
+                        var iconHandle = ((NativeWindow)notifyIconType
+                                .GetField("window", BindingFlags.NonPublic | BindingFlags.Instance)
+                                .GetValue(notifyIcon))
+                            .Handle;
 
-                    using var screenPixel = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
-                    using var screenPixelGraphics = Graphics.FromImage(screenPixel);
-                    using (var screenGraphics = Graphics.FromHwnd(IntPtr.Zero))
-                    {
-                        var screenGraphicsHandle = screenGraphics.GetHdc();
-                        try
+                        // Get the screen position of the tray icon.
+                        var notifyIconId = new NotifyIconIdentifier
                         {
-                            var screenPixelGraphicHandle = screenPixelGraphics.GetHdc();
+                            hWnd = iconHandle,
+                            uID = (uint)iconId
+                        };
+                        notifyIconId.cbSize = (uint)Marshal.SizeOf(notifyIconId);
+                        Shell_NotifyIconGetRect(ref notifyIconId, out var rect);
+
+                        // Get the colour of the top left pixel of the tray icon.
+                        // This colour will be the taskbar colour.
+                        using var screenPixel = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+                        using var screenPixelGraphics = Graphics.FromImage(screenPixel);
+                        using (var screenGraphics = Graphics.FromHwnd(IntPtr.Zero))
+                        {
+                            var screenGraphicsHandle = screenGraphics.GetHdc();
                             try
                             {
-                                BitBlt(screenPixelGraphicHandle, 0, 0, 1, 1, screenGraphicsHandle, rect.left, rect.top,
-                                    (int)CopyPixelOperation.SourceCopy);
+                                var screenPixelGraphicHandle = screenPixelGraphics.GetHdc();
+                                try
+                                {
+                                    BitBlt(screenPixelGraphicHandle, 0, 0, 1, 1, screenGraphicsHandle, rect.left,
+                                        rect.top,
+                                        (int)CopyPixelOperation.SourceCopy);
+                                }
+                                finally
+                                {
+                                    screenPixelGraphics.ReleaseHdc();
+                                }
                             }
                             finally
                             {
-                                screenPixelGraphics.ReleaseHdc();
+                                screenGraphics.ReleaseHdc();
                             }
                         }
-                        finally
-                        {
-                            screenGraphics.ReleaseHdc();
-                        }
-                    }
 
-                    var color = screenPixel.GetPixel(0, 0);
-                    rgbValues = new[] { color.R, color.G, color.B };
+                        var color = screenPixel.GetPixel(0, 0);
+                        return new[] { color.R, color.G, color.B };
+                    });
                 }
                 catch
                 {
-                    // If anything goes wrong retrieving the color of the top left pixel of the tray icon,
-                    // fall back to the current app color.
-                    var color = UiSettings.GetColorValue(UIColorType.Background);
-                    rgbValues = new[] { color.R, color.G, color.B };
+                    // If anything goes wrong retrieving the colour of the top left pixel of the tray icon,
+                    // fall back to the WinUI app background colour.
+                    var colour = UiSettings.GetColorValue(UIColorType.Background);
+                    rgbValues = new[] { colour.R, colour.G, colour.B };
                 }
 
                 // If any 2 values in the color RGB combination are greater than 128,
                 // treat it as a light color.
                 return rgbValues.Count(x => x > 128) > 2;
             }
-
-            // These seemingly redundant calls are necessary for the menu.SystemColorsChanged event handling to work
-            // before the menu is manually opened by the user. Without actually showing the menu forcing the menu to
-            // initialise, its SystemColorsChanged event won't trigger.
-            menu.Show();
-            menu.Close();
-
+            
             void ActivateDialog<T>(Action<T> windowCreated = null, Action<T> windowClosed = null)
                 where T : Window, new()
             {
@@ -539,7 +543,7 @@ internal class Program
                     }
 
                     // Set tray icon from the drawn bitmap image.
-                    var handle = bitmap.GetHicon();
+                    var handle = ExecuteWithRetry(bitmap.GetHicon);
                     try
                     {
                         notifyIcon.Icon?.Dispose();
@@ -584,6 +588,26 @@ internal class Program
                     }
 
                     lastNotification = (notificationType, utcNow);
+                }
+            }
+        }
+
+        T ExecuteWithRetry<T>(Func<T> function, bool throwWhenFail = true)
+        {
+            for (var i = 0;;)
+            {
+                try
+                {
+                    return function();
+                }
+                catch when (i++ < 5)
+                {
+                    // Swallow exception if retry is possible.
+                }
+                catch when (!throwWhenFail)
+                {
+                    // Return default value if not throwing exception.
+                    return default;
                 }
             }
         }
