@@ -165,8 +165,13 @@ internal class Program
                                 var screenPixelGraphicHandle = screenPixelGraphics.GetHdc();
                                 try
                                 {
-                                    BitBlt(screenPixelGraphicHandle, 0, 0, 1, 1, screenGraphicsHandle, rect.left,
-                                        rect.top,
+                                    // When reading the screen pixel, read the bottom right pixel of the tray icon.
+                                    // Because it is most unlikely to have any other UI appearing on top of this position
+                                    // when the pixel is being read.
+                                    // Note: the bottom pixel needs to be 1 pixel above the actual bottom pixel other wise
+                                    // the colour read back would always be the default colour value (transparent).
+                                    BitBlt(screenPixelGraphicHandle, 0, 0, 1, 1, screenGraphicsHandle, rect.Right,
+                                        rect.Bottom - 1,
                                         (int)CopyPixelOperation.SourceCopy);
                                 }
                                 finally
@@ -634,9 +639,9 @@ internal class Program
     [StructLayout(LayoutKind.Sequential)]
     private struct Rect
     {
-        public readonly int left;
-        public readonly int top;
-        public readonly int right;
-        public readonly int bottom;
+        public readonly int Left;
+        public readonly int Top;
+        public readonly int Right;
+        public readonly int Bottom;
     }
 }
