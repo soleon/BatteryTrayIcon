@@ -1,46 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>False</UseWPF>
-    <Platforms>AnyCPU;x64</Platforms>
-	  <AssetTargetFallback>uap10.0.19041</AssetTargetFallback>
-	  <UseWindowsForms>True</UseWindowsForms>
-	  <AssemblyName>Percentage.$(MSBuildProjectName)</AssemblyName>
-	  <RootNamespace>$(AssemblyName)</RootNamespace>
-	  <StartupObject>Percentage.Ui.Net.Program</StartupObject>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>True</UseWindowsForms>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Assets\applicationIcon-256.png" />
+	</ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="WPF-UI" Version="2.0.3" />
+	</ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.Forms.UI.XamlHost" Version="6.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ui.Uwp.App\Ui.Uwp.App.csproj" />
-    <ProjectReference Include="..\Ui.Uwp\Ui.Uwp.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="App.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Assets\applicationIcon-256.png" />
+	</ItemGroup>
 
 </Project>
