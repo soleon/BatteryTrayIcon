@@ -1,26 +1,22 @@
-﻿using System;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.UI.ViewManagement;
 using Microsoft.Win32;
-using Percentage.Ui.NetFramework.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
-namespace Percentage.Ui.NetFramework;
+[assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
+
+namespace Percentage.App;
 
 using static Environment;
 using static Settings;
@@ -68,10 +64,7 @@ internal class Program
     {
         using (new Mutex(true, Id, out var isNewInstance))
         {
-            if (!isNewInstance)
-            {
-                return;
-            }
+            if (!isNewInstance) return;
 
             if (Default.FirstRun)
             {
@@ -90,15 +83,12 @@ internal class Program
             static void HandleException(object exception)
             {
                 if (exception is OutOfMemoryException)
-                {
                     MessageBox.Show("Battery Percentage Icon did not have enough memory to perform some work.\r\n" +
                                     "Please consider closing some running applications or background services to free up some memory.",
                         "Your system memory is running low",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
-                }
                 else
-                {
                     MessageBox.Show("Battery Percentage Icon has run into an error. You can help to fix this by:\r\n" +
                                     "1. press Ctrl+C on this message\r\n" +
                                     "2. paste it in an email\r\n" +
@@ -107,7 +97,6 @@ internal class Program
                                         ? exp.ToString()
                                         : $"Error type: {exception.GetType().FullName}\r\n{exception}"),
                         "You Found An Error");
-                }
             }
 
             // Right click menu with "Exit" item to exit this application.
@@ -201,7 +190,7 @@ internal class Program
                 // treat it as a light color.
                 return rgbValues.Count(x => x > 128) > 2;
             }
-            
+
             void ActivateDialog<T>(Action<T> windowCreated = null, Action<T> windowClosed = null)
                 where T : Window, new()
             {
@@ -254,19 +243,13 @@ internal class Program
             // Show balloon notification when the tray icon is clicked.
             notifyIcon.MouseClick += (_, e) =>
             {
-                if (e.Button == MouseButtons.Left)
-                {
-                    OpenDetailsWindow();
-                }
+                if (e.Button == MouseButtons.Left) OpenDetailsWindow();
             };
 
             // Update battery status when the computer resumes or when the power status changes.
             SystemEvents.PowerModeChanged += (_, e) =>
             {
-                if (e.Mode is PowerModes.Resume or PowerModes.StatusChange)
-                {
-                    Update();
-                }
+                if (e.Mode is PowerModes.Resume or PowerModes.StatusChange) Update();
             };
 
             // Update battery status when the display settings change.
@@ -277,7 +260,7 @@ internal class Program
             // Update tray icon colour when user preference changes settled down.
             var subject = new Subject<bool>();
             using var userPreferenceChangeFinalised = subject.Throttle(TimeSpan.FromMilliseconds(500))
-                .ObserveOnDispatcher()
+                .ObserveOn(AsyncOperationManager.SynchronizationContext)
                 .Subscribe(_ =>
                 {
                     SetNormalBrush();
@@ -388,10 +371,7 @@ internal class Program
                     notifyIcon.BalloonTipText = "Your battery is fully charged" + powerLineText;
                     notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
 
-                    if (!Default.FullNotification)
-                    {
-                        return;
-                    }
+                    if (!Default.FullNotification) return;
 
                     notificationType = NotificationType.Full;
                     CheckAndSendNotification();
@@ -417,12 +397,10 @@ internal class Program
                             var remainingCapacityInMilliwattHours = report.RemainingCapacityInMilliwattHours;
                             if (fullChargeCapacityInMilliwattHours.HasValue &&
                                 remainingCapacityInMilliwattHours.HasValue)
-                            {
                                 notifyIcon.BalloonTipText = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
                                     (fullChargeCapacityInMilliwattHours.Value -
                                      remainingCapacityInMilliwattHours.Value) /
                                     (double)chargeRateInMilliwatts.Value)) + " until fully charged";
-                            }
                         }
                         else
                         {
@@ -440,20 +418,14 @@ internal class Program
                             // When battery capacity is critical.
                             brush = criticalBrush;
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                            if (Default.CriticalNotification)
-                            {
-                                notificationType = NotificationType.Critical;
-                            }
+                            if (Default.CriticalNotification) notificationType = NotificationType.Critical;
                         }
                         else if (percent <= Default.LowNotificationValue)
                         {
                             // When battery capacity is low.
                             brush = lowBrush;
                             notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                            if (Default.LowNotification)
-                            {
-                                notificationType = NotificationType.Low;
-                            }
+                            if (Default.LowNotification) notificationType = NotificationType.Low;
                         }
                         else
                         {
@@ -486,13 +458,8 @@ internal class Program
                     void SetHighOrFullNotification()
                     {
                         if (percent == Default.HighNotificationValue && Default.HighNotification)
-                        {
                             notificationType = NotificationType.High;
-                        }
-                        else if (percent == 100 && Default.FullNotification)
-                        {
-                            notificationType = NotificationType.Full;
-                        }
+                        else if (percent == 100 && Default.FullNotification) notificationType = NotificationType.Full;
                     }
                 }
 
@@ -530,12 +497,10 @@ internal class Program
                     using (var graphics = Graphics.FromImage(bitmap))
                     {
                         if (IsLightTaskbar())
-                        {
                             // Using anti aliasing provides the best clarity in Windows 10 light theme.
                             // The default ClearType rendering causes black edges around the text making
                             // it thick and pixelated.
                             graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-                        }
 
                         // Draw the text, with a starting position aim to centre align the text,
                         // but removing about 1 percent from top and left.
@@ -571,10 +536,8 @@ internal class Program
                 void CheckAndSendNotification()
                 {
                     if (notificationType == NotificationType.None)
-                    {
                         // No notification required.
                         return;
-                    }
 
                     var utcNow = DateTime.UtcNow;
                     if (lastNotification.Type != notificationType)
@@ -585,11 +548,9 @@ internal class Program
                     else
                     {
                         if (utcNow - lastNotification.DateTime > TimeSpan.FromMinutes(5))
-                        {
                             // Notification required, but battery status is the same as last notification for more than 5 minutes,
                             // notify user.
                             notifyIcon.ShowBalloonTip(0);
-                        }
                     }
 
                     lastNotification = (notificationType, utcNow);
@@ -600,7 +561,6 @@ internal class Program
         T ExecuteWithRetry<T>(Func<T> function, bool throwWhenFail = true)
         {
             for (var i = 0;;)
-            {
                 try
                 {
                     return function();
@@ -614,7 +574,6 @@ internal class Program
                     // Return default value if not throwing exception.
                     return default;
                 }
-            }
         }
     }
 

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Drawing;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
-using Percentage.Ui.NetFramework.Properties;
 
-namespace Percentage.Ui.NetFramework.Converters;
+namespace Percentage.App.Converters;
 
 internal class FontSizeSettingFontConverter : IValueConverter
 {

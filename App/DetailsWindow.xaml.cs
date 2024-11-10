@@ -1,13 +1,10 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.System.Power;
-using Percentage.Ui.NetFramework.Properties;
 
-namespace Percentage.Ui.NetFramework;
+namespace Percentage.App;
 
 using static Settings;
 
@@ -23,9 +20,7 @@ public partial class DetailsWindow
         Default.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(Default.RefreshSeconds))
-            {
                 timer.Interval = TimeSpan.FromSeconds(Default.RefreshSeconds);
-            }
         };
         timer.Tick += (_, _) => Update();
         timer.Start();
@@ -56,16 +51,12 @@ public partial class DetailsWindow
                     {
                         TimeLabel.Text = "Time Until Full";
                         if (fullChargeCapacityInMilliwattHours.HasValue && remainingCapacityInMilliwattHours.HasValue)
-                        {
                             TimeValue.Text = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
                                 (fullChargeCapacityInMilliwattHours.Value -
                                  remainingCapacityInMilliwattHours.Value) /
                                 (double)chargeRateInMilliwatts.Value));
-                        }
                         else
-                        {
                             TimeValue.Text = "Unknown";
-                        }
                     }
                     else
                     {

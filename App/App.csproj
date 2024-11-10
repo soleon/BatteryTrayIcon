@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.Net.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <RootNamespace>Percentage.App</RootNamespace>
+        <AssemblyName>Percentage.App</AssemblyName>
+        <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+        <ApplicationIcon>Icon.ico</ApplicationIcon>
+        <UseWpf>True</UseWpf>
+        <UseWindowsForms>True</UseWindowsForms>
+        <Title>Battery Percentage Icon</Title>
+        <Description>Display your battery percentage and status in the Windows system tray.</Description>
+        <Company>Soleon Innovations</Company>
+        <Product>Battery Percentage Icon</Product>
+        <ImplicitUsings>true</ImplicitUsings>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Reactive" Version="*"/>
+        <Resource Include="Icon.ico"/>
+        <Resource Include="Resources\Help.png"/>
+        <Resource Include="Resources\BatteryFullFluentDark.ico"/>
+        <Resource Include="Resources\BatteryFullFluentLight.ico"/>
+        <Resource Include="Resources\BatteryFullMetroDark.ico"/>
+        <Resource Include="Resources\BatteryFullMetroLight.ico"/>
+    </ItemGroup>
+</Project>

@@ -1,17 +1,12 @@
-﻿using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.ApplicationModel;
-using Percentage.Ui.NetFramework.Properties;
 using Button = System.Windows.Controls.Button;
 using Color = System.Drawing.Color;
 using MessageBox = System.Windows.MessageBox;
 
-namespace Percentage.Ui.NetFramework;
+namespace Percentage.App;
 
 using static Settings;
 
@@ -57,10 +52,7 @@ public partial class SettingsWindow
 
     private async void EnableAutoStart()
     {
-        if (_startupTask == null)
-        {
-            return;
-        }
+        if (_startupTask == null) return;
 
         AutoStart.IsEnabled = false;
         var state = await _startupTask.RequestEnableAsync();
@@ -130,10 +122,7 @@ public partial class SettingsWindow
             AnyColor = true,
             FullOpen = true
         };
-        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-        {
-            return;
-        }
+        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
 
         Default[(string)button.Tag] = dialog.Color;
     }

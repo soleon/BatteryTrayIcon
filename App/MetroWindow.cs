@@ -1,11 +1,10 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Button = System.Windows.Controls.Button;
 
-namespace Percentage.Ui.NetFramework;
+namespace Percentage.App;
 
 public class MetroWindow : Window
 {
@@ -19,10 +18,7 @@ public class MetroWindow : Window
     {
         Loaded += (_, _) =>
         {
-            if (Template.FindName("CloseButton", this) is Button button)
-            {
-                button.Click += (_, _) => Close();
-            }
+            if (Template.FindName("CloseButton", this) is Button button) button.Click += (_, _) => Close();
 
             var accent = new AccentPolicy(3);
             var accentStructSize = Marshal.SizeOf(accent);
@@ -34,17 +30,11 @@ public class MetroWindow : Window
         };
         MouseDown += (_, e) =>
         {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                DragMove();
-            }
+            if (e.ChangedButton == MouseButton.Left) DragMove();
         };
         KeyDown += (_, e) =>
         {
-            if (e.Key == Key.Escape)
-            {
-                Close();
-            }
+            if (e.Key == Key.Escape) Close();
         };
     }
 

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 using FontFamily = System.Drawing.FontFamily;
 
-namespace Percentage.Ui.NetFramework.Converters;
+namespace Percentage.App.Converters;
 
 internal class DrawingFontToMediaFontConverter : IValueConverter
 {

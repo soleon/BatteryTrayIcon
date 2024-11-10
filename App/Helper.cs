@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace Percentage.Ui.NetFramework;
+namespace Percentage.App;
 
 internal static class Helper
 {
@@ -21,11 +20,17 @@ internal static class Helper
 
     internal static void SendFeedBack()
     {
-        Process.Start("mailto:soleon@live.com?subject=Battery Percentage Icon Feedback");
+        Process.Start(new ProcessStartInfo("mailto:soleon@live.com?subject=Battery Percentage Icon Feedback")
+        {
+            UseShellExecute = true
+        });
     }
 
     internal static void ShowRatingView()
     {
-        Process.Start("ms-windows-store://review/?ProductId=9PCKT2B7DZMW");
+        Process.Start(new ProcessStartInfo("ms-windows-store://review/?ProductId=9PCKT2B7DZMW")
+        {
+            UseShellExecute = true
+        });
     }
 }
