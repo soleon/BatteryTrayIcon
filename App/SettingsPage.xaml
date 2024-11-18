@@ -1,0 +1,281 @@
+<Page x:Class="Percentage.App.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:properties="clr-namespace:Percentage.App.Properties"
+      xmlns:app="clr-namespace:Percentage.App"
+      xmlns:system="clr-namespace:System;assembly=System.Runtime"
+      Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <StackPanel.Resources>
+                <Style TargetType="ui:CardControl"
+                       BasedOn="{StaticResource {x:Type ui:CardControl}}">
+                    <Setter Property="Margin"
+                            Value="0,0,0,12" />
+                </Style>
+                <Style TargetType="ui:CardExpander"
+                       BasedOn="{StaticResource {x:Type ui:CardExpander}}">
+                    <Setter Property="Margin"
+                            Value="0,0,0,12" />
+                </Style>
+            </StackPanel.Resources>
+
+            <!-- Auto start disabled warning -->
+            <ui:InfoBar Title="Auto Start Disabled"
+                        Message="Auto start requires this app to run as UWP."
+                        Severity="Warning"
+                        IsOpen="True"
+                        Visibility="Collapsed"
+                        Margin="0,0,0,20"
+                        x:Name="AutoStartDisabledInfoBar"
+                        x:FieldModifier="private" />
+
+            <!-- Auto start -->
+            <ui:CardControl Icon="{ui:SymbolIcon CalendarPlay20}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Auto start"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Start the application when Windows starts up"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch
+                    x:Name="AutoStartToggleSwitch"
+                    x:FieldModifier="private"
+                    IsEnabled="False"
+                    Checked="OnAutoStartChecked"
+                    Unchecked="OnAutoStartUnchecked" />
+            </ui:CardControl>
+
+            <!-- Hide at startup -->
+            <ui:CardControl Icon="{ui:SymbolIcon SlideHide20}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Hide at startup"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Hide the main window when the application starts up"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch
+                    IsChecked="{Binding HideAtStartup, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+            </ui:CardControl>
+
+            <!-- Refresh interval -->
+            <ui:CardControl Icon="{ui:SymbolIcon ArrowSync20}">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Refresh"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Sets how long the battery status is refreshed"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ComboBox ItemStringFormat="{}{0} seconds"
+                          SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                    <system:Int32>1</system:Int32>
+                    <system:Int32>10</system:Int32>
+                    <system:Int32>30</system:Int32>
+                    <system:Int32>60</system:Int32>
+                </ComboBox>
+            </ui:CardControl>
+
+            <!-- Tray icon font -->
+            <ui:CardExpander Icon="{ui:SymbolIcon TextFont20}"
+                             ContentPadding="28,16,14,16">
+                <ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Tray icon font"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Set tray icon font family, size and styles"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardExpander.Header>
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,5">
+                        <TextBlock Text="Font"
+                                   VerticalAlignment="Center" />
+                        <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
+                                      VerticalAlignment="Stretch"
+                                      IsChecked="{Binding TrayIconFontUnderline, Source={x:Static properties:Settings.Default}}"
+                                      DockPanel.Dock="Right"
+                                      Margin="5,0,0,0" />
+                        <ToggleButton Content="{ui:SymbolIcon TextBold20}"
+                                      VerticalAlignment="Stretch"
+                                      IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
+                                      DockPanel.Dock="Right" />
+                        <ComboBox Margin="5,0"
+                                  SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
+                                  ItemsSource="{x:Static Fonts.SystemFontFamilies}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="{Binding}"
+                                               Text="{Binding Source}"
+                                               VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
+                </StackPanel>
+            </ui:CardExpander>
+
+            <!-- Tray icon colour -->
+            <ui:CardExpander
+                Icon="{ui:SymbolIcon Color20}"
+                ContentPadding="28,16,14,16">
+                <ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Tray icon colour"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Set tray icon font colour for different battery status"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardExpander.Header>
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="CheckBox"
+                               BasedOn="{StaticResource {x:Type CheckBox}}">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="5" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               Text="Critical"
+                               VerticalAlignment="Center" />
+                    <app:AccentColourPicker Grid.Row="0"
+                                            Grid.Column="1"
+                                            Margin="5,0"
+                                            SelectedItem="{Binding BatteryCriticalColour, Source={x:Static properties:Settings.Default}}" />
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="2"
+                               Text="Low"
+                               VerticalAlignment="Center" />
+                    <app:AccentColourPicker Grid.Row="0"
+                                            Grid.Column="3"
+                                            Margin="5,0"
+                                            SelectedItem="{Binding BatteryLowColour, Source={x:Static properties:Settings.Default}}" />
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="0"
+                               Text="Charging"
+                               VerticalAlignment="Center" />
+                    <app:AccentColourPicker Grid.Row="2"
+                                            Grid.Column="1"
+                                            Margin="5,0"
+                                            SelectedItem="{Binding BatteryChargingColour, Source={x:Static properties:Settings.Default}}" />
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="2"
+                               Text="Normal"
+                               VerticalAlignment="Center" />
+                    <app:AccentColourPicker Grid.Row="2"
+                                            Grid.Column="3"
+                                            Margin="5,0"
+                                            SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
+                </Grid>
+            </ui:CardExpander>
+
+            <!-- Battery levels and notifications -->
+            <ui:CardExpander
+                Icon="{ui:SymbolIcon Battery520}"
+                ContentPadding="28,16,14,16">
+                <ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Battery levels &amp; notifications"
+                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock
+                            Appearance="Secondary"
+                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Toggle notifications for different battery levels"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardExpander.Header>
+                <StackPanel Grid.IsSharedSizeScope="True">
+                    <app:BatteryLevelNotificationSetter x:Name="CriticalBatteryLevelNotificationSetter"
+                                                        x:FieldModifier="private"
+                                                        StatusName="Critical"
+                                                        Value="{Binding BatteryCriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                        IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                    <app:BatteryLevelNotificationSetter StatusName="Low"
+                                                        Margin="0,12"
+                                                        Value="{Binding BatteryLowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                        IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                    <app:BatteryLevelNotificationSetter StatusName="High"
+                                                        Value="{Binding BatteryHighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                        IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                    <Grid Height="{Binding ActualHeight, ElementName=CriticalBatteryLevelNotificationSetter}"
+                          Margin="0,12,0,0">
+                        <TextBlock Text="Full" />
+                        <ui:ToggleSwitch HorizontalAlignment="Right"
+                                         IsChecked="{Binding BatteryFullNotification, Source={x:Static properties:Settings.Default}}" />
+                    </Grid>
+                </StackPanel>
+            </ui:CardExpander>
+
+            <!-- Miscellaneous -->
+            <ui:CardExpander Icon="{ui:SymbolIcon BoxMultiple20}">
+                <ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Text="Miscellaneous"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </ui:CardExpander.Header>
+                <StackPanel>
+                    <ui:InfoBar Severity="Informational"
+                                IsOpen="True"
+                                Margin="0,0,0,12"
+                                Title="Why can't I make the tray icon bigger?"
+                                Message="Windows limits tray icons to be a 16 × 16 pixel square. Anything goes out of this box will be cut off." />
+                    <ui:Button Appearance="Caution"
+                               Content="Reset All Settings"
+                               Icon="{ui:SymbolIcon ErrorCircle20}"
+                               Click="OnResetButtonClick" />
+                </StackPanel>
+            </ui:CardExpander>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,32 @@
+<Grid x:Class="Percentage.App.BatteryLevelNotificationSetter"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:app="clr-namespace:Percentage.App">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="NameColumn" />
+        <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <TextBlock Text="{Binding StatusName, RelativeSource={RelativeSource AncestorType=app:BatteryLevelNotificationSetter}}"
+               VerticalAlignment="Center" />
+    <DockPanel Grid.Column="1">
+        <ui:ToggleSwitch DockPanel.Dock="Right"
+                         IsChecked="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=app:BatteryLevelNotificationSetter}}"
+                         Margin="12,0,0,0"/>
+        <TextBlock DockPanel.Dock="Right"
+                   Width="34"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   Text="{Binding Value, ElementName=Slider, StringFormat={}{0}%}" />
+        <Slider x:Name="Slider"
+                x:FieldModifier="private"
+                Margin="12,0"
+                TickPlacement="Both"
+                Minimum="0"
+                Maximum="100"
+                IsSnapToTickEnabled="True"
+                Value="{Binding Value, RelativeSource={RelativeSource AncestorType=app:BatteryLevelNotificationSetter}}"
+                TickFrequency="5" />
+    </DockPanel>
+</Grid>

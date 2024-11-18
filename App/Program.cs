@@ -1,17 +1,28 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.UI.ViewManagement;
 using Microsoft.Win32;
+using AppDomain = System.AppDomain;
 using Application = System.Windows.Application;
+using Environment = System.Environment;
+using EventArgs = System.EventArgs;
+using IntPtr = System.IntPtr;
 using MessageBox = System.Windows.MessageBox;
+using OutOfMemoryException = System.OutOfMemoryException;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
@@ -60,7 +71,7 @@ internal class Program
         [Out] out Rect iconLocation);
 
     [STAThread]
-    public static void Main()
+    public static void Debug()
     {
         using (new Mutex(true, Id, out var isNewInstance))
         {

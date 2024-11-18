@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Drawing;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace Percentage.App.Converters;

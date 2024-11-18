@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
 using Windows.System.Power;
