@@ -1,21 +1,24 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using Wpf.Ui;
 using static Percentage.App.Properties.Settings;
 
 namespace Percentage.App;
 
 public partial class App
 {
+    internal static readonly ISnackbarService SnackbarService = new SnackbarService();
+    
     public App()
     {
-        InitializeComponent();
-        
         DispatcherUnhandledException += (_, e) => HandleException(e.Exception);
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException(e.ExceptionObject);
 
         TaskScheduler.UnobservedTaskException += (_, e) => HandleException(e.Exception);
+        
+        InitializeComponent();
     }
 
     protected override void OnExit(ExitEventArgs e)

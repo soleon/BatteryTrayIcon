@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using Windows.Devices.Power;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
+using Percentage.App.Pages;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Markup;
@@ -39,6 +40,7 @@ public sealed partial class MainWindow
     {
         SystemThemeWatcher.Watch(this);
         InitializeComponent();
+        App.SnackbarService.SetSnackbarPresenter(SnackbarPresenter);
     }
 
     private static SolidColorBrush GetBrushFromColourHexString(string hexString, Color fallbackColour)
@@ -162,7 +164,7 @@ public sealed partial class MainWindow
         UpdateBatteryStatus();
     }
 
-    private void SetNotifyIconText(string text, Brush foreground)
+    private void SetNotifyIconText(string text, Brush foreground, string fontFamily = null)
     {
         var textBlock = new TextBlock
         {
@@ -172,23 +174,29 @@ public sealed partial class MainWindow
             Margin = new Thickness(-1.2)
         };
 
-        if (Default.TrayIconFontFamily != null) textBlock.FontFamily = Default.TrayIconFontFamily;
+        if (fontFamily != null) textBlock.FontFamily = new FontFamily(fontFamily);
+        else if (Default.TrayIconFontFamily != null) textBlock.FontFamily = Default.TrayIconFontFamily;
 
         if (Default.TrayIconFontBold) textBlock.FontWeight = FontWeights.Bold;
 
         if (Default.TrayIconFontUnderline) textBlock.TextDecorations = TextDecorations.Underline;
 
-        textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        textBlock.Arrange(new Rect(textBlock.DesiredSize));
-        var dpiScale = VisualTreeHelper.GetDpi(textBlock);
+        NotifyIcon.Icon = GetImageSource(textBlock);
+    }
+
+    private static RenderTargetBitmap GetImageSource(FrameworkElement element)
+    {
+        element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        element.Arrange(new Rect(element.DesiredSize));
+        var dpiScale = VisualTreeHelper.GetDpi(element);
         var renderTargetBitmap = new RenderTargetBitmap(
-            (int)(textBlock.ActualWidth * dpiScale.DpiScaleX),
-            (int)(textBlock.ActualHeight * dpiScale.DpiScaleY),
+            (int)(element.ActualWidth * dpiScale.DpiScaleX),
+            (int)(element.ActualHeight * dpiScale.DpiScaleY),
             dpiScale.PixelsPerInchX * 1.05,
             dpiScale.PixelsPerInchY * 1.05,
             PixelFormats.Default);
-        renderTargetBitmap.Render(textBlock);
-        NotifyIcon.Icon = renderTargetBitmap;
+        renderTargetBitmap.Render(element);
+        return renderTargetBitmap;
     }
 
     private void UpdateBatteryStatus()
@@ -222,7 +230,7 @@ public sealed partial class MainWindow
             {
                 if (percent == 100)
                 {
-                    NotifyIcon.Icon = new BitmapImage(new Uri("pack://application:,,,/Icon.png"));
+                    SetNotifyIconText("\uf5fc", GetNormalBrush(), "Segoe Fluent Icons");
 
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
                         ? " and connected to power"

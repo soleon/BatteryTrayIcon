@@ -1,0 +1,42 @@
+<Page x:Class="Percentage.App.Pages.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:Percentage.App.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}"
+      d:DesignWidth="400">
+    <ScrollViewer>
+        <StackPanel Margin="10">
+            <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
+                             IsExpanded="True">
+                <ui:CardExpander.Header>
+                    <DockPanel>
+                        <controls:CopyButton DockPanel.Dock="Right"
+                                             Margin="0,0,12,0"
+                                             TargetObject="{Binding ElementName=ApplicationInformation}" />
+                        <TextBlock Text="App info"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                </ui:CardExpander.Header>
+                <controls:ApplicationInformation Margin="40,0,0,0"
+                                                 x:Name="ApplicationInformation"
+                                                 x:FieldModifier="private" />
+            </ui:CardExpander>
+            <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
+                             IsExpanded="True">
+                <ui:CardExpander.Header>
+                    <DockPanel>
+                        <controls:CopyButton DockPanel.Dock="Right"
+                                             Margin="0,0,12,0" />
+                        <TextBlock Text="App info"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                </ui:CardExpander.Header>
+
+            </ui:CardExpander>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

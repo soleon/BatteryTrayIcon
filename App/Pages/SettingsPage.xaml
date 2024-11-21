@@ -1,26 +1,12 @@
-<Page x:Class="Percentage.App.SettingsPage"
+<Page x:Class="Percentage.App.Pages.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:properties="clr-namespace:Percentage.App.Properties"
       xmlns:app="clr-namespace:Percentage.App"
-      xmlns:system="clr-namespace:System;assembly=System.Runtime"
-      Foreground="{ui:ThemeResource TextFillColorPrimaryBrush}">
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Auto">
+      xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <ScrollViewer>
         <StackPanel>
-            <StackPanel.Resources>
-                <Style TargetType="ui:CardControl"
-                       BasedOn="{StaticResource {x:Type ui:CardControl}}">
-                    <Setter Property="Margin"
-                            Value="0,0,0,12" />
-                </Style>
-                <Style TargetType="ui:CardExpander"
-                       BasedOn="{StaticResource {x:Type ui:CardExpander}}">
-                    <Setter Property="Margin"
-                            Value="0,0,0,12" />
-                </Style>
-            </StackPanel.Resources>
 
             <!-- Auto start disabled warning -->
             <ui:InfoBar Title="Auto Start Disabled"
@@ -38,13 +24,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Auto start"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Auto start" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Start the application when Windows starts up"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Start the application when Windows starts up" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch
@@ -61,13 +43,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Hide at startup"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Hide at startup" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Hide the main window when the application starts up"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Hide the main window when the application starts up" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ui:ToggleSwitch
@@ -80,13 +58,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Refresh"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Refresh" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Sets how long the battery status is refreshed"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Sets how long the battery status is refreshed" />
                     </StackPanel>
                 </ui:CardControl.Header>
                 <ComboBox ItemStringFormat="{}{0} seconds"
@@ -105,13 +79,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Tray icon font"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Tray icon font" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Set tray icon font family, size and styles"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Set tray icon font family, size and styles" />
                     </StackPanel>
                 </ui:CardExpander.Header>
                 <StackPanel>
@@ -150,13 +120,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Tray icon colour"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Tray icon colour" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Set tray icon font colour for different battery status"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Set tray icon font colour for different battery status" />
                     </StackPanel>
                 </ui:CardExpander.Header>
                 <Grid>
@@ -223,13 +189,9 @@
                     <StackPanel>
                         <ui:TextBlock
                             FontTypography="BodyStrong"
-                            Text="Battery levels &amp; notifications"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Battery levels &amp; notifications" />
                         <ui:TextBlock
-                            Appearance="Secondary"
-                            Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Toggle notifications for different battery levels"
-                            TextWrapping="WrapWithOverflow" />
+                            Text="Toggle notifications for different battery levels"/>
                     </StackPanel>
                 </ui:CardExpander.Header>
                 <StackPanel Grid.IsSharedSizeScope="True">
@@ -255,13 +217,13 @@
             </ui:CardExpander>
 
             <!-- Miscellaneous -->
-            <ui:CardExpander Icon="{ui:SymbolIcon BoxMultiple20}">
+            <ui:CardExpander Icon="{ui:SymbolIcon BoxMultiple20}"
+                             Margin="0">
                 <ui:CardExpander.Header>
                     <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Miscellaneous"
-                            TextWrapping="WrapWithOverflow" />
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Text="Miscellaneous" />
+                        <ui:TextBlock Text="Reset settings and other information"/>
                     </StackPanel>
                 </ui:CardExpander.Header>
                 <StackPanel>

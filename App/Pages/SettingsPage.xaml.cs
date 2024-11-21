@@ -7,7 +7,7 @@ using MessageBox = Wpf.Ui.Controls.MessageBox;
 using static Percentage.App.Properties.Settings;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 
-namespace Percentage.App;
+namespace Percentage.App.Pages;
 
 public partial class SettingsPage
 {

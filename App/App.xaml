@@ -9,6 +9,31 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary />
                 <ui:ControlsDictionary />
+                <ResourceDictionary>
+                    <Style TargetType="ui:CardControl"
+                           BasedOn="{StaticResource {x:Type ui:CardControl}}">
+                        <Setter Property="Margin"
+                                Value="0,0,0,5" />
+                    </Style>
+                    <Style TargetType="ui:CardExpander"
+                           BasedOn="{StaticResource {x:Type ui:CardExpander}}">
+                        <Setter Property="Margin"
+                                Value="0,0,0,5" />
+                    </Style>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                    </Style>
+                    <Style TargetType="ui:TextBlock">
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                        <Setter Property="Appearance"
+                                Value="Secondary" />
+                        <Setter Property="TextWrapping"
+                                Value="WrapWithOverflow" />
+                    </Style>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,0 +1,16 @@
+<Page x:Class="Percentage.App.Pages.DetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="clr-namespace:Percentage.App.Controls"
+      DataContext="{Binding RelativeSource={RelativeSource Self}, Mode=OneTime}"
+      Title="Details">
+    <ScrollViewer>
+        <StackPanel>
+            <controls:BatteryInformation x:Name="BatteryInformation"
+                                         x:FieldModifier="private" />
+            <controls:CopyButton HorizontalAlignment="Right"
+                                 Content="Copy"
+                                 TargetObject="{Binding ElementName=BatteryInformation}" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>
