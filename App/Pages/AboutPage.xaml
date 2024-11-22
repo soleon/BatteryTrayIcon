@@ -9,34 +9,56 @@
       DataContext="{Binding RelativeSource={RelativeSource Self}}"
       d:DesignWidth="400">
     <ScrollViewer>
-        <StackPanel Margin="10">
+        <StackPanel>
+            <ui:InfoBar Severity="Informational"
+                        IsOpen="True"
+                        Margin="0,0,0,12"
+                        Title="Why can't I make the tray icon bigger?"
+                        Message="Windows limits tray icons to be a 16 � 16 pixel square. Anything goes out of this box will be cut off." />
             <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
                              IsExpanded="True">
                 <ui:CardExpander.Header>
                     <DockPanel>
-                        <controls:CopyButton DockPanel.Dock="Right"
-                                             Margin="0,0,12,0"
-                                             TargetObject="{Binding ElementName=ApplicationInformation}" />
-                        <TextBlock Text="App info"
-                                   VerticalAlignment="Center" />
+                        <controls:CopyButton TargetObject="{Binding ElementName=ApplicationInformation}"
+                                             DockPanel.Dock="Right"
+                                             Margin="0,0,12,0" />
+                        <TextBlock Text="App info" />
                     </DockPanel>
                 </ui:CardExpander.Header>
                 <controls:ApplicationInformation Margin="40,0,0,0"
                                                  x:Name="ApplicationInformation"
                                                  x:FieldModifier="private" />
             </ui:CardExpander>
-            <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
+            <ui:CardExpander Icon="{ui:SymbolIcon Desktop20}"
                              IsExpanded="True">
                 <ui:CardExpander.Header>
                     <DockPanel>
-                        <controls:CopyButton DockPanel.Dock="Right"
+                        <controls:CopyButton TargetObject="{Binding ElementName=SystemInformation}"
+                                             DockPanel.Dock="Right"
                                              Margin="0,0,12,0" />
-                        <TextBlock Text="App info"
-                                   VerticalAlignment="Center" />
+                        <TextBlock Text="System info" />
                     </DockPanel>
                 </ui:CardExpander.Header>
-
+                <controls:SystemInformation Margin="40,0,0,0"
+                                            x:Name="SystemInformation"
+                                            x:FieldModifier="private" />
             </ui:CardExpander>
+            <ui:CardControl Icon="{ui:SymbolIcon Mail20}"
+                            Header="Feedback">
+                <ui:HyperlinkButton Content="soleon@live.com"
+                                    Click="OnFeedbackButtonClick" />
+            </ui:CardControl>
+            <ui:CardControl Icon="{ui:SymbolIcon StarHalf20}"
+                            Header="Rate the app">
+                <ui:HyperlinkButton Click="OnRatingButtonClick">
+                    <ui:RatingControl IsHitTestVisible="False" />
+                </ui:HyperlinkButton>
+            </ui:CardControl>
+            <ui:CardControl Icon="{ui:SymbolIcon CodeCs16}"
+                            Header="Source code">
+                <ui:HyperlinkButton Content="GitHub"
+                                    Click="OnSourceCodeButtonClick" />
+            </ui:CardControl>
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.Devices.Power;
 using Windows.System.Power;
@@ -90,7 +89,7 @@ public partial class BatteryInformation : KeyValueItems
     private void Update()
     {
         var report = Battery.AggregateBattery.GetReport();
-        var powerStatus = SystemInformation.PowerStatus;
+        var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
         _batteryLifePercent.Value = report.Status == BatteryStatus.NotPresent
             ? "Unknown"
             : powerStatus.BatteryLifePercent.ToString("P");

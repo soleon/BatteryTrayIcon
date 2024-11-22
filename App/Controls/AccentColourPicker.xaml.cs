@@ -1,4 +1,4 @@
-namespace Percentage.App;
+namespace Percentage.App.Controls;
 
 public partial class AccentColourPicker
 {

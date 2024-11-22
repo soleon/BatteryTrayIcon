@@ -58,6 +58,21 @@ public sealed partial class MainWindow
         return new SolidColorBrush(colour == null ? fallbackColour : (Color)colour);
     }
 
+    private static RenderTargetBitmap GetImageSource(FrameworkElement element)
+    {
+        element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        element.Arrange(new Rect(element.DesiredSize));
+        var dpiScale = VisualTreeHelper.GetDpi(element);
+        var renderTargetBitmap = new RenderTargetBitmap(
+            (int)(element.ActualWidth * dpiScale.DpiScaleX),
+            (int)(element.ActualHeight * dpiScale.DpiScaleY),
+            dpiScale.PixelsPerInchX * 1.05,
+            dpiScale.PixelsPerInchY * 1.05,
+            PixelFormats.Default);
+        renderTargetBitmap.Render(element);
+        return renderTargetBitmap;
+    }
+
     private SolidColorBrush GetNormalBrush()
     {
         return GetBrushFromColourHexString(Default.BatteryNormalColour,
@@ -184,21 +199,6 @@ public sealed partial class MainWindow
         NotifyIcon.Icon = GetImageSource(textBlock);
     }
 
-    private static RenderTargetBitmap GetImageSource(FrameworkElement element)
-    {
-        element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        element.Arrange(new Rect(element.DesiredSize));
-        var dpiScale = VisualTreeHelper.GetDpi(element);
-        var renderTargetBitmap = new RenderTargetBitmap(
-            (int)(element.ActualWidth * dpiScale.DpiScaleX),
-            (int)(element.ActualHeight * dpiScale.DpiScaleY),
-            dpiScale.PixelsPerInchX * 1.05,
-            dpiScale.PixelsPerInchY * 1.05,
-            PixelFormats.Default);
-        renderTargetBitmap.Render(element);
-        return renderTargetBitmap;
-    }
-
     private void UpdateBatteryStatus()
     {
         var powerStatus = SystemInformation.PowerStatus;
@@ -256,7 +256,7 @@ public sealed partial class MainWindow
                 {
                     // When the battery is charging.
                     brush = GetBrushFromColourHexString(Default.BatteryChargingColour,
-                        (Color)ColorConverter.ConvertFromString(ApplicationDefault.BatteryChargingColour)!);
+                        (Color)ColorConverter.ConvertFromString(App.DefaultBatteryChargingColour)!);
                     // notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
                     var report = Battery.AggregateBattery.GetReport();
                     var chargeRateInMilliWatts = report.ChargeRateInMilliwatts;
@@ -284,21 +284,21 @@ public sealed partial class MainWindow
                 else
                 {
                     // When battery is not charging.
-                    if (percent <= Settings.Default.CriticalNotificationValue)
+                    if (percent <= Default.BatteryCriticalNotificationValue)
                     {
                         // When battery capacity is critical.
                         brush = GetBrushFromColourHexString(Default.BatteryCriticalColour,
-                            (Color)ColorConverter.ConvertFromString(ApplicationDefault.BatteryCriticalColour)!);
+                            (Color)ColorConverter.ConvertFromString(App.DefaultBatteryCriticalColour)!);
                         // notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                        if (Settings.Default.CriticalNotification) notificationType = NotificationType.Critical;
+                        if (Default.BatteryCriticalNotification) notificationType = NotificationType.Critical;
                     }
-                    else if (percent <= Settings.Default.LowNotificationValue)
+                    else if (percent <= Default.BatteryLowNotificationValue)
                     {
                         // When battery capacity is low.
                         brush = GetBrushFromColourHexString(Default.BatteryLowColour,
-                            (Color)ColorConverter.ConvertFromString(ApplicationDefault.BatteryLowColour)!);
+                            (Color)ColorConverter.ConvertFromString(App.DefaultBatteryLowColour)!);
                         // notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-                        if (Settings.Default.LowNotification) notificationType = NotificationType.Low;
+                        if (Default.BatteryLowNotification) notificationType = NotificationType.Low;
                     }
                     else
                     {
@@ -331,9 +331,9 @@ public sealed partial class MainWindow
 
                 void SetHighOrFullNotification()
                 {
-                    if (percent == Settings.Default.HighNotificationValue && Settings.Default.HighNotification)
+                    if (percent == Default.BatteryHighNotificationValue && Default.BatteryHighNotification)
                         notificationType = NotificationType.High;
-                    else if (percent == 100 && Settings.Default.FullNotification)
+                    else if (percent == 100 && Default.BatteryFullNotification)
                         notificationType = NotificationType.Full;
                 }
             }

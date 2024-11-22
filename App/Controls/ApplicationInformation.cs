@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel;
@@ -7,7 +6,7 @@ using Percentage.App.Extensions;
 
 namespace Percentage.App.Controls;
 
-public class ApplicationInformation : KeyValueItems
+public sealed class ApplicationInformation : KeyValueItems
 {
     public ApplicationInformation()
     {
@@ -21,17 +20,11 @@ public class ApplicationInformation : KeyValueItems
             version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
         }
 
-        var informationItems = new Dictionary<string, object>
+        ItemsSource = new Dictionary<string, object>
         {
             { "App version", version },
             { "Runtime version", RuntimeInformation.FrameworkDescription },
             { "Runtime architecture", RuntimeInformation.RuntimeIdentifier }
         };
-
-        var process = Process.GetCurrentProcess();
-        informationItems.Add("App start time", process.StartTime);
-        informationItems.Add("App runtime", Helper.GetReadableTimeSpan(process.TotalProcessorTime));
-
-        ItemsSource = informationItems;
     }
 }

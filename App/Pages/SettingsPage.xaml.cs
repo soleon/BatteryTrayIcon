@@ -21,7 +21,7 @@ public partial class SettingsPage
         {
             try
             {
-                AutoStartToggleSwitch.IsChecked = (_startupTask = await StartupTask.GetAsync(Program.Id)).State ==
+                AutoStartToggleSwitch.IsChecked = (_startupTask = await StartupTask.GetAsync(App.Id)).State ==
                                                   StartupTaskState.Enabled;
             }
             catch
@@ -93,18 +93,6 @@ public partial class SettingsPage
         _startupTask.Disable();
     }
 
-    private void RegisterAutoStartEventHandling()
-    {
-        AutoStartToggleSwitch.Checked += OnAutoStartChecked;
-        AutoStartToggleSwitch.Unchecked += OnAutoStartUnchecked;
-    }
-
-    private void UnRegisterAutoStarEventHandling()
-    {
-        AutoStartToggleSwitch.Checked -= OnAutoStartChecked;
-        AutoStartToggleSwitch.Unchecked -= OnAutoStartUnchecked;
-    }
-
     private void OnResetButtonClick(object sender, RoutedEventArgs e)
     {
         var result = new MessageBox
@@ -117,30 +105,39 @@ public partial class SettingsPage
             CloseButtonText = "Cancel"
         }.ShowDialogAsync().GetAwaiter().GetResult();
 
-        if (result != MessageBoxResult.Primary)
-        {
-            return;
-        }
-        
-        Default.BatteryCriticalColour = ApplicationDefault.BatteryCriticalColour;
-        Default.BatteryLowColour = ApplicationDefault.BatteryLowColour;
-        Default.BatteryChargingColour = ApplicationDefault.BatteryChargingColour;
-        Default.BatteryNormalColour = ApplicationDefault.BatteryNormalColour;
-        Default.TrayIconFontFamily = ApplicationDefault.TrayIconFontFamily;
-        Default.TrayIconFontBold = ApplicationDefault.TrayIconFontBold;
-        Default.TrayIconFontUnderline = ApplicationDefault.TrayIconFontUnderline;
-        Default.BatteryCriticalNotificationValue = ApplicationDefault.BatteryCriticalNotificationValue;
-        Default.BatteryLowNotificationValue = ApplicationDefault.BatteryLowNotificationValue;
-        Default.BatteryHighNotificationValue = ApplicationDefault.BatteryHighNotificationValue;
-        Default.RefreshSeconds = ApplicationDefault.RefreshSeconds;
-        Default.BatteryFullNotification = ApplicationDefault.BatteryFullNotification;
-        Default.BatteryLowNotification = ApplicationDefault.BatteryLowNotification;
-        Default.BatteryHighNotification = ApplicationDefault.BatteryHighNotification;
-        Default.BatteryCriticalNotification = ApplicationDefault.BatteryCriticalNotification;
-        Default.HideAtStartup = ApplicationDefault.HideAtStartup;
-        
+        if (result != MessageBoxResult.Primary) return;
+
+        Default.BatteryCriticalColour = App.DefaultBatteryCriticalColour;
+        Default.BatteryLowColour = App.DefaultBatteryLowColour;
+        Default.BatteryChargingColour = App.DefaultBatteryChargingColour;
+        Default.BatteryNormalColour = App.DefaultBatteryNormalColour;
+        Default.TrayIconFontFamily = App.TrayIconFontFamily;
+        Default.TrayIconFontBold = App.DefaultTrayIconFontBold;
+        Default.TrayIconFontUnderline = App.DefaultTrayIconFontUnderline;
+        Default.BatteryCriticalNotificationValue = App.DefaultBatteryCriticalNotificationValue;
+        Default.BatteryLowNotificationValue = App.DefaultBatteryLowNotificationValue;
+        Default.BatteryHighNotificationValue = App.DefaultBatteryHighNotificationValue;
+        Default.RefreshSeconds = App.DefaultRefreshSeconds;
+        Default.BatteryFullNotification = App.DefaultBatteryFullNotification;
+        Default.BatteryLowNotification = App.DefaultBatteryLowNotification;
+        Default.BatteryHighNotification = App.DefaultBatteryHighNotification;
+        Default.BatteryCriticalNotification = App.DefaultBatteryCriticalNotification;
+        Default.HideAtStartup = App.DefaultHideAtStartup;
+
         Default.Save();
-        
+
         _ = EnableAutoStart();
+    }
+
+    private void RegisterAutoStartEventHandling()
+    {
+        AutoStartToggleSwitch.Checked += OnAutoStartChecked;
+        AutoStartToggleSwitch.Unchecked += OnAutoStartUnchecked;
+    }
+
+    private void UnRegisterAutoStarEventHandling()
+    {
+        AutoStartToggleSwitch.Checked -= OnAutoStartChecked;
+        AutoStartToggleSwitch.Unchecked -= OnAutoStartUnchecked;
     }
 }

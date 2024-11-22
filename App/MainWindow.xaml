@@ -25,7 +25,7 @@
             <ui:NavigationView.Header>
                 <ui:BreadcrumbBar x:Name="BreadcrumbBar"
                                   x:FieldModifier="private"
-                                  Margin="42,32,42,20"/>
+                                  Margin="42,32,42,20" />
             </ui:NavigationView.Header>
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="Details"
@@ -45,7 +45,7 @@
             </ui:NavigationView.FooterMenuItems>
             <ui:NavigationView.ContentOverlay>
                 <ui:SnackbarPresenter x:Name="SnackbarPresenter"
-                                      x:FieldModifier="private"/>
+                                      x:FieldModifier="private" />
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
         <ui:TitleBar DockPanel.Dock="Top"
