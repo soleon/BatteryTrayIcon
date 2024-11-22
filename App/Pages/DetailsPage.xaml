@@ -4,13 +4,11 @@
       xmlns:controls="clr-namespace:Percentage.App.Controls"
       DataContext="{Binding RelativeSource={RelativeSource Self}, Mode=OneTime}"
       Title="Details">
-    <ScrollViewer>
-        <StackPanel>
-            <controls:BatteryInformation x:Name="BatteryInformation"
-                                         x:FieldModifier="private" />
-            <controls:CopyButton HorizontalAlignment="Right"
-                                 Content="Copy"
-                                 TargetObject="{Binding ElementName=BatteryInformation}" />
-        </StackPanel>
-    </ScrollViewer>
+    <StackPanel>
+        <controls:BatteryInformation x:Name="BatteryInformation"
+                                     x:FieldModifier="private" />
+        <controls:CopyButton HorizontalAlignment="Right"
+                             Content="Copy"
+                             TargetObject="{Binding ElementName=BatteryInformation}" />
+    </StackPanel>
 </Page>

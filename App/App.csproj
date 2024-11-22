@@ -22,6 +22,7 @@
         <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Codify.System.Windows" Version="*"/>
         <PackageReference Include="System.Management" Version="*"/>
         <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="*"/>
         <PackageReference Include="WPF-UI.Tray" Version="*"/>

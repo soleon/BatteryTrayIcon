@@ -5,60 +5,65 @@
       xmlns:controls="clr-namespace:Percentage.App.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:data="clr-namespace:Codify.System.Windows.Data;assembly=Codify.System.Windows"
       mc:Ignorable="d"
       DataContext="{Binding RelativeSource={RelativeSource Self}}"
       d:DesignWidth="400">
-    <ScrollViewer>
-        <StackPanel>
-            <ui:InfoBar Severity="Informational"
-                        IsOpen="True"
-                        Margin="0,0,0,12"
-                        Title="Why can't I make the tray icon bigger?"
-                        Message="Windows limits tray icons to be a 16 � 16 pixel square. Anything goes out of this box will be cut off." />
-            <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
-                             IsExpanded="True">
-                <ui:CardExpander.Header>
-                    <DockPanel>
-                        <controls:CopyButton TargetObject="{Binding ElementName=ApplicationInformation}"
-                                             DockPanel.Dock="Right"
-                                             Margin="0,0,12,0" />
-                        <TextBlock Text="App info" />
-                    </DockPanel>
-                </ui:CardExpander.Header>
-                <controls:ApplicationInformation Margin="40,0,0,0"
-                                                 x:Name="ApplicationInformation"
-                                                 x:FieldModifier="private" />
-            </ui:CardExpander>
-            <ui:CardExpander Icon="{ui:SymbolIcon Desktop20}"
-                             IsExpanded="True">
-                <ui:CardExpander.Header>
-                    <DockPanel>
-                        <controls:CopyButton TargetObject="{Binding ElementName=SystemInformation}"
-                                             DockPanel.Dock="Right"
-                                             Margin="0,0,12,0" />
-                        <TextBlock Text="System info" />
-                    </DockPanel>
-                </ui:CardExpander.Header>
+    <StackPanel>
+        <ui:InfoBar Severity="Informational"
+                    IsOpen="True"
+                    Margin="0,0,0,12"
+                    Title="Why can't I make the tray icon bigger?"
+                    Message="Windows limits tray icons to be a 16 × 16 pixel square. Anything goes out of this box will be cut off." />
+        <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
+                         IsExpanded="True">
+            <ui:CardExpander.Header>
+                <DockPanel>
+                    <controls:CopyButton TargetObject="{Binding ElementName=ApplicationInformation}"
+                                         DockPanel.Dock="Right"
+                                         Margin="0,0,12,0" />
+                    <TextBlock Text="App info" />
+                </DockPanel>
+            </ui:CardExpander.Header>
+            <controls:ApplicationInformation Margin="40,0,0,0"
+                                             x:Name="ApplicationInformation"
+                                             x:FieldModifier="private" />
+        </ui:CardExpander>
+        <ui:CardExpander Icon="{ui:SymbolIcon Desktop20}"
+                         IsExpanded="True">
+            <ui:CardExpander.Header>
+                <DockPanel>
+                    <controls:CopyButton TargetObject="{Binding ElementName=SystemInformation}"
+                                         DockPanel.Dock="Right"
+                                         Margin="0,0,12,0" />
+                    <TextBlock Text="System info" />
+                </DockPanel>
+            </ui:CardExpander.Header>
+            <Grid>
+                <ProgressBar IsIndeterminate="True"
+                             Visibility="{Binding IsLoading, ElementName=SystemInformation, Converter={x:Static data:VisibilityConverter.Instance}}" />
                 <controls:SystemInformation Margin="40,0,0,0"
                                             x:Name="SystemInformation"
-                                            x:FieldModifier="private" />
-            </ui:CardExpander>
-            <ui:CardControl Icon="{ui:SymbolIcon Mail20}"
-                            Header="Feedback">
-                <ui:HyperlinkButton Content="soleon@live.com"
-                                    Click="OnFeedbackButtonClick" />
-            </ui:CardControl>
-            <ui:CardControl Icon="{ui:SymbolIcon StarHalf20}"
-                            Header="Rate the app">
-                <ui:HyperlinkButton Click="OnRatingButtonClick">
-                    <ui:RatingControl IsHitTestVisible="False" />
-                </ui:HyperlinkButton>
-            </ui:CardControl>
-            <ui:CardControl Icon="{ui:SymbolIcon CodeCs16}"
-                            Header="Source code">
-                <ui:HyperlinkButton Content="GitHub"
-                                    Click="OnSourceCodeButtonClick" />
-            </ui:CardControl>
-        </StackPanel>
-    </ScrollViewer>
+                                            x:FieldModifier="private"
+                                            Visibility="{Binding IsLoading, RelativeSource={RelativeSource Self}, Converter={x:Static data:VisibilityConverter.Instance}, ConverterParameter=invert}" />
+            </Grid>
+        </ui:CardExpander>
+        <ui:CardControl Icon="{ui:SymbolIcon Mail20}"
+                        Header="Feedback">
+            <ui:HyperlinkButton Content="soleon@live.com"
+                                Click="OnFeedbackButtonClick" />
+        </ui:CardControl>
+        <ui:CardControl Icon="{ui:SymbolIcon StarHalf20}"
+                        Header="Rate the app">
+            <ui:HyperlinkButton Click="OnRatingButtonClick">
+                <ui:RatingControl IsHitTestVisible="False" />
+            </ui:HyperlinkButton>
+        </ui:CardControl>
+        <ui:CardControl Icon="{ui:SymbolIcon CodeCs16}"
+                        Header="Source code"
+                        Margin="0">
+            <ui:HyperlinkButton Content="GitHub"
+                                Click="OnSourceCodeButtonClick" />
+        </ui:CardControl>
+    </StackPanel>
 </Page>

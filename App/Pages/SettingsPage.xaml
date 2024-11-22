@@ -5,216 +5,214 @@
       xmlns:properties="clr-namespace:Percentage.App.Properties"
       xmlns:system="clr-namespace:System;assembly=System.Runtime"
       xmlns:controls="clr-namespace:Percentage.App.Controls">
-    <ScrollViewer>
-        <StackPanel>
+    <StackPanel>
 
-            <!-- Auto start disabled warning -->
-            <ui:InfoBar Title="Auto Start Disabled"
-                        Message="Auto start requires this app to run as UWP."
-                        Severity="Warning"
-                        IsOpen="True"
-                        Visibility="Collapsed"
-                        Margin="0,0,0,20"
-                        x:Name="AutoStartDisabledInfoBar"
-                        x:FieldModifier="private" />
+        <!-- Auto start disabled warning -->
+        <ui:InfoBar Title="Auto Start Disabled"
+                    Message="Auto start requires this app to run as UWP."
+                    Severity="Warning"
+                    IsOpen="True"
+                    Visibility="Collapsed"
+                    Margin="0,0,0,20"
+                    x:Name="AutoStartDisabledInfoBar"
+                    x:FieldModifier="private" />
 
-            <!-- Auto start -->
-            <ui:CardControl Icon="{ui:SymbolIcon CalendarPlay20}">
-                <ui:CardControl.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Auto start" />
-                        <ui:TextBlock
-                            Text="Start the application when Windows starts up" />
-                    </StackPanel>
-                </ui:CardControl.Header>
-                <ui:ToggleSwitch
-                    x:Name="AutoStartToggleSwitch"
-                    x:FieldModifier="private"
-                    IsEnabled="False"
-                    Checked="OnAutoStartChecked"
-                    Unchecked="OnAutoStartUnchecked" />
-            </ui:CardControl>
-
-            <!-- Hide at startup -->
-            <ui:CardControl Icon="{ui:SymbolIcon SlideHide20}">
-                <ui:CardControl.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Hide at startup" />
-                        <ui:TextBlock
-                            Text="Hide the main window when the application starts up" />
-                    </StackPanel>
-                </ui:CardControl.Header>
-                <ui:ToggleSwitch
-                    IsChecked="{Binding HideAtStartup, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
-            </ui:CardControl>
-
-            <!-- Refresh interval -->
-            <ui:CardControl Icon="{ui:SymbolIcon ArrowSync20}">
-                <ui:CardControl.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Refresh" />
-                        <ui:TextBlock
-                            Text="Sets how long the battery status is refreshed" />
-                    </StackPanel>
-                </ui:CardControl.Header>
-                <ComboBox ItemStringFormat="{}{0} seconds"
-                          SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
-                    <system:Int32>1</system:Int32>
-                    <system:Int32>10</system:Int32>
-                    <system:Int32>30</system:Int32>
-                    <system:Int32>60</system:Int32>
-                </ComboBox>
-            </ui:CardControl>
-
-            <!-- Tray icon font -->
-            <ui:CardExpander Icon="{ui:SymbolIcon TextFont20}">
-                <ui:CardExpander.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Tray icon font" />
-                        <ui:TextBlock
-                            Text="Set tray icon font family, size and styles" />
-                    </StackPanel>
-                </ui:CardExpander.Header>
-                <DockPanel>
-                    <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
-                                  VerticalAlignment="Stretch"
-                                  IsChecked="{Binding TrayIconFontUnderline, Source={x:Static properties:Settings.Default}}"
-                                  DockPanel.Dock="Right"
-                                  Margin="5,0,0,0" />
-                    <ToggleButton Content="{ui:SymbolIcon TextBold20}"
-                                  VerticalAlignment="Stretch"
-                                  IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
-                                  DockPanel.Dock="Right" />
-                    <ComboBox Margin="5,0"
-                              SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
-                              ItemsSource="{x:Static Fonts.SystemFontFamilies}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock FontFamily="{Binding}"
-                                           Text="{Binding Source}"
-                                           VerticalAlignment="Center" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </DockPanel>
-            </ui:CardExpander>
-
-            <!-- Tray icon colour -->
-            <ui:CardExpander
-                Icon="{ui:SymbolIcon Color20}">
-                <ui:CardExpander.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Tray icon colour" />
-                        <ui:TextBlock
-                            Text="Set tray icon font colour for different battery status" />
-                    </StackPanel>
-                </ui:CardExpander.Header>
-                <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="CheckBox"
-                               BasedOn="{StaticResource {x:Type CheckBox}}">
-                            <Setter Property="HorizontalAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="5" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="0"
-                               Text="Critical"
-                               VerticalAlignment="Center" />
-                    <controls:AccentColourPicker Grid.Row="0"
-                                                 Grid.Column="1"
-                                                 Margin="5,0"
-                                                 SelectedItem="{Binding BatteryCriticalColour, Source={x:Static properties:Settings.Default}}" />
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="2"
-                               Text="Low"
-                               VerticalAlignment="Center" />
-                    <controls:AccentColourPicker Grid.Row="0"
-                                                 Grid.Column="3"
-                                                 Margin="5,0"
-                                                 SelectedItem="{Binding BatteryLowColour, Source={x:Static properties:Settings.Default}}" />
-                    <TextBlock Grid.Row="2"
-                               Grid.Column="0"
-                               Text="Charging"
-                               VerticalAlignment="Center" />
-                    <controls:AccentColourPicker Grid.Row="2"
-                                                 Grid.Column="1"
-                                                 Margin="5,0"
-                                                 SelectedItem="{Binding BatteryChargingColour, Source={x:Static properties:Settings.Default}}" />
-                    <TextBlock Grid.Row="2"
-                               Grid.Column="2"
-                               Text="Normal"
-                               VerticalAlignment="Center" />
-                    <controls:AccentColourPicker Grid.Row="2"
-                                                 Grid.Column="3"
-                                                 Margin="5,0"
-                                                 SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
-                </Grid>
-            </ui:CardExpander>
-
-            <!-- Battery levels and notifications -->
-            <ui:CardExpander
-                Icon="{ui:SymbolIcon Battery520}">
-                <ui:CardExpander.Header>
-                    <StackPanel>
-                        <ui:TextBlock
-                            FontTypography="BodyStrong"
-                            Text="Battery levels &amp; notifications" />
-                        <ui:TextBlock
-                            Text="Toggle notifications for different battery levels" />
-                    </StackPanel>
-                </ui:CardExpander.Header>
-                <StackPanel Grid.IsSharedSizeScope="True">
-                    <controls:BatteryLevelNotificationSetter x:Name="CriticalBatteryLevelNotificationSetter"
-                                                             x:FieldModifier="private"
-                                                             StatusName="Critical"
-                                                             Value="{Binding BatteryCriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                             IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
-                    <controls:BatteryLevelNotificationSetter StatusName="Low"
-                                                             Margin="0,12"
-                                                             Value="{Binding BatteryLowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                             IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
-                    <controls:BatteryLevelNotificationSetter StatusName="High"
-                                                             Value="{Binding BatteryHighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                             IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
-                    <Grid Height="{Binding ActualHeight, ElementName=CriticalBatteryLevelNotificationSetter}"
-                          Margin="0,12,0,0">
-                        <TextBlock Text="Full" />
-                        <ui:ToggleSwitch HorizontalAlignment="Right"
-                                         IsChecked="{Binding BatteryFullNotification, Source={x:Static properties:Settings.Default}}" />
-                    </Grid>
+        <!-- Auto start -->
+        <ui:CardControl Icon="{ui:SymbolIcon CalendarPlay20}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Auto start" />
+                    <ui:TextBlock
+                        Text="Start the application when Windows starts up" />
                 </StackPanel>
-            </ui:CardExpander>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                x:Name="AutoStartToggleSwitch"
+                x:FieldModifier="private"
+                IsEnabled="False"
+                Checked="OnAutoStartChecked"
+                Unchecked="OnAutoStartUnchecked" />
+        </ui:CardControl>
 
-            <!-- Reset all settings button -->
-            <ui:Button Appearance="Caution"
-                       HorizontalAlignment="Right"
-                       Content="Reset All Settings"
-                       Icon="{ui:SymbolIcon ErrorCircle20}"
-                       Click="OnResetButtonClick" />
-        </StackPanel>
-    </ScrollViewer>
+        <!-- Hide at startup -->
+        <ui:CardControl Icon="{ui:SymbolIcon SlideHide20}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Hide at startup" />
+                    <ui:TextBlock
+                        Text="Hide the main window when the application starts up" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                IsChecked="{Binding HideAtStartup, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+        </ui:CardControl>
+
+        <!-- Refresh interval -->
+        <ui:CardControl Icon="{ui:SymbolIcon ArrowSync20}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Refresh" />
+                    <ui:TextBlock
+                        Text="Sets how long the battery status is refreshed" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ComboBox ItemStringFormat="{}{0} seconds"
+                      SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
+                <system:Int32>1</system:Int32>
+                <system:Int32>10</system:Int32>
+                <system:Int32>30</system:Int32>
+                <system:Int32>60</system:Int32>
+            </ComboBox>
+        </ui:CardControl>
+
+        <!-- Tray icon font -->
+        <ui:CardExpander Icon="{ui:SymbolIcon TextFont20}">
+            <ui:CardExpander.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Tray icon font" />
+                    <ui:TextBlock
+                        Text="Set tray icon font family, size and styles" />
+                </StackPanel>
+            </ui:CardExpander.Header>
+            <DockPanel>
+                <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
+                              VerticalAlignment="Stretch"
+                              IsChecked="{Binding TrayIconFontUnderline, Source={x:Static properties:Settings.Default}}"
+                              DockPanel.Dock="Right"
+                              Margin="5,0,0,0" />
+                <ToggleButton Content="{ui:SymbolIcon TextBold20}"
+                              VerticalAlignment="Stretch"
+                              IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
+                              DockPanel.Dock="Right" />
+                <ComboBox Margin="5,0"
+                          SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
+                          ItemsSource="{x:Static Fonts.SystemFontFamilies}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock FontFamily="{Binding}"
+                                       Text="{Binding Source}"
+                                       VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </DockPanel>
+        </ui:CardExpander>
+
+        <!-- Tray icon colour -->
+        <ui:CardExpander
+            Icon="{ui:SymbolIcon Color20}">
+            <ui:CardExpander.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Tray icon colour" />
+                    <ui:TextBlock
+                        Text="Set tray icon font colour for different battery status" />
+                </StackPanel>
+            </ui:CardExpander.Header>
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="CheckBox"
+                           BasedOn="{StaticResource {x:Type CheckBox}}">
+                        <Setter Property="HorizontalAlignment"
+                                Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="5" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Text="Critical"
+                           VerticalAlignment="Center" />
+                <controls:AccentColourPicker Grid.Row="0"
+                                             Grid.Column="1"
+                                             Margin="5,0"
+                                             SelectedItem="{Binding BatteryCriticalColour, Source={x:Static properties:Settings.Default}}" />
+                <TextBlock Grid.Row="0"
+                           Grid.Column="2"
+                           Text="Low"
+                           VerticalAlignment="Center" />
+                <controls:AccentColourPicker Grid.Row="0"
+                                             Grid.Column="3"
+                                             Margin="5,0"
+                                             SelectedItem="{Binding BatteryLowColour, Source={x:Static properties:Settings.Default}}" />
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
+                           Text="Charging"
+                           VerticalAlignment="Center" />
+                <controls:AccentColourPicker Grid.Row="2"
+                                             Grid.Column="1"
+                                             Margin="5,0"
+                                             SelectedItem="{Binding BatteryChargingColour, Source={x:Static properties:Settings.Default}}" />
+                <TextBlock Grid.Row="2"
+                           Grid.Column="2"
+                           Text="Normal"
+                           VerticalAlignment="Center" />
+                <controls:AccentColourPicker Grid.Row="2"
+                                             Grid.Column="3"
+                                             Margin="5,0"
+                                             SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
+            </Grid>
+        </ui:CardExpander>
+
+        <!-- Battery levels and notifications -->
+        <ui:CardExpander
+            Icon="{ui:SymbolIcon Battery520}">
+            <ui:CardExpander.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Battery levels &amp; notifications" />
+                    <ui:TextBlock
+                        Text="Toggle notifications for different battery levels" />
+                </StackPanel>
+            </ui:CardExpander.Header>
+            <StackPanel Grid.IsSharedSizeScope="True">
+                <controls:BatteryLevelNotificationSetter x:Name="CriticalBatteryLevelNotificationSetter"
+                                                         x:FieldModifier="private"
+                                                         StatusName="Critical"
+                                                         Value="{Binding BatteryCriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                <controls:BatteryLevelNotificationSetter StatusName="Low"
+                                                         Margin="0,12"
+                                                         Value="{Binding BatteryLowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                <controls:BatteryLevelNotificationSetter StatusName="High"
+                                                         Value="{Binding BatteryHighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
+                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                <Grid Height="{Binding ActualHeight, ElementName=CriticalBatteryLevelNotificationSetter}"
+                      Margin="0,12,0,0">
+                    <TextBlock Text="Full" />
+                    <ui:ToggleSwitch HorizontalAlignment="Right"
+                                     IsChecked="{Binding BatteryFullNotification, Source={x:Static properties:Settings.Default}}" />
+                </Grid>
+            </StackPanel>
+        </ui:CardExpander>
+
+        <!-- Reset all settings button -->
+        <ui:Button Appearance="Caution"
+                   HorizontalAlignment="Right"
+                   Content="Reset All Settings"
+                   Icon="{ui:SymbolIcon ErrorCircle20}"
+                   Click="OnResetButtonClick" />
+    </StackPanel>
 </Page>

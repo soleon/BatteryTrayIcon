@@ -4,32 +4,51 @@ using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.VisualBasic.Devices;
 
 namespace Percentage.App.Controls;
 
 public sealed class SystemInformation : KeyValueItems
 {
+    public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
+        nameof(IsLoading), typeof(bool), typeof(SystemInformation), new PropertyMetadata(default(bool)));
+
     public SystemInformation()
     {
-        ItemsSource = new Dictionary<string, object> { { "Loading", "please wait..." } };
+        IsLoading = true;
         Task.Run(() =>
         {
-            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-
-            var cpuInfo = string.Join(Environment.NewLine,
-                searcher.Get().OfType<ManagementBaseObject>().Select(x => x["Name"]));
-
-            var computerInfo = new ComputerInfo();
-            var totalMemory = computerInfo.TotalPhysicalMemory;
-
-            return Dispatcher.InvokeAsync(() => ItemsSource = new Dictionary<string, object>
+            string cpuInfo;
+            try
             {
-                { "Windows version", RuntimeInformation.OSDescription },
-                { "Architecture", RuntimeInformation.OSArchitecture },
-                { "Processor", cpuInfo },
-                { "Memory", Helper.GetReadableSize((long)totalMemory) }
+                var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+
+                cpuInfo = string.Join(Environment.NewLine,
+                    searcher.Get().OfType<ManagementBaseObject>().Select(x => x["Name"]));
+            }
+            catch
+            {
+                cpuInfo = "Unknown";
+            }
+
+            return Dispatcher.InvokeAsync(() =>
+            {
+                ItemsSource = new Dictionary<string, object>
+                {
+                    { "Windows version", RuntimeInformation.OSDescription },
+                    { "Architecture", RuntimeInformation.OSArchitecture },
+                    { "Processor", cpuInfo },
+                    { "Memory", Helper.GetReadableSize((long)new ComputerInfo().TotalPhysicalMemory) }
+                };
+                IsLoading = false;
             });
         });
+    }
+
+    public bool IsLoading
+    {
+        get => (bool)GetValue(IsLoadingProperty);
+        set => SetValue(IsLoadingProperty, value);
     }
 }
