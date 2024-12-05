@@ -37,7 +37,6 @@ public sealed class SystemInformation : KeyValueItems
                 ItemsSource = new Dictionary<string, object>
                 {
                     { "Windows version", RuntimeInformation.OSDescription },
-                    { "Architecture", RuntimeInformation.OSArchitecture },
                     { "Processor", cpuInfo },
                     { "Memory", Helper.GetReadableSize((long)new ComputerInfo().TotalPhysicalMemory) }
                 };

@@ -10,11 +10,6 @@
       DataContext="{Binding RelativeSource={RelativeSource Self}}"
       d:DesignWidth="400">
     <StackPanel>
-        <ui:InfoBar Severity="Informational"
-                    IsOpen="True"
-                    Margin="0,0,0,12"
-                    Title="Why can't I make the tray icon bigger?"
-                    Message="Windows limits tray icons to be a 16 × 16 pixel square. Anything goes out of this box will be cut off." />
         <ui:CardExpander Icon="{ui:SymbolIcon AppGeneric20}"
                          IsExpanded="True">
             <ui:CardExpander.Header>
@@ -58,6 +53,11 @@
             <ui:HyperlinkButton Click="OnRatingButtonClick">
                 <ui:RatingControl IsHitTestVisible="False" />
             </ui:HyperlinkButton>
+        </ui:CardControl>
+        <ui:CardControl Icon="{ui:SymbolIcon DrinkCoffee20}"
+                        Header="Buy me a coffee">
+            <ui:HyperlinkButton Content="PayPal"
+                                Click="OnSourceCodeButtonClick" />
         </ui:CardControl>
         <ui:CardControl Icon="{ui:SymbolIcon CodeCs16}"
                         Header="Source code"

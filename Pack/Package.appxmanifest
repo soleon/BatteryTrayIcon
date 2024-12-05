@@ -41,7 +41,7 @@
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <uap5:Extension Category="windows.startupTask" Executable="Percentage.App.exe" EntryPoint="Windows.FullTrustApplication">
+        <uap5:Extension Category="windows.startupTask" EntryPoint="Windows.FullTrustApplication">
           <uap5:StartupTask
             TaskId="f05f920a-c997-4817-84bd-c54d87e40625"
             Enabled="true"
