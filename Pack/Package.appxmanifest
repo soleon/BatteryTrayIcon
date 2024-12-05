@@ -3,13 +3,14 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
   <Identity
     Name="61867SoleonInnovation.BatteryPercentageIcon"
     Publisher="CN=B0B1FE5B-CC73-4F71-BD3F-7B809647826C"
-    Version="1.0.5.0" />
+    Version="1.0.6.0" />
 
   <Properties>
     <DisplayName>Battery Percentage Icon</DisplayName>
@@ -39,6 +40,14 @@
         <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png"/>
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.startupTask" Executable="Percentage.App.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:StartupTask
+            TaskId="f05f920a-c997-4817-84bd-c54d87e40625"
+            Enabled="true"
+            DisplayName="Battery Percentage Icon" />
+        </uap5:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
