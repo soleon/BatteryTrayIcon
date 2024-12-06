@@ -44,8 +44,8 @@
             </Grid>
         </ui:CardExpander>
         <ui:CardControl Icon="{ui:SymbolIcon Mail20}"
-                        Header="Feedback">
-            <ui:HyperlinkButton Content="soleon@live.com"
+                        Header="Report an issue">
+            <ui:HyperlinkButton Content="GitHub"
                                 Click="OnFeedbackButtonClick" />
         </ui:CardControl>
         <ui:CardControl Icon="{ui:SymbolIcon StarHalf20}"
@@ -55,9 +55,9 @@
             </ui:HyperlinkButton>
         </ui:CardControl>
         <ui:CardControl Icon="{ui:SymbolIcon DrinkCoffee20}"
-                        Header="Buy me a coffee">
+                        Header="Support my work">
             <ui:HyperlinkButton Content="PayPal"
-                                Click="OnSourceCodeButtonClick" />
+                                Click="OnDonationButtonClick" />
         </ui:CardControl>
         <ui:CardControl Icon="{ui:SymbolIcon CodeCs16}"
                         Header="Source code"

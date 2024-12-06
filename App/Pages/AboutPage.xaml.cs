@@ -11,7 +11,7 @@ public partial class AboutPage
 
     private void OnFeedbackButtonClick(object sender, RoutedEventArgs e)
     {
-        Helper.SendFeedBack();
+        Helper.OpenFeedbackLocation();
     }
 
     private void OnRatingButtonClick(object sender, RoutedEventArgs e)
@@ -22,5 +22,10 @@ public partial class AboutPage
     private void OnSourceCodeButtonClick(object sender, RoutedEventArgs e)
     {
         Helper.OpenSourceCodeLocation();
+    }
+
+    private void OnDonationButtonClick(object sender, RoutedEventArgs e)
+    {
+        Helper.OpenDonationLocation();
     }
 }

@@ -42,25 +42,29 @@ internal static class Helper
                   : null);
     }
 
-    internal static void OpenSourceCodeLocation()
+    public static void OpenDonationLocation()
     {
-        Process.Start(new ProcessStartInfo("https://github.com/soleon/Percentage")
-        {
-            UseShellExecute = true
-        });
+        StartShellExecutedProgress("https://www.paypal.com/donate/?hosted_button_id=EFS3E8WPF8SJL");
     }
 
-    internal static void SendFeedBack()
+    internal static void OpenFeedbackLocation()
     {
-        Process.Start(new ProcessStartInfo("mailto:soleon@live.com?subject=Battery Percentage Icon Feedback")
-        {
-            UseShellExecute = true
-        });
+        StartShellExecutedProgress("https://github.com/soleon/Percentage/issues");
+    }
+
+    internal static void OpenSourceCodeLocation()
+    {
+        StartShellExecutedProgress("https://github.com/soleon/Percentage");
     }
 
     internal static void ShowRatingView()
     {
-        Process.Start(new ProcessStartInfo("ms-windows-store://review/?ProductId=9PCKT2B7DZMW")
+        StartShellExecutedProgress("ms-windows-store://review/?ProductId=9PCKT2B7DZMW");
+    }
+
+    private static void StartShellExecutedProgress(string fileName)
+    {
+        Process.Start(new ProcessStartInfo(fileName)
         {
             UseShellExecute = true
         });
