@@ -1,25 +1,17 @@
 ﻿<Project Sdk="Microsoft.Net.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <RootNamespace>Percentage.App</RootNamespace>
-        <AssemblyName>Percentage.App</AssemblyName>
         <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
         <ApplicationIcon>icon.ico</ApplicationIcon>
         <UseWpf>True</UseWpf>
         <UseWindowsForms>True</UseWindowsForms>
         <Title>Battery Percentage Icon</Title>
         <Description>Display your battery percentage and status in the Windows system tray.</Description>
-        <Company>Soleon Innovations</Company>
         <Product>Battery Percentage Icon</Product>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
         <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-        <PackageProjectUrl>https://github.com/soleon/Percentage</PackageProjectUrl>
-        <PackageIcon>Icon.png</PackageIcon>
-        <RepositoryUrl>https://github.com/soleon/Percentage</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Codify.System.Windows" Version="*"/>
@@ -46,10 +38,8 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Settings.settings</DependentUpon>
         </Compile>
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="..\README.md">
-        <Link>README.md</Link>
-      </Content>
+        <Content Include="..\README.md">
+            <Link>README.md</Link>
+        </Content>
     </ItemGroup>
 </Project>

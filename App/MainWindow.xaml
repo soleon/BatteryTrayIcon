@@ -14,12 +14,11 @@
                  Closing="OnClosing"
                  Loaded="OnLoaded">
     <Grid>
-        <ui:NavigationView FrameMargin="0"
-                           Padding="42,0,42,12"
+        <ui:NavigationView Padding="42,0,42,12"
                            IsPaneOpen="False"
                            x:Name="NavigationView"
                            x:FieldModifier="private"
-                           OpenPaneLength="150"
+                           OpenPaneLength="110"
                            TitleBar="{Binding ElementName=TitleBar}"
                            BreadcrumbBar="{Binding ElementName=BreadcrumbBar}">
             <ui:NavigationView.Header>
