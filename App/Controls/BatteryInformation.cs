@@ -13,7 +13,7 @@ using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
 namespace Percentage.App.Controls;
 
-public partial class BatteryInformation : KeyValueItems
+public partial class BatteryInformation : KeyValueItemsControl
 {
     private readonly BatteryInformationObservableValue _batteryHealth =
         new(SymbolRegular.BatterySaver20, "Battery Health");

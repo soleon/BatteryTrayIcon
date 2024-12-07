@@ -6,7 +6,7 @@ using Percentage.App.Extensions;
 
 namespace Percentage.App.Controls;
 
-public sealed class ApplicationInformation : KeyValueItems
+public sealed class ApplicationInformation : KeyValueItemsControl
 {
     public ApplicationInformation()
     {

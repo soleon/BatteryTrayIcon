@@ -6,12 +6,12 @@ using System.Windows.Controls;
 
 namespace Percentage.App.Controls;
 
-public class KeyValueItems : ItemsControl
+public class KeyValueItemsControl : ItemsControl
 {
-    static KeyValueItems()
+    static KeyValueItemsControl()
     {
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(KeyValueItems),
-            new FrameworkPropertyMetadata(typeof(KeyValueItems)));
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(KeyValueItemsControl),
+            new FrameworkPropertyMetadata(typeof(KeyValueItemsControl)));
     }
 
     public override string ToString()

@@ -32,10 +32,6 @@ public sealed partial class MainWindow
     private string _notificationTitle;
     private IDisposable _refreshSubscription;
 
-    // The subscriptions must be kept or the subscription can be garbage collected early.
-    private IDisposable _userPreferenceChangedSubscription;
-    private IDisposable _userSettingChangedSubscription;
-
     public MainWindow()
     {
         SystemThemeWatcher.Watch(this);
@@ -115,7 +111,7 @@ public sealed partial class MainWindow
 
         // This event can be triggered multiple times when Windows changes between dark and light theme.
         // Update tray icon colour when user preference changes settled down.
-        _userPreferenceChangedSubscription = Observable
+        Observable
             .FromEventPattern<UserPreferenceChangedEventHandler, UserPreferenceChangedEventArgs>(
                 handler => SystemEvents.UserPreferenceChanged += handler,
                 handler => SystemEvents.UserPreferenceChanged -= handler)
@@ -124,7 +120,7 @@ public sealed partial class MainWindow
             .Subscribe(_ => UpdateBatteryStatus());
 
         // Handle user settings change with debouncing.
-        _userSettingChangedSubscription = Observable
+        Observable
             .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                 handler => Default.PropertyChanged += handler,
                 handler => Default.PropertyChanged -= handler)

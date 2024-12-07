@@ -9,7 +9,7 @@ using Microsoft.VisualBasic.Devices;
 
 namespace Percentage.App.Controls;
 
-public sealed class SystemInformation : KeyValueItems
+public sealed class SystemInformation : KeyValueItemsControl
 {
     public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
         nameof(IsLoading), typeof(bool), typeof(SystemInformation), new PropertyMetadata(default(bool)));

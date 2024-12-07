@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Percentage.App.Controls"
                     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
-    <Style TargetType="controls:KeyValueItems"
-           x:Key="{x:Type controls:KeyValueItems}"
+    <Style TargetType="controls:KeyValueItemsControl"
+           x:Key="{x:Type controls:KeyValueItemsControl}"
            BasedOn="{StaticResource {x:Type ItemsControl}}">
         <Setter Property="ItemTemplate">
             <Setter.Value>
@@ -25,7 +25,7 @@
     </Style>
     <Style TargetType="controls:BatteryInformation"
            x:Key="{x:Type controls:BatteryInformation}"
-           BasedOn="{StaticResource {x:Type controls:KeyValueItems}}">
+           BasedOn="{StaticResource {x:Type controls:KeyValueItemsControl}}">
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -34,6 +34,40 @@
                         <ui:TextBlock Text="{Binding Value.Value}" />
                     </ui:CardControl>
                 </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="controls:BatteryLevelNotificationSetter"
+           x:Key="{x:Type controls:BatteryLevelNotificationSetter}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"
+                                              SharedSizeGroup="NameColumn" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Text="{Binding StatusName, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <DockPanel Grid.Column="1">
+                            <ui:ToggleSwitch DockPanel.Dock="Right"
+                                             IsChecked="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}"
+                                             Margin="12,0,0,0" />
+                            <TextBlock DockPanel.Dock="Right"
+                                       Width="34"
+                                       TextAlignment="Center"
+                                       Text="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0}%}" />
+                            <Slider Margin="12,0"
+                                    TickPlacement="Both"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    TickFrequency="5" />
+                        </DockPanel>
+                    </Grid>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
