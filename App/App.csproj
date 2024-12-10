@@ -14,14 +14,15 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
         <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+        <Platforms>AnyCPU;x64;ARM64;x86</Platforms>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Codify.System.Windows" Version="*"/>
-        <PackageReference Include="System.Management" Version="*"/>
-        <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="*"/>
-        <PackageReference Include="WPF-UI.Tray" Version="*"/>
-        <PackageReference Include="System.Reactive" Version="*"/>
-        <Resource Include="Icon.png"/>
+        <PackageReference Include="Codify.System.Windows" Version="*" />
+        <PackageReference Include="System.Management" Version="*" />
+        <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="*" />
+        <PackageReference Include="WPF-UI.Tray" Version="*" />
+        <PackageReference Include="System.Reactive" Version="*" />
+        <Resource Include="Icon.png" />
         <Compile Update="Properties\Settings.Designer.cs">
             <DesignTimeSharedInput>True</DesignTimeSharedInput>
             <AutoGen>True</AutoGen>
