@@ -2,7 +2,6 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
                  xmlns:pages="clr-namespace:Percentage.App.Pages"
                  DataContext="{Binding RelativeSource={RelativeSource Self}, Mode=OneTime}"
                  ExtendsContentIntoTitleBar="True"
@@ -10,17 +9,15 @@
                  Title="Battery Percentage Icon"
                  Height="800"
                  Width="600"
-                 WindowStartupLocation="CenterScreen"
-                 Closing="OnClosing"
-                 Loaded="OnLoaded">
+                 WindowStartupLocation="CenterScreen">
     <Grid>
         <ui:NavigationView Padding="42,0,42,12"
                            IsPaneOpen="False"
-                           x:Name="NavigationView"
-                           x:FieldModifier="private"
                            OpenPaneLength="110"
                            TitleBar="{Binding ElementName=TitleBar}"
-                           BreadcrumbBar="{Binding ElementName=BreadcrumbBar}">
+                           BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
+                           x:Name="NavigationView"
+                           x:FieldModifier="private">
             <ui:NavigationView.Header>
                 <ui:BreadcrumbBar x:Name="BreadcrumbBar"
                                   x:FieldModifier="private"
@@ -55,21 +52,5 @@
                 <ui:ImageIcon Source="pack://application:,,,/Icon.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
-        <tray:NotifyIcon x:Name="NotifyIcon"
-                         x:FieldModifier="private">
-            <tray:NotifyIcon.Menu>
-                <ContextMenu>
-                    <ui:MenuItem Header="_Details"
-                                 Click="OnDetailsMenuItemClick"
-                                 Icon="{ui:SymbolIcon AppsListDetail20}" />
-                    <ui:MenuItem Header="_Settings"
-                                 Click="OnSettingsMenuItemClick"
-                                 Icon="{ui:SymbolIcon Settings20}" />
-                    <ui:MenuItem Header="E_xit"
-                                 Click="OnExitMenuItemClick"
-                                 Icon="{ui:SymbolIcon ArrowExit20}" />
-                </ContextMenu>
-            </tray:NotifyIcon.Menu>
-        </tray:NotifyIcon>
     </Grid>
 </ui:FluentWindow>
