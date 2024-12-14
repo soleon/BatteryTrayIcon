@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,8 +12,8 @@ using Windows.Devices.Power;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
 using Percentage.App.Pages;
+using Percentage.App.Properties;
 using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
 using Wpf.Ui.Markup;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
@@ -157,6 +158,9 @@ public partial class TrayIconWindow
 
     private void OnUserSettingsPropertyChanged(string propertyName)
     {
+        // Always save settings change immediately in case the app crashes losing all changes.
+        Default.Save();
+        
         switch (propertyName)
         {
             case nameof(Default.RefreshSeconds):
@@ -192,7 +196,8 @@ public partial class TrayIconWindow
             Text = text,
             Foreground = foreground,
             FontSize = 18,
-            Margin = new Thickness(-1.2)
+            TextAlignment = TextAlignment.Center,
+            Margin = new Thickness(-1, -0.4, 0, 0)
         };
 
         if (fontFamily != null) textBlock.FontFamily = new FontFamily(fontFamily);
@@ -202,7 +207,27 @@ public partial class TrayIconWindow
 
         if (Default.TrayIconFontUnderline) textBlock.TextDecorations = TextDecorations.Underline;
 
-        NotifyIcon.Icon = GetImageSource(textBlock);
+        var iconImageSource = GetImageSource(textBlock);
+        
+        // There's a chance that some native exception may be thrown when setting the notify icon's image.
+        // Catch any exception here and retry a few times then fail silently with logs.
+        for (var i = 0; i < 5; i++)
+        {
+            try
+            {
+                NotifyIcon.Icon = iconImageSource;
+                break;
+            }
+            catch (Exception e)
+            {
+                if (i == 4)
+                {
+                    // Retried maximum number of times.
+                    // Log error and continue.
+                    App.SetTrayIconUpdateError(e);
+                }
+            }
+        }
     }
 
     private void UpdateBatteryStatus()

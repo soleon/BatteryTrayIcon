@@ -111,7 +111,7 @@ public partial class SettingsPage
         Default.BatteryLowColour = App.DefaultBatteryLowColour;
         Default.BatteryChargingColour = App.DefaultBatteryChargingColour;
         Default.BatteryNormalColour = App.DefaultBatteryNormalColour;
-        Default.TrayIconFontFamily = App.TrayIconFontFamily;
+        Default.TrayIconFontFamily = App.DefaultTrayIconFontFamily;
         Default.TrayIconFontBold = App.DefaultTrayIconFontBold;
         Default.TrayIconFontUnderline = App.DefaultTrayIconFontUnderline;
         Default.BatteryCriticalNotificationValue = App.DefaultBatteryCriticalNotificationValue;
@@ -123,8 +123,6 @@ public partial class SettingsPage
         Default.BatteryHighNotification = App.DefaultBatteryHighNotification;
         Default.BatteryCriticalNotification = App.DefaultBatteryCriticalNotification;
         Default.HideAtStartup = App.DefaultHideAtStartup;
-
-        Default.Save();
 
         _ = EnableAutoStart();
     }

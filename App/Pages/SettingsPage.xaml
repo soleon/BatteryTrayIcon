@@ -79,31 +79,38 @@
                         FontTypography="BodyStrong"
                         Text="Tray icon font" />
                     <ui:TextBlock
-                        Text="Set tray icon font family, size and styles" />
+                        Text="Set tray icon font family and styles" />
                 </StackPanel>
             </ui:CardExpander.Header>
-            <DockPanel>
-                <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
-                              VerticalAlignment="Stretch"
-                              IsChecked="{Binding TrayIconFontUnderline, Source={x:Static properties:Settings.Default}}"
-                              DockPanel.Dock="Right"
-                              Margin="5,0,0,0" />
-                <ToggleButton Content="{ui:SymbolIcon TextBold20}"
-                              VerticalAlignment="Stretch"
-                              IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
-                              DockPanel.Dock="Right" />
-                <ComboBox Margin="5,0"
-                          SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
-                          ItemsSource="{x:Static Fonts.SystemFontFamilies}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock FontFamily="{Binding}"
-                                       Text="{Binding Source}"
-                                       VerticalAlignment="Center" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </DockPanel>
+            <StackPanel>
+                <ui:InfoBar Severity="Informational"
+                            IsOpen="True"
+                            Margin="0,0,0,12"
+                            Title="Why can't I make the tray icon text bigger?"
+                            Message="Windows limits tray icons to be a 16 × 16 pixel square. Anything goes out of this box will be cut off." />
+                <DockPanel>
+                    <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
+                                  VerticalAlignment="Stretch"
+                                  IsChecked="{Binding TrayIconFontUnderline, Source={x:Static properties:Settings.Default}}"
+                                  DockPanel.Dock="Right"
+                                  Margin="5,0,0,0" />
+                    <ToggleButton Content="{ui:SymbolIcon TextBold20}"
+                                  VerticalAlignment="Stretch"
+                                  IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
+                                  DockPanel.Dock="Right" />
+                    <ComboBox Margin="5,0"
+                              SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
+                              ItemsSource="{x:Static Fonts.SystemFontFamilies}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontFamily="{Binding}"
+                                           Text="{Binding Source}"
+                                           VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+            </StackPanel>
         </ui:CardExpander>
 
         <!-- Tray icon colour -->

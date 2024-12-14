@@ -5,6 +5,7 @@
       xmlns:controls="clr-namespace:Percentage.App.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:data="clr-namespace:Codify.System.Windows.Data;assembly=Codify.System.Windows"
       mc:Ignorable="d"
       DataContext="{Binding RelativeSource={RelativeSource Self}}"
       d:DesignWidth="400">
@@ -19,9 +20,26 @@
                     <TextBlock Text="App info" />
                 </DockPanel>
             </ui:CardExpander.Header>
-            <controls:ApplicationInformation Margin="40,0,0,0"
-                                             x:Name="ApplicationInformation"
-                                             x:FieldModifier="private" />
+            <StackPanel>
+                <controls:ApplicationInformation x:Name="ApplicationInformation"
+                                                 x:FieldModifier="private" />
+                <ui:CardControl Icon="{ui:SymbolIcon Warning20}"
+                                Visibility="{Binding TrayIconUpdateError, Converter={x:Static data:VisibilityConverter.Instance}}"
+                                Background="{DynamicResource InfoBarWarningSeverityBackgroundBrush}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock
+                                FontTypography="BodyStrong"
+                                Text="The tray icon couldn't be updated" />
+                            <ui:TextBlock
+                                Text="Try restarting the app if the tray icon stops updating. Copy the full error details and report this issue if it blocks you from using the app." />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <controls:CopyButton
+                        TargetObject="{Binding TrayIconUpdateError}"
+                        ToolTip="Copy full error details" />
+                </ui:CardControl>
+            </StackPanel>
         </ui:CardExpander>
         <ui:CardControl Icon="{ui:SymbolIcon Mail20}"
                         Header="Report an issue">

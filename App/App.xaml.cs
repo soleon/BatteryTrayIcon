@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Wpf.Ui;
-using static Percentage.App.Properties.Settings;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
@@ -28,9 +27,9 @@ public partial class App
     internal const bool DefaultTrayIconFontBold = false;
     internal const bool DefaultTrayIconFontUnderline = false;
     internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
-
+    private static Exception _trayIconUpdateError;
+    internal static readonly FontFamily DefaultTrayIconFontFamily = new("Microsoft Sans Serif");
     internal static readonly ISnackbarService SnackbarService = new SnackbarService();
-    internal static readonly FontFamily TrayIconFontFamily = new("Microsoft Sans Serif");
 
     private readonly Mutex _appMutex;
 
@@ -47,6 +46,11 @@ public partial class App
         InitializeComponent();
 
         if (!isNewInstance) Shutdown(1);
+    }
+
+    internal static Exception GetTrayIconUpdateError()
+    {
+        return _trayIconUpdateError;
     }
 
     private static void HandleException(object exception)
@@ -84,10 +88,17 @@ public partial class App
         }
     }
 
+    internal static void SetTrayIconUpdateError(Exception e)
+    {
+        _trayIconUpdateError = e;
+        TrayIconUpdateErrorSet?.Invoke(e);
+    }
+
+    internal static event Action<Exception> TrayIconUpdateErrorSet;
+
     protected override void OnExit(ExitEventArgs e)
     {
         // Save user settings when exiting the app.
-        Default.Save();
         _appMutex.Dispose();
         base.OnExit(e);
     }

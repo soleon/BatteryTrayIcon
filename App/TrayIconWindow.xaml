@@ -5,8 +5,8 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Loaded="OnLoaded"
         ShowInTaskbar="False"
-        Left="-1000"
-        Top="-1000"
+        Left="-100"
+        Top="-100"
         Width="0"
         Height="0">
     <tray:NotifyIcon x:Name="NotifyIcon"
