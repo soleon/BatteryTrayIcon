@@ -198,14 +198,14 @@
                                                          x:FieldModifier="private"
                                                          StatusName="Critical"
                                                          Value="{Binding BatteryCriticalNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                 <controls:BatteryLevelNotificationSetter StatusName="Low"
                                                          Margin="0,12"
                                                          Value="{Binding BatteryLowNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                                                         IsChecked="{Binding BatteryLowNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                 <controls:BatteryLevelNotificationSetter StatusName="High"
                                                          Value="{Binding BatteryHighNotificationValue, Source={x:Static properties:Settings.Default}, Mode=TwoWay}"
-                                                         IsChecked="{Binding BatteryCriticalNotification, Source={x:Static properties:Settings.Default}}" />
+                                                         IsChecked="{Binding BatteryHighNotification, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                 <Grid Height="{Binding ActualHeight, ElementName=CriticalBatteryLevelNotificationSetter}"
                       Margin="0,12,0,0">
                     <TextBlock Text="Full" />
