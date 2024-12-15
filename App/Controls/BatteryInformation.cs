@@ -5,9 +5,11 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.Devices.Power;
 using Windows.System.Power;
+using Percentage.App.Properties;
 using Wpf.Ui.Controls;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 
@@ -79,17 +81,35 @@ public partial class BatteryInformation : KeyValueItemsControl
 
             Update();
 
-            updateSubscription = Observable.Interval(TimeSpan.FromSeconds(1))
-                .ObserveOn(AsyncOperationManager.SynchronizationContext).Subscribe(_ => Update());
+            SetupUpdateSubscription();
+
+            Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                    handler => Settings.Default.PropertyChanged += handler,
+                    handler => Settings.Default.PropertyChanged -= handler)
+                .Throttle(TimeSpan.FromMilliseconds(500))
+                .ObserveOn(AsyncOperationManager.SynchronizationContext)
+                .Subscribe(_ => SetupUpdateSubscription());
+
+            return;
+
+            void SetupUpdateSubscription()
+            {
+                updateSubscription?.Dispose();
+                updateSubscription = Observable.Interval(TimeSpan.FromSeconds(Settings.Default.RefreshSeconds))
+                    .ObserveOn(AsyncOperationManager.SynchronizationContext).Subscribe(_ => Update());
+            }
         };
 
         Unloaded += (_, _) => { updateSubscription?.Dispose(); };
     }
 
+    [GeneratedRegex(@"\B[A-Z]")]
+    private static partial Regex WordStartLetterRegex();
+
     private void Update()
     {
         var report = Battery.AggregateBattery.GetReport();
-        var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
+        var powerStatus = SystemInformation.PowerStatus;
         _batteryLifePercent.Value = report.Status == BatteryStatus.NotPresent
             ? "Unknown"
             : powerStatus.BatteryLifePercent.ToString("P");
@@ -153,9 +173,6 @@ public partial class BatteryInformation : KeyValueItemsControl
         // Inserts a space between each word in battery status.
         _batteryStatus.Value = WordStartLetterRegex().Replace(report.Status.ToString(), " $0");
     }
-
-    [GeneratedRegex(@"\B[A-Z]")]
-    private static partial Regex WordStartLetterRegex();
 
     private sealed partial class BatteryInformationObservableValue(SymbolRegular icon, string name)
         : SymbolIconObservableValue<string>(icon)

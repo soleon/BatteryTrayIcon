@@ -225,5 +225,17 @@ namespace Percentage.App.Properties {
                 this["TrayIconFontUnderline"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsAutoBatteryNormalColour {
+            get {
+                return ((bool)(this["IsAutoBatteryNormalColour"]));
+            }
+            set {
+                this["IsAutoBatteryNormalColour"] = value;
+            }
+        }
     }
 }

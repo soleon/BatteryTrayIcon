@@ -23,6 +23,7 @@ public partial class App
     internal const int DefaultBatteryLowNotificationValue = 20;
     internal const string DefaultBatteryNormalColour = null;
     internal const bool DefaultHideAtStartup = false;
+    internal const bool DefaultIsAutoBatteryNormalColour = true;
     internal const int DefaultRefreshSeconds = 60;
     internal const bool DefaultTrayIconFontBold = false;
     internal const bool DefaultTrayIconFontUnderline = false;

@@ -4,7 +4,12 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:properties="clr-namespace:Percentage.App.Properties"
       xmlns:system="clr-namespace:System;assembly=System.Runtime"
-      xmlns:controls="clr-namespace:Percentage.App.Controls">
+      xmlns:controls="clr-namespace:Percentage.App.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:data="clr-namespace:Codify.System.Windows.Data;assembly=Codify.System.Windows"
+      mc:Ignorable="d"
+      d:DesignWidth="400">
     <StackPanel>
 
         <!-- Auto start disabled warning -->
@@ -64,7 +69,7 @@
             </ui:CardControl.Header>
             <ComboBox ItemStringFormat="{}{0} seconds"
                       SelectedValue="{Binding RefreshSeconds, Source={x:Static properties:Settings.Default}, Mode=TwoWay}">
-                <system:Int32>1</system:Int32>
+                <system:Int32>5</system:Int32>
                 <system:Int32>10</system:Int32>
                 <system:Int32>30</system:Int32>
                 <system:Int32>60</system:Int32>
@@ -174,10 +179,17 @@
                            Grid.Column="2"
                            Text="Normal"
                            VerticalAlignment="Center" />
-                <controls:AccentColourPicker Grid.Row="2"
-                                             Grid.Column="3"
-                                             Margin="5,0"
-                                             SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
+                <StackPanel Grid.Row="2"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                    <controls:AccentColourPicker
+                        Margin="5,0,12,0"
+                        SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}"
+                        IsEnabled="{Binding IsAutoBatteryNormalColour, Source={x:Static properties:Settings.Default}, Converter={x:Static data:BooleanConverter.Instance}, ConverterParameter=invert}" />
+                    <CheckBox Content="Auto"
+                              ToolTip="Use system default text colour"
+                              IsChecked="{Binding IsAutoBatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
+                </StackPanel>
             </Grid>
         </ui:CardExpander>
 

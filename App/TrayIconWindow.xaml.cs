@@ -12,7 +12,6 @@ using Windows.Devices.Power;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
 using Percentage.App.Pages;
-using Percentage.App.Properties;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Markup;
 using Application = System.Windows.Application;
@@ -27,18 +26,34 @@ namespace Percentage.App;
 
 public partial class TrayIconWindow
 {
-    private DispatcherTimer _batteryStatusRefreshTimer;
-
-    // Setup variables used in the repetitively ran "Update" local function.
+    private static readonly TimeSpan DebounceTimeSpan = TimeSpan.FromMilliseconds(500);
+    private readonly DispatcherTimer _refreshTimer;
     private (NotificationType Type, DateTime DateTime) _lastNotification = (default, default);
     private string _notificationText;
     private string _notificationTitle;
-    private IDisposable _refreshSubscription;
 
     public TrayIconWindow()
     {
         SystemThemeWatcher.Watch(this);
         InitializeComponent();
+
+        // Setup timer to update the tray icon.
+        _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
+        _refreshTimer.Tick += (_, _) => UpdateBatteryStatus();
+    }
+
+    private static MainWindow ActivateMainWindow()
+    {
+        var window = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+        if (window != null)
+        {
+            window.Activate();
+            return window;
+        }
+
+        window = new MainWindow();
+        window.Show();
+        return window;
     }
 
     private static SolidColorBrush GetBrushFromColourHexString(string hexString, Color fallbackColour)
@@ -71,24 +86,12 @@ public partial class TrayIconWindow
         return renderTargetBitmap;
     }
 
-    private static MainWindow ActivateMainWindow()
-    {
-        var window = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-        if (window != null)
-        {
-            window.Activate();
-            return window;
-        }
-
-        window = new MainWindow();
-        window.Show();
-        return window;
-    }
-
     private SolidColorBrush GetNormalBrush()
     {
-        return GetBrushFromColourHexString(Default.BatteryNormalColour,
-            (Color)FindResource(nameof(ThemeResource.TextFillColorPrimary)));
+        return Default.IsAutoBatteryNormalColour
+            ? new SolidColorBrush((Color)FindResource(nameof(ThemeResource.TextFillColorPrimary)))
+            : GetBrushFromColourHexString(Default.BatteryNormalColour,
+                (Color)FindResource(nameof(ThemeResource.TextFillColorPrimary)));
     }
 
     private void OnAboutMenuItemClick(object sender, RoutedEventArgs e)
@@ -112,43 +115,50 @@ public partial class TrayIconWindow
 
         if (!Default.HideAtStartup) ActivateMainWindow().NavigateToPage<DetailsPage>();
 
-        // Update battery status when the computer resumes or when the power status changes.
-        SystemEvents.PowerModeChanged += (_, e) =>
-        {
-            if (e.Mode is PowerModes.Resume or PowerModes.StatusChange) UpdateBatteryStatus();
-        };
+        // Update battery status when the computer resumes or when the power status changes with debounce.
+        Observable.FromEventPattern<PowerModeChangedEventHandler, PowerModeChangedEventArgs>(
+                handler => SystemEvents.PowerModeChanged += handler,
+                handler => SystemEvents.PowerModeChanged -= handler)
+            .Throttle(DebounceTimeSpan)
+            .ObserveOn(AsyncOperationManager.SynchronizationContext)
+            .Subscribe(_ => UpdateBatteryStatus());
 
-        // Update battery status when the display settings change.
+        // Update battery status when the display settings change with debounce.
         // This will redraw the tray icon to ensure optimal icon resolution under the current display settings.
-        SystemEvents.DisplaySettingsChanged += (_, _) => UpdateBatteryStatus();
+        Observable.FromEventPattern<EventHandler, EventArgs>(
+                handler => SystemEvents.DisplaySettingsChanged += handler,
+                handler => SystemEvents.DisplaySettingsChanged -= handler)
+            .Throttle(DebounceTimeSpan)
+            .ObserveOn(AsyncOperationManager.SynchronizationContext)
+            .Subscribe(_ => UpdateBatteryStatus());
 
         // This event can be triggered multiple times when Windows changes between dark and light theme.
         // Update tray icon colour when user preference changes settled down.
-        Observable
-            .FromEventPattern<UserPreferenceChangedEventHandler, UserPreferenceChangedEventArgs>(
+        Observable.FromEventPattern<UserPreferenceChangedEventHandler, UserPreferenceChangedEventArgs>(
                 handler => SystemEvents.UserPreferenceChanged += handler,
                 handler => SystemEvents.UserPreferenceChanged -= handler)
-            .Throttle(TimeSpan.FromMilliseconds(500))
+            .Throttle(DebounceTimeSpan)
             .ObserveOn(AsyncOperationManager.SynchronizationContext)
             .Subscribe(_ => UpdateBatteryStatus());
 
         // Handle user settings change with debouncing.
-        Observable
-            .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                 handler => Default.PropertyChanged += handler,
                 handler => Default.PropertyChanged -= handler)
-            .Throttle(TimeSpan.FromMilliseconds(500))
+            .Throttle(DebounceTimeSpan)
             .ObserveOn(AsyncOperationManager.SynchronizationContext)
             .Subscribe(pattern => OnUserSettingsPropertyChanged(pattern.EventArgs.PropertyName));
 
-        // Initial updates.
+        // Initial update.
         UpdateBatteryStatus();
-        UpdateRefreshSubscription();
 
-        // Setup timer to update the tray icon.
-        _batteryStatusRefreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
-        _batteryStatusRefreshTimer.Tick += (_, _) => UpdateBatteryStatus();
-        _batteryStatusRefreshTimer.Start();
+        // Kick off to update the tray icon.
+        _refreshTimer.Start();
+    }
+
+    private void OnNotifyIconLeftDoubleClick(NotifyIcon sender, RoutedEventArgs e)
+    {
+        ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 
     private void OnSettingsMenuItemClick(object sender, RoutedEventArgs e)
@@ -160,11 +170,11 @@ public partial class TrayIconWindow
     {
         // Always save settings change immediately in case the app crashes losing all changes.
         Default.Save();
-        
+
         switch (propertyName)
         {
             case nameof(Default.RefreshSeconds):
-                _batteryStatusRefreshTimer.Interval = TimeSpan.FromSeconds(Default.RefreshSeconds);
+                _refreshTimer.Interval = TimeSpan.FromSeconds(Default.RefreshSeconds);
                 break;
             case nameof(Default.BatteryCriticalNotificationValue):
                 if (Default.BatteryLowNotificationValue < Default.BatteryCriticalNotificationValue)
@@ -208,11 +218,10 @@ public partial class TrayIconWindow
         if (Default.TrayIconFontUnderline) textBlock.TextDecorations = TextDecorations.Underline;
 
         var iconImageSource = GetImageSource(textBlock);
-        
+
         // There's a chance that some native exception may be thrown when setting the notify icon's image.
         // Catch any exception here and retry a few times then fail silently with logs.
         for (var i = 0; i < 5; i++)
-        {
             try
             {
                 NotifyIcon.Icon = iconImageSource;
@@ -221,13 +230,10 @@ public partial class TrayIconWindow
             catch (Exception e)
             {
                 if (i == 4)
-                {
                     // Retried maximum number of times.
                     // Log error and continue.
                     App.SetTrayIconUpdateError(e);
-                }
             }
-        }
     }
 
     private void UpdateBatteryStatus()
@@ -404,17 +410,5 @@ public partial class TrayIconWindow
 
             _lastNotification = (notificationType, utcNow);
         }
-    }
-
-    private void UpdateRefreshSubscription()
-    {
-        _refreshSubscription?.Dispose();
-        _refreshSubscription = Observable.Interval(TimeSpan.FromSeconds(Default.RefreshSeconds))
-            .ObserveOn(AsyncOperationManager.SynchronizationContext).Subscribe(_ => UpdateBatteryStatus());
-    }
-
-    private void OnNotifyIconLeftDoubleClick(NotifyIcon sender, RoutedEventArgs e)
-    {
-        ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 }

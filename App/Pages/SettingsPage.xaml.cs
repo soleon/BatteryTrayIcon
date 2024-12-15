@@ -123,6 +123,7 @@ public partial class SettingsPage
         Default.BatteryHighNotification = App.DefaultBatteryHighNotification;
         Default.BatteryCriticalNotification = App.DefaultBatteryCriticalNotification;
         Default.HideAtStartup = App.DefaultHideAtStartup;
+        Default.IsAutoBatteryNormalColour = App.DefaultIsAutoBatteryNormalColour;
 
         _ = EnableAutoStart();
     }

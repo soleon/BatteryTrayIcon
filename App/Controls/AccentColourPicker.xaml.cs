@@ -2,8 +2,10 @@ namespace Percentage.App.Controls;
 
 public partial class AccentColourPicker
 {
-    public static string[] AccentBrushes =
+    public static readonly string[] AccentBrushes =
     [
+        "#000000", // Black
+        "#FFFFFF", // White
         "#FFB900", // Gold
         "#FF8C00", // Dark Orange
         "#F7630C", // Orange
