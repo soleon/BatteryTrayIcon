@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -27,6 +28,7 @@ namespace Percentage.App;
 public partial class TrayIconWindow
 {
     private static readonly TimeSpan DebounceTimeSpan = TimeSpan.FromMilliseconds(500);
+    private readonly Subject<bool> _batteryStatusUpdateSubject = new();
     private readonly DispatcherTimer _refreshTimer;
     private (NotificationType Type, DateTime DateTime) _lastNotification = (default, default);
     private string _notificationText;
@@ -39,7 +41,7 @@ public partial class TrayIconWindow
 
         // Setup timer to update the tray icon.
         _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
-        _refreshTimer.Tick += (_, _) => UpdateBatteryStatus();
+        _refreshTimer.Tick += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
     }
 
     private static MainWindow ActivateMainWindow()
@@ -56,7 +58,7 @@ public partial class TrayIconWindow
         return window;
     }
 
-    private static SolidColorBrush GetBrushFromColourHexString(string hexString, Color fallbackColour)
+    private static Brush GetBrushFromColourHexString(string hexString, Brush fallbackBrush)
     {
         object colour;
         try
@@ -65,10 +67,10 @@ public partial class TrayIconWindow
         }
         catch (FormatException)
         {
-            colour = fallbackColour;
+            return fallbackBrush;
         }
 
-        return new SolidColorBrush(colour == null ? fallbackColour : (Color)colour);
+        return colour == null ? fallbackBrush : new SolidColorBrush((Color)colour);
     }
 
     private static RenderTargetBitmap GetImageSource(FrameworkElement element)
@@ -86,12 +88,35 @@ public partial class TrayIconWindow
         return renderTargetBitmap;
     }
 
-    private SolidColorBrush GetNormalBrush()
+    private Brush GetBatteryChargingBrush()
     {
-        return Default.IsAutoBatteryNormalColour
+        return GetTargetBrush(Default.IsAutoBatteryChargingColour, Default.BatteryChargingColour,
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.DefaultBatteryChargingColour)!));
+    }
+
+    private Brush GetBatteryCriticalBrush()
+    {
+        return GetTargetBrush(Default.IsAutoBatteryCriticalColour, Default.BatteryCriticalColour,
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.DefaultBatteryCriticalColour)!));
+    }
+
+    private Brush GetBatteryLowBrush()
+    {
+        return GetTargetBrush(Default.IsAutoBatteryLowColour, Default.BatteryLowColour,
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.DefaultBatteryLowColour)!));
+    }
+
+    private Brush GetBatteryNormalBrush()
+    {
+        return GetTargetBrush(Default.IsAutoBatteryNormalColour, Default.BatteryNormalColour,
+            (Brush)FindResource(nameof(ThemeResource.TextFillColorPrimaryBrush)));
+    }
+
+    private Brush GetTargetBrush(bool isUsingAutoColour, string targetColour, Brush fallbackBrush)
+    {
+        return isUsingAutoColour
             ? new SolidColorBrush((Color)FindResource(nameof(ThemeResource.TextFillColorPrimary)))
-            : GetBrushFromColourHexString(Default.BatteryNormalColour,
-                (Color)FindResource(nameof(ThemeResource.TextFillColorPrimary)));
+            : GetBrushFromColourHexString(targetColour, fallbackBrush);
     }
 
     private void OnAboutMenuItemClick(object sender, RoutedEventArgs e)
@@ -115,33 +140,23 @@ public partial class TrayIconWindow
 
         if (!Default.HideAtStartup) ActivateMainWindow().NavigateToPage<DetailsPage>();
 
-        // Update battery status when the computer resumes or when the power status changes with debounce.
-        Observable.FromEventPattern<PowerModeChangedEventHandler, PowerModeChangedEventArgs>(
-                handler => SystemEvents.PowerModeChanged += handler,
-                handler => SystemEvents.PowerModeChanged -= handler)
-            .Throttle(DebounceTimeSpan)
-            .ObserveOn(AsyncOperationManager.SynchronizationContext)
+        // Debounce calls to update battery status.
+        // This should be the only place that calls the UpdateBatteryStatus method.
+        _batteryStatusUpdateSubject.Throttle(DebounceTimeSpan).ObserveOn(AsyncOperationManager.SynchronizationContext)
             .Subscribe(_ => UpdateBatteryStatus());
+
+        // Update battery status when the computer resumes or when the power status changes with debounce.
+        SystemEvents.PowerModeChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
         // Update battery status when the display settings change with debounce.
         // This will redraw the tray icon to ensure optimal icon resolution under the current display settings.
-        Observable.FromEventPattern<EventHandler, EventArgs>(
-                handler => SystemEvents.DisplaySettingsChanged += handler,
-                handler => SystemEvents.DisplaySettingsChanged -= handler)
-            .Throttle(DebounceTimeSpan)
-            .ObserveOn(AsyncOperationManager.SynchronizationContext)
-            .Subscribe(_ => UpdateBatteryStatus());
+        SystemEvents.DisplaySettingsChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
         // This event can be triggered multiple times when Windows changes between dark and light theme.
         // Update tray icon colour when user preference changes settled down.
-        Observable.FromEventPattern<UserPreferenceChangedEventHandler, UserPreferenceChangedEventArgs>(
-                handler => SystemEvents.UserPreferenceChanged += handler,
-                handler => SystemEvents.UserPreferenceChanged -= handler)
-            .Throttle(DebounceTimeSpan)
-            .ObserveOn(AsyncOperationManager.SynchronizationContext)
-            .Subscribe(_ => UpdateBatteryStatus());
+        SystemEvents.UserPreferenceChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
-        // Handle user settings change with debouncing.
+        // Handle user settings change with debounce.
         Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                 handler => Default.PropertyChanged += handler,
                 handler => Default.PropertyChanged -= handler)
@@ -150,9 +165,9 @@ public partial class TrayIconWindow
             .Subscribe(pattern => OnUserSettingsPropertyChanged(pattern.EventArgs.PropertyName));
 
         // Initial update.
-        UpdateBatteryStatus();
+        _batteryStatusUpdateSubject.OnNext(false);
 
-        // Kick off to update the tray icon.
+        // Kick off timer to update the tray icon.
         _refreshTimer.Start();
     }
 
@@ -196,7 +211,7 @@ public partial class TrayIconWindow
                 break;
         }
 
-        UpdateBatteryStatus();
+        _batteryStatusUpdateSubject.OnNext(false);
     }
 
     private void SetNotifyIconText(string text, Brush foreground, string fontFamily = null)
@@ -249,15 +264,14 @@ public partial class TrayIconWindow
             case BatteryChargeStatus.NoSystemBattery:
                 // When no battery detected.
                 trayIconText = "❌";
-                brush = GetNormalBrush();
+                brush = GetBatteryNormalBrush();
                 _notificationTitle = null;
                 _notificationText = "No battery detected";
-                // notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
                 break;
             case BatteryChargeStatus.Unknown:
                 // When battery status is unknown.
                 trayIconText = "❓";
-                brush = GetNormalBrush();
+                brush = GetBatteryNormalBrush();
                 break;
             case BatteryChargeStatus.High:
             case BatteryChargeStatus.Low:
@@ -267,7 +281,7 @@ public partial class TrayIconWindow
             {
                 if (percent == 100)
                 {
-                    SetNotifyIconText("\uf5fc", GetNormalBrush(), "Segoe Fluent Icons");
+                    SetNotifyIconText("\uf5fc", GetBatteryNormalBrush(), "Segoe Fluent Icons");
 
                     var powerLineText = powerStatus.PowerLineStatus == PowerLineStatus.Online
                         ? " and connected to power"
@@ -292,9 +306,7 @@ public partial class TrayIconWindow
                 if (batteryChargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     // When the battery is charging.
-                    brush = GetBrushFromColourHexString(Default.BatteryChargingColour,
-                        (Color)ColorConverter.ConvertFromString(App.DefaultBatteryChargingColour)!);
-                    // notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                    brush = GetBatteryChargingBrush();
                     var report = Battery.AggregateBattery.GetReport();
                     var chargeRateInMilliWatts = report.ChargeRateInMilliwatts;
                     if (chargeRateInMilliWatts > 0)
@@ -324,24 +336,19 @@ public partial class TrayIconWindow
                     if (percent <= Default.BatteryCriticalNotificationValue)
                     {
                         // When battery capacity is critical.
-                        brush = GetBrushFromColourHexString(Default.BatteryCriticalColour,
-                            (Color)ColorConverter.ConvertFromString(App.DefaultBatteryCriticalColour)!);
-                        // notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+                        brush = GetBatteryCriticalBrush();
                         if (Default.BatteryCriticalNotification) notificationType = NotificationType.Critical;
                     }
                     else if (percent <= Default.BatteryLowNotificationValue)
                     {
                         // When battery capacity is low.
-                        brush = GetBrushFromColourHexString(Default.BatteryLowColour,
-                            (Color)ColorConverter.ConvertFromString(App.DefaultBatteryLowColour)!);
-                        // notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+                        brush = GetBatteryLowBrush();
                         if (Default.BatteryLowNotification) notificationType = NotificationType.Low;
                     }
                     else
                     {
                         // When battery capacity is normal.
-                        brush = GetNormalBrush();
-                        // notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+                        brush = GetBatteryNormalBrush();
                         SetHighOrFullNotification();
                     }
 

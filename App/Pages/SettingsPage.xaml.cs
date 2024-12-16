@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Windows.ApplicationModel;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Markup;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
 using static Percentage.App.Properties.Settings;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
@@ -110,7 +112,7 @@ public partial class SettingsPage
         Default.BatteryCriticalColour = App.DefaultBatteryCriticalColour;
         Default.BatteryLowColour = App.DefaultBatteryLowColour;
         Default.BatteryChargingColour = App.DefaultBatteryChargingColour;
-        Default.BatteryNormalColour = App.DefaultBatteryNormalColour;
+        Default.BatteryNormalColour = ((Brush)FindResource(nameof(ThemeResource.TextFillColorPrimaryBrush))).ToString();
         Default.TrayIconFontFamily = App.DefaultTrayIconFontFamily;
         Default.TrayIconFontBold = App.DefaultTrayIconFontBold;
         Default.TrayIconFontUnderline = App.DefaultTrayIconFontUnderline;
@@ -124,6 +126,9 @@ public partial class SettingsPage
         Default.BatteryCriticalNotification = App.DefaultBatteryCriticalNotification;
         Default.HideAtStartup = App.DefaultHideAtStartup;
         Default.IsAutoBatteryNormalColour = App.DefaultIsAutoBatteryNormalColour;
+        Default.IsAutoBatteryChargingColour = App.DefaultIsAutoBatteryChargingColour;
+        Default.IsAutoBatteryLowColour = App.DefaultIsAutoBatteryLowColour;
+        Default.IsAutoBatteryCriticalColour = App.DefaultIsAutoBatteryCriticalColour;
 
         _ = EnableAutoStart();
     }

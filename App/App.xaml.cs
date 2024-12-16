@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Wpf.Ui;
+using Wpf.Ui.Markup;
+using static Percentage.App.Properties.Settings;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
@@ -11,18 +13,20 @@ namespace Percentage.App;
 
 public partial class App
 {
-    internal const string DefaultBatteryChargingColour = "#10893E";
-    internal const string DefaultBatteryCriticalColour = "#E81123";
+    internal const string DefaultBatteryChargingColour = "#FF10893E";
+    internal const string DefaultBatteryCriticalColour = "#FFE81123";
     internal const bool DefaultBatteryCriticalNotification = true;
     internal const int DefaultBatteryCriticalNotificationValue = 10;
     internal const bool DefaultBatteryFullNotification = true;
     internal const bool DefaultBatteryHighNotification = true;
     internal const int DefaultBatteryHighNotificationValue = 80;
-    internal const string DefaultBatteryLowColour = "#CA5010";
+    internal const string DefaultBatteryLowColour = "#FFCA5010";
     internal const bool DefaultBatteryLowNotification = true;
     internal const int DefaultBatteryLowNotificationValue = 20;
-    internal const string DefaultBatteryNormalColour = null;
     internal const bool DefaultHideAtStartup = false;
+    internal const bool DefaultIsAutoBatteryChargingColour = false;
+    internal const bool DefaultIsAutoBatteryCriticalColour = false;
+    internal const bool DefaultIsAutoBatteryLowColour = false;
     internal const bool DefaultIsAutoBatteryNormalColour = true;
     internal const int DefaultRefreshSeconds = 60;
     internal const bool DefaultTrayIconFontBold = false;
@@ -38,6 +42,8 @@ public partial class App
     {
         _appMutex = new Mutex(true, Id, out var isNewInstance);
 
+        if (!isNewInstance) Shutdown(1);
+
         DispatcherUnhandledException += (_, e) => HandleException(e.Exception);
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException(e.ExceptionObject);
@@ -46,7 +52,8 @@ public partial class App
 
         InitializeComponent();
 
-        if (!isNewInstance) Shutdown(1);
+        // User settings migration for backward compatibility.
+        MigrateUserSettings();
     }
 
     internal static Exception GetTrayIconUpdateError()
@@ -96,6 +103,23 @@ public partial class App
     }
 
     internal static event Action<Exception> TrayIconUpdateErrorSet;
+
+    private void MigrateUserSettings()
+    {
+        if (Default.RefreshSeconds < 5) Default.RefreshSeconds = 5;
+
+        Default.BatteryNormalColour ??=
+            ((Brush)FindResource(nameof(ThemeResource.TextFillColorPrimaryBrush)))!.ToString();
+
+        if (Default.BatteryLowColour is { Length: 7 } lowColourHexValue)
+            Default.BatteryLowColour = lowColourHexValue.Insert(1, "FF");
+
+        if (Default.BatteryCriticalColour is { Length: 7 } criticalColourHexValue)
+            Default.BatteryCriticalColour = criticalColourHexValue.Insert(1, "FF");
+
+        if (Default.BatteryChargingColour is { Length: 7 } chargingColourHexValue)
+            Default.BatteryChargingColour = chargingColourHexValue.Insert(1, "FF");
+    }
 
     protected override void OnExit(ExitEventArgs e)
     {

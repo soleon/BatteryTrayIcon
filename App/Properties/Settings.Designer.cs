@@ -237,5 +237,41 @@ namespace Percentage.App.Properties {
                 this["IsAutoBatteryNormalColour"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsAutoBatteryLowColour {
+            get {
+                return ((bool)(this["IsAutoBatteryLowColour"]));
+            }
+            set {
+                this["IsAutoBatteryLowColour"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsAutoBatteryChargingColour {
+            get {
+                return ((bool)(this["IsAutoBatteryChargingColour"]));
+            }
+            set {
+                this["IsAutoBatteryChargingColour"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsAutoBatteryCriticalColour {
+            get {
+                return ((bool)(this["IsAutoBatteryCriticalColour"]));
+            }
+            set {
+                this["IsAutoBatteryCriticalColour"] = value;
+            }
+        }
     }
 }

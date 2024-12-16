@@ -7,7 +7,6 @@
       xmlns:controls="clr-namespace:Percentage.App.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:data="clr-namespace:Codify.System.Windows.Data;assembly=Codify.System.Windows"
       mc:Ignorable="d"
       d:DesignWidth="400">
     <StackPanel>
@@ -130,18 +129,8 @@
                         Text="Set tray icon font colour for different battery status" />
                 </StackPanel>
             </ui:CardExpander.Header>
-            <Grid>
-                <Grid.Resources>
-                    <Style TargetType="CheckBox"
-                           BasedOn="{StaticResource {x:Type CheckBox}}">
-                        <Setter Property="HorizontalAlignment"
-                                Value="Stretch" />
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                    </Style>
-                </Grid.Resources>
+            <Grid IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -151,45 +140,31 @@
                     <RowDefinition Height="5" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"
-                           Grid.Column="0"
-                           Text="Critical"
-                           VerticalAlignment="Center" />
+                <controls:AccentColourPicker Label="Critical"
+                                             IsAutoColour="{Binding IsAutoBatteryCriticalColour, Source={x:Static properties:Settings.Default}}"
+                                             SelectedColour="{Binding BatteryCriticalColour, Source={x:Static properties:Settings.Default}}" />
                 <controls:AccentColourPicker Grid.Row="0"
-                                             Grid.Column="1"
-                                             Margin="5,0"
-                                             SelectedItem="{Binding BatteryCriticalColour, Source={x:Static properties:Settings.Default}}" />
-                <TextBlock Grid.Row="0"
-                           Grid.Column="2"
-                           Text="Low"
-                           VerticalAlignment="Center" />
-                <controls:AccentColourPicker Grid.Row="0"
-                                             Grid.Column="3"
-                                             Margin="5,0"
-                                             SelectedItem="{Binding BatteryLowColour, Source={x:Static properties:Settings.Default}}" />
-                <TextBlock Grid.Row="2"
-                           Grid.Column="0"
-                           Text="Charging"
-                           VerticalAlignment="Center" />
+                                             Grid.Column="2"
+                                             Label="Low"
+                                             IsAutoColour="{Binding IsAutoBatteryLowColour, Source={x:Static properties:Settings.Default}}"
+                                             SelectedColour="{Binding BatteryLowColour, Source={x:Static properties:Settings.Default}}" />
+                <Rectangle Grid.RowSpan="3"
+                           Grid.Row="0"
+                           Grid.Column="1"
+                           VerticalAlignment="Stretch"
+                           Width="1"
+                           Margin="8"
+                           Fill="{ui:ThemeResource ControlElevationBorderBrush}" />
                 <controls:AccentColourPicker Grid.Row="2"
-                                             Grid.Column="1"
-                                             Margin="5,0"
-                                             SelectedItem="{Binding BatteryChargingColour, Source={x:Static properties:Settings.Default}}" />
-                <TextBlock Grid.Row="2"
-                           Grid.Column="2"
-                           Text="Normal"
-                           VerticalAlignment="Center" />
-                <StackPanel Grid.Row="2"
-                            Grid.Column="3"
-                            Orientation="Horizontal">
-                    <controls:AccentColourPicker
-                        Margin="5,0,12,0"
-                        SelectedItem="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}"
-                        IsEnabled="{Binding IsAutoBatteryNormalColour, Source={x:Static properties:Settings.Default}, Converter={x:Static data:BooleanConverter.Instance}, ConverterParameter=invert}" />
-                    <CheckBox Content="Auto"
-                              ToolTip="Use system default text colour"
-                              IsChecked="{Binding IsAutoBatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
-                </StackPanel>
+                                             Grid.Column="0"
+                                             Label="Charging"
+                                             IsAutoColour="{Binding IsAutoBatteryChargingColour, Source={x:Static properties:Settings.Default}}"
+                                             SelectedColour="{Binding BatteryChargingColour, Source={x:Static properties:Settings.Default}}" />
+                <controls:AccentColourPicker Grid.Row="2"
+                                             Grid.Column="2"
+                                             Label="Normal"
+                                             SelectedColour="{Binding BatteryNormalColour, Source={x:Static properties:Settings.Default}}"
+                                             IsAutoColour="{Binding IsAutoBatteryNormalColour, Source={x:Static properties:Settings.Default}}" />
             </Grid>
         </ui:CardExpander>
 
