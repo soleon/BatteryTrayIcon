@@ -45,7 +45,7 @@ public sealed partial class AboutPage : INotifyPropertyChanged
         Helper.OpenSourceCodeLocation();
     }
 
-    private void OnTrayIconUpdateErrorSet(Exception obj)
+    private void OnTrayIconUpdateErrorSet(Exception _)
     {
         OnPropertyChanged(nameof(TrayIconUpdateError));
     }

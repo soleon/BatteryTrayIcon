@@ -63,10 +63,13 @@ public partial class App
 
     private static void HandleException(object exception)
     {
+        var version = Helper.GetAppVersion();
+
         if (exception is OutOfMemoryException)
         {
-            MessageBox.Show("Battery Percentage Icon did not have enough memory to perform some work.\r\n" +
-                            "Please consider closing some running applications or background services to free up some memory.",
+            MessageBox.Show(
+                $"Battery Percentage Icon version {version} did not have enough memory to perform some work.\r\n" +
+                "Please consider closing some running applications or background services to free up some memory.",
                 "Your system memory is running low",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -74,25 +77,14 @@ public partial class App
         else
         {
             const string title = "You Found An Error";
-            var message = "Battery Percentage Icon has run into an error. You can help to fix this by:\r\n" +
-                          "1. press Ctrl+C on this message\r\n" +
-                          "2. paste it in an email\r\n" +
-                          "3. send it to soleon@live.com\r\n\r\n" +
-                          (exception is Exception exp
-                              ? exp.ToString()
-                              : $"Error type: {exception.GetType().FullName}\r\n{exception}");
-            try
-            {
-                new Wpf.Ui.Controls.MessageBox
-                {
-                    Title = title,
-                    Content = message
-                }.ShowDialogAsync().GetAwaiter().GetResult();
-            }
-            catch
-            {
-                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            var message =
+                $"Battery Percentage Icon version {version} has run into an error. You can help to fix this by:\r\n" +
+                "1. Press Ctrl+C on this message\r\n" +
+                "2. Report the copied error at https://github.com/soleon/Percentage/issues\r\n\r\n" +
+                (exception is Exception exp
+                    ? exp.ToString()
+                    : $"Error type: {exception.GetType().FullName}\r\n{exception}");
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -119,6 +111,8 @@ public partial class App
 
         if (Default.BatteryChargingColour is { Length: 7 } chargingColourHexValue)
             Default.BatteryChargingColour = chargingColourHexValue.Insert(1, "FF");
+
+        Default.Save();
     }
 
     protected override void OnExit(ExitEventArgs e)

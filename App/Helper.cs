@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
+using Windows.ApplicationModel;
+using Percentage.App.Extensions;
 
 namespace Percentage.App;
 
@@ -60,6 +63,21 @@ internal static class Helper
     internal static void ShowRatingView()
     {
         StartShellExecutedProgress("ms-windows-store://review/?ProductId=9PCKT2B7DZMW");
+    }
+
+    internal static string GetAppVersion()
+    {
+        string version;
+        try
+        {
+            version = Package.Current.Id.Version.ToVersionString();
+        }
+        catch
+        {
+            version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
+        }
+
+        return version;
     }
 
     private static void StartShellExecutedProgress(string fileName)
