@@ -15,6 +15,12 @@
         <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
         <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
         <Platforms>AnyCPU;x64;ARM64;x86</Platforms>
+        <PackageVersion>2.1.1</PackageVersion>
+        <PackageProjectUrl>https://github.com/soleon/Percentage</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/soleon/Percentage?tab=MIT-1-ov-file</PackageLicenseUrl>
+        <PackageIcon>Icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/soleon/Percentage</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Codify.System.Windows" Version="*" />

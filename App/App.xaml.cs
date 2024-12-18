@@ -1,8 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Percentage.App.Extensions;
+using Percentage.App.Pages;
 using Wpf.Ui;
 using Wpf.Ui.Markup;
 using static Percentage.App.Properties.Settings;
@@ -42,7 +46,13 @@ public partial class App
     {
         _appMutex = new Mutex(true, Id, out var isNewInstance);
 
-        if (!isNewInstance) Shutdown(1);
+        if (!isNewInstance)
+        {
+            Shutdown(1);
+            return;
+        }
+
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
         DispatcherUnhandledException += (_, e) => HandleException(e.Exception);
 
@@ -54,6 +64,28 @@ public partial class App
 
         // User settings migration for backward compatibility.
         MigrateUserSettings();
+
+        // Subscribe to toast notification activations.
+        ToastNotificationManagerCompat.OnActivated += async toastArgs =>
+        {
+            if (ToastArguments.Parse(toastArgs.Argument).GetActionArgument() ==
+                ToastNotificationExtensions.Action.ViewDetails)
+                await Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+        };
+    }
+
+    internal static MainWindow ActivateMainWindow()
+    {
+        var window = Current.Windows.OfType<MainWindow>().FirstOrDefault();
+        if (window != null)
+        {
+            window.Activate();
+            return window;
+        }
+
+        window = new MainWindow();
+        window.Show();
+        return window;
     }
 
     internal static Exception GetTrayIconUpdateError()

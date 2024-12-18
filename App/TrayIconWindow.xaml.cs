@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
@@ -10,8 +9,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Windows.Devices.Power;
-using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
+using Percentage.App.Extensions;
 using Percentage.App.Pages;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Markup;
@@ -42,20 +41,6 @@ public partial class TrayIconWindow
         // Setup timer to update the tray icon.
         _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
         _refreshTimer.Tick += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
-    }
-
-    private static MainWindow ActivateMainWindow()
-    {
-        var window = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-        if (window != null)
-        {
-            window.Activate();
-            return window;
-        }
-
-        window = new MainWindow();
-        window.Show();
-        return window;
     }
 
     private static Brush GetBrushFromColourHexString(string hexString, Brush fallbackBrush)
@@ -121,12 +106,12 @@ public partial class TrayIconWindow
 
     private void OnAboutMenuItemClick(object sender, RoutedEventArgs e)
     {
-        ActivateMainWindow().NavigateToPage<AboutPage>();
+        App.ActivateMainWindow().NavigateToPage<AboutPage>();
     }
 
     private void OnDetailsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        ActivateMainWindow().NavigateToPage<DetailsPage>();
+        App.ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 
     private void OnExitMenuItemClick(object sender, RoutedEventArgs e)
@@ -138,7 +123,7 @@ public partial class TrayIconWindow
     {
         Visibility = Visibility.Collapsed;
 
-        if (!Default.HideAtStartup) ActivateMainWindow().NavigateToPage<DetailsPage>();
+        if (!Default.HideAtStartup) App.ActivateMainWindow().NavigateToPage<DetailsPage>();
 
         // Debounce calls to update battery status.
         // This should be the only place that calls the UpdateBatteryStatus method.
@@ -173,12 +158,12 @@ public partial class TrayIconWindow
 
     private void OnNotifyIconLeftDoubleClick(NotifyIcon sender, RoutedEventArgs e)
     {
-        ActivateMainWindow().NavigateToPage<DetailsPage>();
+        App.ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 
     private void OnSettingsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        ActivateMainWindow().NavigateToPage<SettingsPage>();
+        App.ActivateMainWindow().NavigateToPage<SettingsPage>();
     }
 
     private void OnUserSettingsPropertyChanged(string propertyName)
@@ -401,21 +386,22 @@ public partial class TrayIconWindow
                 return;
 
             var utcNow = DateTime.UtcNow;
-            if (_lastNotification.Type != notificationType)
-                // Notification required, and battery status has changed from last notification, notify user.
-                new ToastContentBuilder()
-                    .AddText(_notificationTitle)
-                    .AddText(_notificationText)
-                    .Show();
-            else if (utcNow - _lastNotification.DateTime > TimeSpan.FromMinutes(5))
-                // Notification required, but battery status is the same as last notification for more than 5 minutes,
-                // notify user.
-                new ToastContentBuilder()
-                    .AddText(_notificationTitle)
-                    .AddText(_notificationText)
-                    .Show();
+            if (_lastNotification.Type != notificationType ||
+                utcNow - _lastNotification.DateTime > TimeSpan.FromMinutes(5))
+                // Notification is required if the existing notification type is different from the previous one or
+                // battery status is the same, but it has been more than 5 minutes since the last notification was shown.
+                ToastNotificationExtensions.ShowToastNotification(_notificationTitle, _notificationText);
 
             _lastNotification = (notificationType, utcNow);
         }
+    }
+
+    private enum NotificationType : byte
+    {
+        None = 0,
+        Critical,
+        Low,
+        High,
+        Full
     }
 }
