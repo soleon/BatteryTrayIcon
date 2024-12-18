@@ -9,7 +9,7 @@ public sealed partial class MainWindow
     {
         SystemThemeWatcher.Watch(this);
         InitializeComponent();
-        App.SnackbarService.SetSnackbarPresenter(SnackbarPresenter);
+        App.SnackBarService.SetSnackbarPresenter(SnackbarPresenter);
     }
 
     internal void NavigateToPage<T>() where T : Page

@@ -38,7 +38,7 @@ public partial class App
     internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
     private static Exception _trayIconUpdateError;
     internal static readonly FontFamily DefaultTrayIconFontFamily = new("Microsoft Sans Serif");
-    internal static readonly ISnackbarService SnackbarService = new SnackbarService();
+    internal static readonly ISnackbarService SnackBarService = new SnackbarService();
 
     private readonly Mutex _appMutex;
 
@@ -68,9 +68,38 @@ public partial class App
         // Subscribe to toast notification activations.
         ToastNotificationManagerCompat.OnActivated += async toastArgs =>
         {
-            if (ToastArguments.Parse(toastArgs.Argument).GetActionArgument() ==
-                ToastNotificationExtensions.Action.ViewDetails)
-                await Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+            var arguments = ToastArguments.Parse(toastArgs.Argument);
+            var action = arguments.GetActionArgument();
+            switch (action)
+            {
+                case ToastNotificationExtensions.Action.ViewDetails:
+                    await Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+                    break;
+                case ToastNotificationExtensions.Action.DisableBatteryNotification:
+                    var type = arguments.GetNotificationTypeArgument();
+                    switch (type)
+                    {
+                        case ToastNotificationExtensions.NotificationType.Critical:
+                            Default.BatteryCriticalNotification = false;
+                            break;
+                        case ToastNotificationExtensions.NotificationType.Low:
+                            Default.BatteryLowNotification = false;
+                            break;
+                        case ToastNotificationExtensions.NotificationType.High:
+                            Default.BatteryHighNotification = false;
+                            break;
+                        case ToastNotificationExtensions.NotificationType.Full:
+                            Default.BatteryFullNotification = false;
+                            break;
+                        case ToastNotificationExtensions.NotificationType.None:
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(type), type, $"{type} is not supported.");
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, $"{action} is not supported.");
+            }
         };
     }
 
@@ -91,6 +120,11 @@ public partial class App
     internal static Exception GetTrayIconUpdateError()
     {
         return _trayIconUpdateError;
+    }
+
+    internal static TrayIconWindow GetTrayIconWindow()
+    {
+        return Current.Windows.OfType<TrayIconWindow>().FirstOrDefault();
     }
 
     private static void HandleException(object exception)

@@ -29,7 +29,10 @@ public partial class TrayIconWindow
     private static readonly TimeSpan DebounceTimeSpan = TimeSpan.FromMilliseconds(500);
     private readonly Subject<bool> _batteryStatusUpdateSubject = new();
     private readonly DispatcherTimer _refreshTimer;
-    private (NotificationType Type, DateTime DateTime) _lastNotification = (default, default);
+
+    private (ToastNotificationExtensions.NotificationType Type, DateTime DateTime) _lastNotification =
+        (default, default);
+
     private string _notificationText;
     private string _notificationTitle;
 
@@ -130,10 +133,10 @@ public partial class TrayIconWindow
         _batteryStatusUpdateSubject.Throttle(DebounceTimeSpan).ObserveOn(AsyncOperationManager.SynchronizationContext)
             .Subscribe(_ => UpdateBatteryStatus());
 
-        // Update battery status when the computer resumes or when the power status changes with debounce.
+        // Update battery status when the computer resumes or when the power status changes with debouncing.
         SystemEvents.PowerModeChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
-        // Update battery status when the display settings change with debounce.
+        // Update battery status when the display settings change with debouncing.
         // This will redraw the tray icon to ensure optimal icon resolution under the current display settings.
         SystemEvents.DisplaySettingsChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
@@ -141,7 +144,7 @@ public partial class TrayIconWindow
         // Update tray icon colour when user preference changes settled down.
         SystemEvents.UserPreferenceChanged += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
 
-        // Handle user settings change with debounce.
+        // Handle user settings change with debouncing.
         Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                 handler => Default.PropertyChanged += handler,
                 handler => Default.PropertyChanged -= handler)
@@ -219,12 +222,13 @@ public partial class TrayIconWindow
 
         var iconImageSource = GetImageSource(textBlock);
 
-        // There's a chance that some native exception may be thrown when setting the notify icon's image.
+        // There's a chance that some native exception may be thrown when setting the icon's image.
         // Catch any exception here and retry a few times then fail silently with logs.
         for (var i = 0; i < 5; i++)
             try
             {
                 NotifyIcon.Icon = iconImageSource;
+                App.SetTrayIconUpdateError(null);
                 break;
             }
             catch (Exception e)
@@ -241,7 +245,7 @@ public partial class TrayIconWindow
         var powerStatus = SystemInformation.PowerStatus;
         var batteryChargeStatus = powerStatus.BatteryChargeStatus;
         var percent = (int)Math.Round(powerStatus.BatteryLifePercent * 100);
-        var notificationType = NotificationType.None;
+        var notificationType = ToastNotificationExtensions.NotificationType.None;
         Brush brush;
         string trayIconText;
         switch (batteryChargeStatus)
@@ -280,7 +284,7 @@ public partial class TrayIconWindow
                     // Show fully charged notification.
 
                     _notificationTitle = "Fully charged" + powerLineText;
-                    notificationType = NotificationType.Full;
+                    notificationType = ToastNotificationExtensions.NotificationType.Full;
                     CheckAndSendNotification();
 
                     return;
@@ -322,13 +326,15 @@ public partial class TrayIconWindow
                     {
                         // When battery capacity is critical.
                         brush = GetBatteryCriticalBrush();
-                        if (Default.BatteryCriticalNotification) notificationType = NotificationType.Critical;
+                        if (Default.BatteryCriticalNotification)
+                            notificationType = ToastNotificationExtensions.NotificationType.Critical;
                     }
                     else if (percent <= Default.BatteryLowNotificationValue)
                     {
                         // When battery capacity is low.
                         brush = GetBatteryLowBrush();
-                        if (Default.BatteryLowNotification) notificationType = NotificationType.Low;
+                        if (Default.BatteryLowNotification)
+                            notificationType = ToastNotificationExtensions.NotificationType.Low;
                     }
                     else
                     {
@@ -361,9 +367,9 @@ public partial class TrayIconWindow
                 void SetHighOrFullNotification()
                 {
                     if (percent == Default.BatteryHighNotificationValue && Default.BatteryHighNotification)
-                        notificationType = NotificationType.High;
+                        notificationType = ToastNotificationExtensions.NotificationType.High;
                     else if (percent == 100 && Default.BatteryFullNotification)
-                        notificationType = NotificationType.Full;
+                        notificationType = ToastNotificationExtensions.NotificationType.Full;
                 }
             }
         }
@@ -381,7 +387,7 @@ public partial class TrayIconWindow
         // Check and send notification.
         void CheckAndSendNotification()
         {
-            if (notificationType == NotificationType.None)
+            if (notificationType == ToastNotificationExtensions.NotificationType.None)
                 // No notification required.
                 return;
 
@@ -390,18 +396,15 @@ public partial class TrayIconWindow
                 utcNow - _lastNotification.DateTime > TimeSpan.FromMinutes(5))
                 // Notification is required if the existing notification type is different from the previous one or
                 // battery status is the same, but it has been more than 5 minutes since the last notification was shown.
-                ToastNotificationExtensions.ShowToastNotification(_notificationTitle, _notificationText);
+                ToastNotificationExtensions.ShowToastNotification(_notificationTitle, _notificationText,
+                    notificationType);
 
             _lastNotification = (notificationType, utcNow);
         }
     }
 
-    private enum NotificationType : byte
+    public void RequestBatteryStatusUpdate()
     {
-        None = 0,
-        Critical,
-        Low,
-        High,
-        Full
+        _batteryStatusUpdateSubject.OnNext(false);
     }
 }

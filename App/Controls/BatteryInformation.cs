@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,6 +44,8 @@ public partial class BatteryInformation : KeyValueItemsControl
 
     private readonly BatteryInformationObservableValue _remainingChargeCapacity =
         new(SymbolRegular.Battery020, "Remaining Charge Capacity");
+    
+    private readonly Subject<bool> _updateSubject = new();
 
     static BatteryInformation()
     {
@@ -79,7 +82,11 @@ public partial class BatteryInformation : KeyValueItemsControl
                     FindResource(typeof(CardControl)) is Style style)
                     card.Style = style;
 
-            Update();
+            _updateSubject.Throttle(TimeSpan.FromMilliseconds(500))
+                .ObserveOn(AsyncOperationManager.SynchronizationContext)
+                .Subscribe(_ => Update());
+
+            _updateSubject.OnNext(false);
 
             SetupUpdateSubscription();
 
@@ -87,7 +94,6 @@ public partial class BatteryInformation : KeyValueItemsControl
                     handler => Settings.Default.PropertyChanged += handler,
                     handler => Settings.Default.PropertyChanged -= handler)
                 .Throttle(TimeSpan.FromMilliseconds(500))
-                .ObserveOn(AsyncOperationManager.SynchronizationContext)
                 .Subscribe(_ => SetupUpdateSubscription());
 
             return;
@@ -96,7 +102,7 @@ public partial class BatteryInformation : KeyValueItemsControl
             {
                 updateSubscription?.Dispose();
                 updateSubscription = Observable.Interval(TimeSpan.FromSeconds(Settings.Default.RefreshSeconds))
-                    .ObserveOn(AsyncOperationManager.SynchronizationContext).Subscribe(_ => Update());
+                    .ObserveOn(AsyncOperationManager.SynchronizationContext).Subscribe(_ => _updateSubject.OnNext(false));
             }
         };
 
@@ -188,5 +194,10 @@ public partial class BatteryInformation : KeyValueItemsControl
         {
             return Value?.ToString();
         }
+    }
+
+    internal void RequestUpdate()
+    {
+        _updateSubject.OnNext(false);
     }
 }

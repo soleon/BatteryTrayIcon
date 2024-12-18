@@ -32,13 +32,13 @@ public class CopyButton : Button
         var targetStringValue = TargetObject?.ToString();
         if (targetStringValue == null)
         {
-            App.SnackbarService.Show("Nothing to copy", "There was nothing to copy to the clipboard.",
+            App.SnackBarService.Show("Nothing to copy", "There was nothing to copy to the clipboard.",
                 ControlAppearance.Caution);
         }
         else
         {
             Clipboard.SetText(targetStringValue);
-            App.SnackbarService.Show("Copied to clipboard", targetStringValue, ControlAppearance.Success);
+            App.SnackBarService.Show("Copied to clipboard", targetStringValue, ControlAppearance.Success);
         }
 
         base.OnClick();
