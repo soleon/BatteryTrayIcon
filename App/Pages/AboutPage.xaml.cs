@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Percentage.App.Extensions;
 
 namespace Percentage.App.Pages;
 
@@ -22,12 +23,12 @@ public sealed partial class AboutPage : INotifyPropertyChanged
 
     private void OnDonationButtonClick(object sender, RoutedEventArgs e)
     {
-        Helper.OpenDonationLocation();
+        ExternalProcessExtensions.OpenDonationLocation();
     }
 
     private void OnFeedbackButtonClick(object sender, RoutedEventArgs e)
     {
-        Helper.OpenFeedbackLocation();
+        ExternalProcessExtensions.OpenFeedbackLocation();
     }
 
     private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -37,12 +38,12 @@ public sealed partial class AboutPage : INotifyPropertyChanged
 
     private void OnRatingButtonClick(object sender, RoutedEventArgs e)
     {
-        Helper.ShowRatingView();
+        ExternalProcessExtensions.ShowRatingView();
     }
 
     private void OnSourceCodeButtonClick(object sender, RoutedEventArgs e)
     {
-        Helper.OpenSourceCodeLocation();
+        ExternalProcessExtensions.OpenSourceCodeLocation();
     }
 
     private void OnTrayIconUpdateErrorSet(Exception _)

@@ -129,7 +129,7 @@ public partial class App
 
     private static void HandleException(object exception)
     {
-        var version = Helper.GetAppVersion();
+        var version = VersionExtensions.GetAppVersion();
 
         if (exception is OutOfMemoryException)
         {

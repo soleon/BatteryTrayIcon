@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Percentage.App.Extensions;
 
 namespace Percentage.App.Controls;
 
@@ -9,7 +10,7 @@ public sealed class ApplicationInformation : KeyValueItemsControl
     {
         ItemsSource = new Dictionary<string, object>
         {
-            { "App version", Helper.GetAppVersion() },
+            { "App version", VersionExtensions.GetAppVersion() },
             { "Runtime version", RuntimeInformation.FrameworkDescription },
             { "Runtime architecture", RuntimeInformation.RuntimeIdentifier }
         };

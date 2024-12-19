@@ -112,6 +112,11 @@ public partial class TrayIconWindow
         App.ActivateMainWindow().NavigateToPage<AboutPage>();
     }
 
+    private void OnAppSettingsMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        App.ActivateMainWindow().NavigateToPage<SettingsPage>();
+    }
+
     private void OnDetailsMenuItemClick(object sender, RoutedEventArgs e)
     {
         App.ActivateMainWindow().NavigateToPage<DetailsPage>();
@@ -164,9 +169,9 @@ public partial class TrayIconWindow
         App.ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 
-    private void OnSettingsMenuItemClick(object sender, RoutedEventArgs e)
+    private void OnSystemSettingsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        App.ActivateMainWindow().NavigateToPage<SettingsPage>();
+        ExternalProcessExtensions.OpenPowerSettings();
     }
 
     private void OnUserSettingsPropertyChanged(string propertyName)
@@ -199,6 +204,11 @@ public partial class TrayIconWindow
                 break;
         }
 
+        _batteryStatusUpdateSubject.OnNext(false);
+    }
+
+    public void RequestBatteryStatusUpdate()
+    {
         _batteryStatusUpdateSubject.OnNext(false);
     }
 
@@ -306,7 +316,7 @@ public partial class TrayIconWindow
                         var remainingCapacityInMilliWattHours = report.RemainingCapacityInMilliwattHours;
                         if (fullChargeCapacityInMilliWattHours.HasValue &&
                             remainingCapacityInMilliWattHours.HasValue)
-                            _notificationText = Helper.GetReadableTimeSpan(TimeSpan.FromHours(
+                            _notificationText = ReadableExtensions.GetReadableTimeSpan(TimeSpan.FromHours(
                                 (fullChargeCapacityInMilliWattHours.Value -
                                  remainingCapacityInMilliWattHours.Value) /
                                 (double)chargeRateInMilliWatts.Value)) + " until fully charged";
@@ -349,7 +359,8 @@ public partial class TrayIconWindow
                             ? "connected (not charging)"
                             : "on battery")}";
                         _notificationText =
-                            Helper.GetReadableTimeSpan(TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining)) +
+                            ReadableExtensions.GetReadableTimeSpan(
+                                TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining)) +
                             " remaining";
                     }
                     else
@@ -401,10 +412,5 @@ public partial class TrayIconWindow
 
             _lastNotification = (notificationType, utcNow);
         }
-    }
-
-    public void RequestBatteryStatusUpdate()
-    {
-        _batteryStatusUpdateSubject.OnNext(false);
     }
 }

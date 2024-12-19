@@ -18,9 +18,12 @@
                 <ui:MenuItem Header="_Details"
                              Click="OnDetailsMenuItemClick"
                              Icon="{ui:SymbolIcon AppsListDetail20}" />
-                <ui:MenuItem Header="_Settings"
-                             Click="OnSettingsMenuItemClick"
+                <ui:MenuItem Header="App _settings"
+                             Click="OnAppSettingsMenuItemClick"
                              Icon="{ui:SymbolIcon Settings20}" />
+                <ui:MenuItem Header="System _power settings"
+                             Click="OnSystemSettingsMenuItemClick"
+                             Icon="{ui:SymbolIcon FlashSettings20}" />
                 <ui:MenuItem Header="_About"
                              Click="OnAboutMenuItemClick"
                              Icon="{ui:SymbolIcon Info20}" />

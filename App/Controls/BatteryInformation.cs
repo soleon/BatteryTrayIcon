@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using Windows.Devices.Power;
 using Windows.System.Power;
+using Percentage.App.Extensions;
 using Percentage.App.Properties;
 using Wpf.Ui.Controls;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
@@ -136,14 +137,14 @@ public partial class BatteryInformation : KeyValueItemsControl
                 {
                     if (fullChargeCapacityInMilliWattHours.HasValue && remainingCapacityInMilliWattHours.HasValue)
                         _batteryTime.Value =
-                            $"{Helper.GetReadableTimeSpan(TimeSpan.FromHours((fullChargeCapacityInMilliWattHours.Value - remainingCapacityInMilliWattHours.Value) / (double)chargeRateInMilliWatts.Value))} until full";
+                            $"{ReadableExtensions.GetReadableTimeSpan(TimeSpan.FromHours((fullChargeCapacityInMilliWattHours.Value - remainingCapacityInMilliWattHours.Value) / (double)chargeRateInMilliWatts.Value))} until full";
                     else
                         _batteryTime.Value = "Unknown";
                 }
                 else
                 {
                     _batteryTime.Value =
-                        $"{Helper.GetReadableTimeSpan(TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining))} remaining";
+                        $"{ReadableExtensions.GetReadableTimeSpan(TimeSpan.FromSeconds(powerStatus.BatteryLifeRemaining))} remaining";
                 }
 
                 _chargeRate.Value = chargeRateInMilliWatts + " mW";
