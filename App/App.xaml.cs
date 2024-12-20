@@ -66,41 +66,7 @@ public partial class App
         MigrateUserSettings();
 
         // Subscribe to toast notification activations.
-        ToastNotificationManagerCompat.OnActivated += async toastArgs =>
-        {
-            var arguments = ToastArguments.Parse(toastArgs.Argument);
-            var action = arguments.GetActionArgument();
-            switch (action)
-            {
-                case ToastNotificationExtensions.Action.ViewDetails:
-                    await Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
-                    break;
-                case ToastNotificationExtensions.Action.DisableBatteryNotification:
-                    var type = arguments.GetNotificationTypeArgument();
-                    switch (type)
-                    {
-                        case ToastNotificationExtensions.NotificationType.Critical:
-                            Default.BatteryCriticalNotification = false;
-                            break;
-                        case ToastNotificationExtensions.NotificationType.Low:
-                            Default.BatteryLowNotification = false;
-                            break;
-                        case ToastNotificationExtensions.NotificationType.High:
-                            Default.BatteryHighNotification = false;
-                            break;
-                        case ToastNotificationExtensions.NotificationType.Full:
-                            Default.BatteryFullNotification = false;
-                            break;
-                        case ToastNotificationExtensions.NotificationType.None:
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(type), type, $"{type} is not supported.");
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(action), action, $"{action} is not supported.");
-            }
-        };
+        ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivatedAsync;
     }
 
     internal static MainWindow ActivateMainWindow()
@@ -186,5 +152,41 @@ public partial class App
         // Save user settings when exiting the app.
         _appMutex.Dispose();
         base.OnExit(e);
+    }
+
+    private void OnToastNotificationActivatedAsync(ToastNotificationActivatedEventArgsCompat toastArgs)
+    {
+        var arguments = ToastArguments.Parse(toastArgs.Argument);
+        if (!arguments.TryGetActionArgument(out var action)) return;
+        switch (action)
+        {
+            case ToastNotificationExtensions.Action.ViewDetails:
+                Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+                break;
+            case ToastNotificationExtensions.Action.DisableBatteryNotification:
+                if (!arguments.TryGetNotificationTypeArgument(out var type)) break;
+                switch (type)
+                {
+                    case ToastNotificationExtensions.NotificationType.Critical:
+                        Default.BatteryCriticalNotification = false;
+                        break;
+                    case ToastNotificationExtensions.NotificationType.Low:
+                        Default.BatteryLowNotification = false;
+                        break;
+                    case ToastNotificationExtensions.NotificationType.High:
+                        Default.BatteryHighNotification = false;
+                        break;
+                    case ToastNotificationExtensions.NotificationType.Full:
+                        Default.BatteryFullNotification = false;
+                        break;
+                    case ToastNotificationExtensions.NotificationType.None:
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, $"{type} is not supported.");
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(action), action, $"{action} is not supported.");
+        }
     }
 }

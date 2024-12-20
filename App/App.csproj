@@ -5,22 +5,24 @@
         <ApplicationIcon>icon.ico</ApplicationIcon>
         <RootNamespace>Percentage.App</RootNamespace>
         <AssemblyName>Percentage.App</AssemblyName>
+        <AssemblyTitle>Battery Percentage Icon</AssemblyTitle>
         <UseWpf>True</UseWpf>
         <UseWindowsForms>True</UseWindowsForms>
-        <Title>Battery Percentage Icon</Title>
+        <Title>$(AssemblyTitle)</Title>
         <Description>Display your battery percentage and status in the Windows system tray.</Description>
-        <Product>Battery Percentage Icon</Product>
+        <Product>$(AssemblyTitle)</Product>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
         <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
         <Platforms>AnyCPU;x64;ARM64;x86</Platforms>
-        <PackageVersion>2.1.1</PackageVersion>
+        <PackageVersion>2.1.2</PackageVersion>
         <PackageProjectUrl>https://github.com/soleon/Percentage</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/soleon/Percentage?tab=MIT-1-ov-file</PackageLicenseUrl>
         <PackageIcon>Icon.png</PackageIcon>
         <RepositoryUrl>https://github.com/soleon/Percentage</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <Authors>Long Zhou</Authors>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Codify.System.Windows" Version="*" />
