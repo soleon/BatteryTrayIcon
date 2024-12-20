@@ -157,7 +157,14 @@ public partial class App
     private void OnToastNotificationActivatedAsync(ToastNotificationActivatedEventArgsCompat toastArgs)
     {
         var arguments = ToastArguments.Parse(toastArgs.Argument);
-        if (!arguments.TryGetActionArgument(out var action)) return;
+        if (!arguments.TryGetActionArgument(out var action))
+        {
+            // When there's no action from toast notification activation, this is most likely triggered by users
+            // clicking the entire notification instead of an individual button.
+            // Show the details view in this case.
+            Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+        }
+        
         switch (action)
         {
             case ToastNotificationExtensions.Action.ViewDetails:
