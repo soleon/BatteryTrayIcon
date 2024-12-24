@@ -88,9 +88,9 @@ public partial class App
         return _trayIconUpdateError;
     }
 
-    internal static TrayIconWindow GetTrayIconWindow()
+    internal static NotifyIconWindow GetTrayIconWindow()
     {
-        return Current.Windows.OfType<TrayIconWindow>().FirstOrDefault();
+        return Current.Windows.OfType<NotifyIconWindow>().FirstOrDefault();
     }
 
     private static void HandleException(object exception)

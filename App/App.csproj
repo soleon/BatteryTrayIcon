@@ -16,7 +16,7 @@
         <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
         <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
         <Platforms>AnyCPU;x64;ARM64;x86</Platforms>
-        <PackageVersion>2.1.2</PackageVersion>
+        <PackageVersion>2.1.3</PackageVersion>
         <PackageProjectUrl>https://github.com/soleon/Percentage</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/soleon/Percentage?tab=MIT-1-ov-file</PackageLicenseUrl>
         <PackageIcon>Icon.png</PackageIcon>
@@ -25,12 +25,13 @@
         <Authors>Long Zhou</Authors>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Codify.System.Windows" Version="*" />
-        <PackageReference Include="System.Management" Version="*" />
-        <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="*" />
-        <PackageReference Include="WPF-UI.Tray" Version="*" />
-        <PackageReference Include="System.Reactive" Version="*" />
-        <Resource Include="Icon.png" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="*"/>
+        <PackageReference Include="Codify.System.Windows" Version="*"/>
+        <PackageReference Include="System.Management" Version="*"/>
+        <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="*"/>
+        <PackageReference Include="WPF-UI.Tray" Version="*"/>
+        <PackageReference Include="System.Reactive" Version="*"/>
+        <Resource Include="Icon.png"/>
         <Compile Update="Properties\Settings.Designer.cs">
             <DesignTimeSharedInput>True</DesignTimeSharedInput>
             <AutoGen>True</AutoGen>

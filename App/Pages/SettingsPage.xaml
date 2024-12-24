@@ -13,7 +13,7 @@
 
         <!-- Auto start disabled warning -->
         <ui:InfoBar Title="Auto Start Disabled"
-                    Message="Auto start requires this app to run as UWP."
+                    Message="Auto start requires this app to run as a Windows Store app."
                     Severity="Warning"
                     IsOpen="True"
                     Visibility="Collapsed"
@@ -83,15 +83,10 @@
                         FontTypography="BodyStrong"
                         Text="Tray icon font" />
                     <ui:TextBlock
-                        Text="Set tray icon font family and styles" />
+                        Text="Customise tray icon font" />
                 </StackPanel>
             </ui:CardExpander.Header>
             <StackPanel>
-                <ui:InfoBar Severity="Informational"
-                            IsOpen="True"
-                            Margin="0,0,0,12"
-                            Title="Why can't I make the tray icon text bigger?"
-                            Message="Windows limits tray icons to be a 16 × 16 pixel square. Anything goes out of this box will be cut off." />
                 <DockPanel>
                     <ToggleButton Content="{ui:SymbolIcon TextUnderline20}"
                                   VerticalAlignment="Stretch"
@@ -102,7 +97,7 @@
                                   VerticalAlignment="Stretch"
                                   IsChecked="{Binding TrayIconFontBold, Source={x:Static properties:Settings.Default}}"
                                   DockPanel.Dock="Right" />
-                    <ComboBox Margin="5,0"
+                    <ComboBox Margin="0,0,5,0"
                               SelectedItem="{Binding TrayIconFontFamily, Source={x:Static properties:Settings.Default}}"
                               ItemsSource="{x:Static Fonts.SystemFontFamilies}">
                         <ComboBox.ItemTemplate>
@@ -113,6 +108,17 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Text="Size" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="{Binding TrayIconFontSize, Source={x:Static properties:Settings.Default}}" />
+                    <Slider Margin="12"
+                            TickPlacement="Both"
+                            Minimum="4"
+                            Maximum="28"
+                            IsSnapToTickEnabled="True"
+                            Value="{Binding TrayIconFontSize, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
                 </DockPanel>
             </StackPanel>
         </ui:CardExpander>
@@ -201,6 +207,20 @@
                 </Grid>
             </StackPanel>
         </ui:CardExpander>
+        
+        <ui:CardControl Icon="{ui:SymbolIcon Power20}"
+                        Content="{ui:SymbolIcon Open20}"
+                        Click="OnSystemPowerSettingsClick">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Power &amp; battery" />
+                    <ui:TextBlock
+                        Text="Open Windows system power and battery settings" />
+                </StackPanel>
+            </ui:CardControl.Header>
+        </ui:CardControl>
 
         <!-- Reset all settings button -->
         <ui:Button Appearance="Caution"

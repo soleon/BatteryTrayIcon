@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Windows.ApplicationModel;
+using Percentage.App.Extensions;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Markup;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
@@ -131,6 +132,11 @@ public partial class SettingsPage
         Default.IsAutoBatteryCriticalColour = App.DefaultIsAutoBatteryCriticalColour;
 
         _ = EnableAutoStart();
+    }
+
+    private void OnSystemPowerSettingsClick(object sender, RoutedEventArgs e)
+    {
+        ExternalProcessExtensions.OpenPowerSettings();
     }
 
     private void RegisterAutoStartEventHandling()
