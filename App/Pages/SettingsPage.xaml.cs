@@ -117,6 +117,7 @@ public partial class SettingsPage
         Default.TrayIconFontFamily = App.DefaultTrayIconFontFamily;
         Default.TrayIconFontBold = App.DefaultTrayIconFontBold;
         Default.TrayIconFontUnderline = App.DefaultTrayIconFontUnderline;
+        Default.TrayIconFontSize = App.DefaultTrayIconFontSize;
         Default.BatteryCriticalNotificationValue = App.DefaultBatteryCriticalNotificationValue;
         Default.BatteryLowNotificationValue = App.DefaultBatteryLowNotificationValue;
         Default.BatteryHighNotificationValue = App.DefaultBatteryHighNotificationValue;

@@ -45,17 +45,17 @@ public partial class NotifyIconWindow
 
     private void OnAboutMenuItemClick(object sender, RoutedEventArgs e)
     {
-        App.ActivateMainWindow().NavigateToPage<AboutPage>();
+        Application.Current.ActivateMainWindow().NavigateToPage<AboutPage>();
     }
 
     private void OnAppSettingsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        App.ActivateMainWindow().NavigateToPage<SettingsPage>();
+        Application.Current.ActivateMainWindow().NavigateToPage<SettingsPage>();
     }
 
     private void OnDetailsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        App.ActivateMainWindow().NavigateToPage<DetailsPage>();
+        Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
     }
 
     private void OnExitMenuItemClick(object sender, RoutedEventArgs e)
@@ -67,7 +67,7 @@ public partial class NotifyIconWindow
     {
         Visibility = Visibility.Collapsed;
 
-        if (!Default.HideAtStartup) App.ActivateMainWindow().NavigateToPage<DetailsPage>();
+        if (!Default.HideAtStartup) Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
 
         // Debounce all calls to update battery status.
         // This should be the only place that calls the UpdateBatteryStatus method.
@@ -109,7 +109,12 @@ public partial class NotifyIconWindow
 
     private void OnNotifyIconLeftDoubleClick(NotifyIcon sender, RoutedEventArgs e)
     {
-        App.ActivateMainWindow().NavigateToPage<DetailsPage>();
+        Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
+    }
+
+    private void OnSleepMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        ExternalProcessExtensions.SleepDevice();
     }
 
     private void OnSystemSettingsMenuItemClick(object sender, RoutedEventArgs e)
@@ -170,22 +175,7 @@ public partial class NotifyIconWindow
 
         if (Default.TrayIconFontUnderline) textBlock.TextDecorations = TextDecorations.Underline;
 
-        // There's a chance that some native exception may be thrown when setting the icon's image.
-        // Catch any exception here and retry a few times then fail silently with logs.
-        for (var i = 0; i < 5; i++)
-            try
-            {
-                NotifyIcon.SetIcon(textBlock);
-                App.SetTrayIconUpdateError(null);
-                break;
-            }
-            catch (Exception e)
-            {
-                if (i == 4)
-                    // Retried maximum number of times.
-                    // Log error and continue.
-                    App.SetTrayIconUpdateError(e);
-            }
+        NotifyIcon.SetIcon(textBlock);
     }
 
     private void UpdateBatteryStatus()

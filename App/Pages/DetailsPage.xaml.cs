@@ -1,4 +1,5 @@
 using System.Windows;
+using Percentage.App.Extensions;
 
 namespace Percentage.App.Pages;
 
@@ -12,6 +13,6 @@ public partial class DetailsPage
     private void OnRefreshButtonClick(object sender, RoutedEventArgs e)
     {
         BatteryInformation.RequestUpdate();
-        App.GetTrayIconWindow().RequestBatteryStatusUpdate();
+        Application.Current.GetTrayIconWindow().RequestBatteryStatusUpdate();
     }
 }

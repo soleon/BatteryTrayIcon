@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,6 +34,7 @@ public partial class App
     internal const bool DefaultIsAutoBatteryNormalColour = true;
     internal const int DefaultRefreshSeconds = 60;
     internal const bool DefaultTrayIconFontBold = false;
+    internal const int DefaultTrayIconFontSize = 16;
     internal const bool DefaultTrayIconFontUnderline = false;
     internal const string Id = "f05f920a-c997-4817-84bd-c54d87e40625";
     private static Exception _trayIconUpdateError;
@@ -69,28 +70,9 @@ public partial class App
         ToastNotificationManagerCompat.OnActivated += OnToastNotificationActivatedAsync;
     }
 
-    internal static MainWindow ActivateMainWindow()
-    {
-        var window = Current.Windows.OfType<MainWindow>().FirstOrDefault();
-        if (window != null)
-        {
-            window.Activate();
-            return window;
-        }
-
-        window = new MainWindow();
-        window.Show();
-        return window;
-    }
-
     internal static Exception GetTrayIconUpdateError()
     {
         return _trayIconUpdateError;
-    }
-
-    internal static NotifyIconWindow GetTrayIconWindow()
-    {
-        return Current.Windows.OfType<NotifyIconWindow>().FirstOrDefault();
     }
 
     private static void HandleException(object exception)
@@ -158,17 +140,15 @@ public partial class App
     {
         var arguments = ToastArguments.Parse(toastArgs.Argument);
         if (!arguments.TryGetActionArgument(out var action))
-        {
             // When there's no action from toast notification activation, this is most likely triggered by users
             // clicking the entire notification instead of an individual button.
             // Show the details view in this case.
-            Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
-        }
-        
+            Dispatcher.InvokeAsync(() => this.ActivateMainWindow().NavigateToPage<DetailsPage>());
+
         switch (action)
         {
             case ToastNotificationExtensions.Action.ViewDetails:
-                Dispatcher.InvokeAsync(() => ActivateMainWindow().NavigateToPage<DetailsPage>());
+                Dispatcher.InvokeAsync(() => this.ActivateMainWindow().NavigateToPage<DetailsPage>());
                 break;
             case ToastNotificationExtensions.Action.DisableBatteryNotification:
                 if (!arguments.TryGetNotificationTypeArgument(out var type)) break;
@@ -188,12 +168,14 @@ public partial class App
                         break;
                     case ToastNotificationExtensions.NotificationType.None:
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(type), type, $"{type} is not supported.");
+                        throw new InvalidEnumArgumentException(nameof(type), (int)type,
+                            typeof(ToastNotificationExtensions.NotificationType));
                 }
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, $"{action} is not supported.");
+                throw new InvalidEnumArgumentException(nameof(action), (int)action,
+                    typeof(ToastNotificationExtensions.Action));
         }
     }
 }

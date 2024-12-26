@@ -27,6 +27,10 @@
                              Click="OnSystemSettingsMenuItemClick"
                              Icon="{ui:SymbolIcon Power20}"
                              ToolTip="Open Windows system power and battery settings" />
+                <ui:MenuItem Header="_Sleep device"
+                             ToolTip="Turn your device to sleep mode"
+                             Icon="{ui:SymbolIcon WeatherMoon20}"
+                             Click="OnSleepMenuItemClick" />
                 <ui:MenuItem Header="_About"
                              Click="OnAboutMenuItemClick"
                              Icon="{ui:SymbolIcon Info20}"

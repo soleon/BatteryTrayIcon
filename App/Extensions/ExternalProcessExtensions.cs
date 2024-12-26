@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection;
-using Windows.ApplicationModel;
+﻿using System.Diagnostics;
 
 namespace Percentage.App.Extensions;
 
@@ -17,6 +14,11 @@ internal static class ExternalProcessExtensions
         StartShellExecutedProgress("https://github.com/soleon/Percentage/issues");
     }
 
+    internal static void OpenPowerSettings()
+    {
+        StartShellExecutedProgress("ms-settings:powersleep");
+    }
+
     internal static void OpenSourceCodeLocation()
     {
         StartShellExecutedProgress("https://github.com/soleon/Percentage");
@@ -27,9 +29,15 @@ internal static class ExternalProcessExtensions
         StartShellExecutedProgress("ms-windows-store://review/?ProductId=9PCKT2B7DZMW");
     }
 
-    internal static void OpenPowerSettings()
+    internal static void SleepDevice()
     {
-        StartShellExecutedProgress("ms-settings:powersleep");
+        // Parameter 0,0,0 for "SetSuspendState" native function:
+        // 0: no hibernation
+        // 0: deprecated
+        // 0: allow wake-up events
+        // See documentation for "powerprof":
+        // https://learn.microsoft.com/windows/win32/api/powrprof/nf-powrprof-setsuspendstate
+        Process.Start("rundll32.exe", "powrprof.dll,SetSuspendState 0,0,0");
     }
 
     private static void StartShellExecutedProgress(string fileName)
