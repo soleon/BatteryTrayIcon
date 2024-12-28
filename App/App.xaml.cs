@@ -55,11 +55,19 @@ public partial class App
 
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-        DispatcherUnhandledException += (_, e) => HandleException(e.Exception);
+        DispatcherUnhandledException += (_, e) =>
+        {
+            HandleException(e.Exception);
+            e.Handled = true;
+        };
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => HandleException(e.ExceptionObject);
 
-        TaskScheduler.UnobservedTaskException += (_, e) => HandleException(e.Exception);
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            HandleException(e.Exception);
+            e.SetObserved();
+        };
 
         InitializeComponent();
 
