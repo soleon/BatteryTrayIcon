@@ -29,6 +29,14 @@ internal static class ExternalProcessExtensions
         StartShellExecutedProgress("ms-windows-store://review/?ProductId=9PCKT2B7DZMW");
     }
 
+    public static void ShutDownDevice()
+    {
+        Process.Start(new ProcessStartInfo("shutdown", "/s /t 0")
+        {
+            CreateNoWindow = true
+        });
+    }
+
     internal static void SleepDevice()
     {
         // Parameter 0,0,0 for "SetSuspendState" native function:

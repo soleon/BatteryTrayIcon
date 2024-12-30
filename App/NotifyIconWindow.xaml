@@ -12,7 +12,8 @@
     <tray:NotifyIcon x:Name="NotifyIcon"
                      x:FieldModifier="private"
                      FocusOnLeftClick="False"
-                     LeftDoubleClick="OnNotifyIconLeftDoubleClick">
+                     LeftDoubleClick="OnNotifyIconLeftDoubleClick"
+                     LeftClick="OnNotifyIconLeftClick">
         <tray:NotifyIcon.Menu>
             <ContextMenu>
                 <ui:MenuItem Header="_Details"
@@ -25,12 +26,16 @@
                              ToolTip="Open application settings" />
                 <ui:MenuItem Header="_Power &amp; battery settings"
                              Click="OnSystemSettingsMenuItemClick"
-                             Icon="{ui:SymbolIcon Power20}"
+                             Icon="{ui:SymbolIcon FlashSettings20}"
                              ToolTip="Open Windows system power and battery settings" />
                 <ui:MenuItem Header="_Sleep device"
                              ToolTip="Turn your device to sleep mode"
                              Icon="{ui:SymbolIcon WeatherMoon20}"
                              Click="OnSleepMenuItemClick" />
+                <ui:MenuItem Header="Sh_ut down device"
+                             ToolTip="Shut down your device"
+                             Icon="{ui:SymbolIcon Power20}"
+                             Click="OnShutDownMenuItemClick" />
                 <ui:MenuItem Header="_About"
                              Click="OnAboutMenuItemClick"
                              Icon="{ui:SymbolIcon Info20}"

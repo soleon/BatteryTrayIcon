@@ -54,6 +54,36 @@
             <ui:ToggleSwitch
                 IsChecked="{Binding HideAtStartup, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
         </ui:CardControl>
+        
+        <!-- Double click tray icon to activate main UI -->
+        <ui:CardControl Icon="{ui:SymbolIcon CursorClick20}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Double click activation" />
+                    <ui:TextBlock
+                        Text="Double click the tray icon to show battery details" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                IsChecked="{Binding DoubleClickActivation, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+        </ui:CardControl>
+        
+        <!-- Shut down without confirmation -->
+        <ui:CardControl Icon="{ui:SymbolIcon Power20}">
+            <ui:CardControl.Header>
+                <StackPanel>
+                    <ui:TextBlock
+                        FontTypography="BodyStrong"
+                        Text="Shut down without confirmation" />
+                    <ui:TextBlock
+                        Text="Do not show confirmation when shutting down your device" />
+                </StackPanel>
+            </ui:CardControl.Header>
+            <ui:ToggleSwitch
+                IsChecked="{Binding ShutDownWithoutConfirmation, Source={x:Static properties:Settings.Default}, Mode=TwoWay}" />
+        </ui:CardControl>
 
         <!-- Refresh interval -->
         <ui:CardControl Icon="{ui:SymbolIcon ArrowSync20}">
@@ -63,7 +93,7 @@
                         FontTypography="BodyStrong"
                         Text="Refresh" />
                     <ui:TextBlock
-                        Text="Sets how long the battery status is refreshed" />
+                        Text="How frequent the battery status is refreshed" />
                 </StackPanel>
             </ui:CardControl.Header>
             <ComboBox ItemStringFormat="{}{0} seconds"
@@ -83,7 +113,7 @@
                         FontTypography="BodyStrong"
                         Text="Tray icon font" />
                     <ui:TextBlock
-                        Text="Customise tray icon font" />
+                        Text="Change tray icon font, size and style" />
                 </StackPanel>
             </ui:CardExpander.Header>
             <StackPanel>
@@ -132,7 +162,7 @@
                         FontTypography="BodyStrong"
                         Text="Tray icon colour" />
                     <ui:TextBlock
-                        Text="Set tray icon font colour for different battery status" />
+                        Text="Change tray icon colour for different battery levels" />
                 </StackPanel>
             </ui:CardExpander.Header>
             <Grid IsSharedSizeScope="True">
@@ -183,7 +213,7 @@
                         FontTypography="BodyStrong"
                         Text="Battery levels &amp; notifications" />
                     <ui:TextBlock
-                        Text="Toggle notifications for different battery levels" />
+                        Text="Change notifications for different battery levels" />
                 </StackPanel>
             </ui:CardExpander.Header>
             <StackPanel Grid.IsSharedSizeScope="True">
@@ -208,7 +238,8 @@
             </StackPanel>
         </ui:CardExpander>
         
-        <ui:CardControl Icon="{ui:SymbolIcon Power20}"
+        <!-- Open system power settings -->
+        <ui:CardControl Icon="{ui:SymbolIcon FlashSettings20}"
                         Content="{ui:SymbolIcon Open20}"
                         Click="OnSystemPowerSettingsClick">
             <ui:CardControl.Header>
@@ -217,7 +248,7 @@
                         FontTypography="BodyStrong"
                         Text="Power &amp; battery" />
                     <ui:TextBlock
-                        Text="Open Windows system power and battery settings" />
+                        Text="Open system power and battery settings" />
                 </StackPanel>
             </ui:CardControl.Header>
         </ui:CardControl>

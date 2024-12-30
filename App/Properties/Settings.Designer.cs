@@ -285,5 +285,29 @@ namespace Percentage.App.Properties {
                 this["TrayIconFontSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DoubleClickActivation {
+            get {
+                return ((bool)(this["DoubleClickActivation"]));
+            }
+            set {
+                this["DoubleClickActivation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShutDownWithoutConfirmation {
+            get {
+                return ((bool)(this["ShutDownWithoutConfirmation"]));
+            }
+            set {
+                this["ShutDownWithoutConfirmation"] = value;
+            }
+        }
     }
 }

@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Windows.Devices.Power;
@@ -11,12 +11,16 @@ using Microsoft.Win32;
 using Percentage.App.Extensions;
 using Percentage.App.Pages;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using TimeSpan = System.TimeSpan;
 using static Percentage.App.Properties.Settings;
+using MessageBox = Wpf.Ui.Controls.MessageBox;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 using NotifyIcon = Wpf.Ui.Tray.Controls.NotifyIcon;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace Percentage.App;
 
@@ -41,6 +45,39 @@ public partial class NotifyIconWindow
         // Setup timer to update the tray icon.
         _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _refreshTimer.Tick += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
+    }
+
+    private static async Task ShutDownAsync()
+    {
+        if (!Default.ShutDownWithoutConfirmation)
+        {
+            var result = await new MessageBox
+            {
+                Title = "Shut Down",
+                Content = "Are you sure you want to shut down your device?",
+                PrimaryButtonAppearance = ControlAppearance.Caution,
+                PrimaryButtonText = "Yes",
+                SecondaryButtonAppearance = ControlAppearance.Caution,
+                SecondaryButtonText = "Always Yes",
+                CloseButtonText = "No"
+            }.ShowDialogAsync().ConfigureAwait(false);
+
+            switch (result)
+            {
+                case MessageBoxResult.None:
+                    return;
+                case MessageBoxResult.Primary:
+                    break;
+                case MessageBoxResult.Secondary:
+                    Default.ShutDownWithoutConfirmation = true;
+                    Default.Save();
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException($"{result} is not a supported enum value.");
+            }
+        }
+
+        ExternalProcessExtensions.ShutDownDevice();
     }
 
     private void OnAboutMenuItemClick(object sender, RoutedEventArgs e)
@@ -107,9 +144,21 @@ public partial class NotifyIconWindow
         _refreshTimer.Start();
     }
 
+    private void OnNotifyIconLeftClick(NotifyIcon sender, RoutedEventArgs e)
+    {
+        if (!Default.DoubleClickActivation)
+            Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
+    }
+
     private void OnNotifyIconLeftDoubleClick(NotifyIcon sender, RoutedEventArgs e)
     {
-        Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
+        if (Default.DoubleClickActivation)
+            Application.Current.ActivateMainWindow().NavigateToPage<DetailsPage>();
+    }
+
+    private void OnShutDownMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        _ = ShutDownAsync();
     }
 
     private void OnSleepMenuItemClick(object sender, RoutedEventArgs e)

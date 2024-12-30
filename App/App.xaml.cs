@@ -27,12 +27,14 @@ public partial class App
     internal const string DefaultBatteryLowColour = "#FFCA5010";
     internal const bool DefaultBatteryLowNotification = true;
     internal const int DefaultBatteryLowNotificationValue = 20;
+    internal const bool DefaultDoubleClickActivation = false;
     internal const bool DefaultHideAtStartup = false;
     internal const bool DefaultIsAutoBatteryChargingColour = false;
     internal const bool DefaultIsAutoBatteryCriticalColour = false;
     internal const bool DefaultIsAutoBatteryLowColour = false;
     internal const bool DefaultIsAutoBatteryNormalColour = true;
     internal const int DefaultRefreshSeconds = 60;
+    internal const bool DefaultShutDownWithoutConfirmation = false;
     internal const bool DefaultTrayIconFontBold = false;
     internal const int DefaultTrayIconFontSize = 16;
     internal const bool DefaultTrayIconFontUnderline = false;
