@@ -19,7 +19,7 @@ internal static class ApplicationExtensions
         return window;
     }
     
-    internal static NotifyIconWindow GetTrayIconWindow(this Application app)
+    internal static NotifyIconWindow GetNotifyIconWindow(this Application app)
     {
         return app.Windows.OfType<NotifyIconWindow>().FirstOrDefault();
     }

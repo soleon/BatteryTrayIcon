@@ -39,21 +39,20 @@ internal static class NotifyIconExtensions
 
         // Render the element with the correct DPI scale.
         var dpiScale = VisualTreeHelper.GetDpi(textBlock);
-        var renderTargetBitmap = new RenderTargetBitmap(
-            (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleX, MidpointRounding.AwayFromZero),
-            (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleY, MidpointRounding.AwayFromZero),
-            dpiScale.PixelsPerInchX,
-            dpiScale.PixelsPerInchY,
-            PixelFormats.Default);
 
-        // There's a chance that a COMException can be thrown when rendering the bitmap.
-        // Catch any COM exceptions here and retry a few times then fail silently.
-        DelegateExtensions.RetryOnException<COMException>(() => renderTargetBitmap.Render(textBlock),
-            App.SetTrayIconUpdateError);
-
-        // There's a chance that some native exception may be thrown when setting the icon's image.
+        // There's a chance that some native exceptions may be thrown when rendering and setting the icon's image.
         // Catch any exception here and retry a few times then fail silently.
-        DelegateExtensions.RetryOnException<Exception>(() => notifyIcon.Icon = renderTargetBitmap,
-            App.SetTrayIconUpdateError);
+        DelegateExtensions.RetryOnException<Exception>(() =>
+        {
+            var renderTargetBitmap = new RenderTargetBitmap(
+                (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleX, MidpointRounding.AwayFromZero),
+                (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleY, MidpointRounding.AwayFromZero),
+                dpiScale.PixelsPerInchX,
+                dpiScale.PixelsPerInchY,
+                PixelFormats.Default);
+            renderTargetBitmap.Render(textBlock);
+            notifyIcon.Icon = renderTargetBitmap;
+            App.SetTrayIconUpdateError(null);
+        }, App.SetTrayIconUpdateError);
     }
 }

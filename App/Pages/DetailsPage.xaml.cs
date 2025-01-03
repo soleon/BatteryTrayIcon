@@ -13,6 +13,6 @@ public partial class DetailsPage
     private void OnRefreshButtonClick(object sender, RoutedEventArgs e)
     {
         BatteryInformation.RequestUpdate();
-        Application.Current.GetTrayIconWindow().RequestBatteryStatusUpdate();
+        Application.Current.GetNotifyIconWindow().RequestBatteryStatusUpdate();
     }
 }

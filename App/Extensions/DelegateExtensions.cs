@@ -4,7 +4,7 @@ namespace Percentage.App.Extensions;
 
 internal static class DelegateExtensions
 {
-    private const int DefaultMaxRetryCount = 5;
+    private const int DefaultMaxRetryCount = 3;
 
     internal static void RetryOnException<T>(this Action action, Action<T> onRetryFailed = null,
         int maxRetryCount = DefaultMaxRetryCount) where T : Exception
