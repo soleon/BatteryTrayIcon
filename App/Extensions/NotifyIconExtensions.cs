@@ -40,19 +40,23 @@ internal static class NotifyIconExtensions
         // Render the element with the correct DPI scale.
         var dpiScale = VisualTreeHelper.GetDpi(textBlock);
 
-        // There's a chance that some native exceptions may be thrown when rendering and setting the icon's image.
-        // Catch any exception here and retry a few times then fail silently.
-        DelegateExtensions.RetryOnException<Exception>(() =>
-        {
-            var renderTargetBitmap = new RenderTargetBitmap(
-                (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleX, MidpointRounding.AwayFromZero),
-                (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleY, MidpointRounding.AwayFromZero),
-                dpiScale.PixelsPerInchX,
-                dpiScale.PixelsPerInchY,
-                PixelFormats.Default);
-            renderTargetBitmap.Render(textBlock);
-            notifyIcon.Icon = renderTargetBitmap;
-            App.SetTrayIconUpdateError(null);
-        }, App.SetTrayIconUpdateError);
+        // There's a known issue that keep creating RenderTargetBitmap in a WPF app, the COMException: MILERR_WIN32ERROR
+        // may happen.
+        // This is reported as https://github.com/dotnet/wpf/issues/3067.
+        // Manually forcing a GC seems to help.
+        var renderTargetBitmap =
+            new RenderTargetBitmap(
+            (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleX, MidpointRounding.AwayFromZero),
+            (int)Math.Round(DefaultNotifyIconSize * dpiScale.DpiScaleY, MidpointRounding.AwayFromZero),
+            dpiScale.PixelsPerInchX,
+            dpiScale.PixelsPerInchY,
+            PixelFormats.Default);
+        renderTargetBitmap.Render(textBlock);
+
+        // Force GC after each RenderTargetBitmap creation to avoid running into COMException: MILERR_WIN32ERROR.
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        
+        notifyIcon.Icon = renderTargetBitmap;
     }
 }

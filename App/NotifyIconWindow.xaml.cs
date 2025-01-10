@@ -42,7 +42,7 @@ public partial class NotifyIconWindow
         InitializeComponent();
 
         // Setup timer to update the tray icon.
-        _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(Default.RefreshSeconds) };
         _refreshTimer.Tick += (_, _) => _batteryStatusUpdateSubject.OnNext(false);
     }
 
